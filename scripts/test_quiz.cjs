@@ -1,0 +1,47 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const core=require('../quiz-core.js');
+const root=path.resolve(__dirname,'..');
+const context={window:{}};
+vm.runInNewContext(fs.readFileSync(path.join(root,'data.js'),'utf8'),context);
+const data=JSON.parse(JSON.stringify(context.window.ISAAD));
+const banks=core.buildBanks(data);
+assert.equal(Object.keys(banks).length,7);
+assert.equal(banks.exam.questions.length,40);
+assert.equal(data.practice.length,30);
+assert.equal(new Set([...data.practice,...data.exam].map(q=>q.id)).size,70);
+const practiceStems=new Set(data.practice.map(q=>q.stem));
+assert(data.exam.every(q=>!practiceStems.has(q.stem)));
+let checks=0;
+for(const bank of Object.values(banks)){
+  const a=core.createAttempt(bank.questions.length);
+  assert.equal(core.submit(bank,a),false,'Must not submit unanswered questions');
+  assert.equal(core.choose(bank,a,-1),false);
+  assert.equal(core.choose(bank,a,4),false);
+  bank.questions.forEach((q,i)=>{a.current=i;assert.equal(core.choose(bank,a,q.correct),true);if(bank.mode==='practice')assert.equal(core.choose(bank,a,(q.correct+1)%4),false,'Graded practice answers stay locked');});
+  assert.equal(core.score(bank,a),bank.questions.length);
+  assert.equal(core.missing(a).length,0);
+  assert.equal(core.submit(bank,a),true);
+  assert.equal(core.choose(bank,a,0),false,'Submitted exam answers stay locked');
+  const restored=core.restoreState({read:[1,1,2,0,99],attempts:{[bank.id]:a}},banks);
+  assert.deepEqual(restored.read,[1,2]);
+  assert.deepEqual(restored.attempts[bank.id],a,'A valid saved attempt must survive reload');
+  checks++;
+}
+const exam=banks.exam,a=core.createAttempt(40);
+exam.questions.forEach((q,i)=>{a.current=i;core.choose(exam,a,q.correct);});
+a.current=0;assert(core.choose(exam,a,(exam.questions[0].correct+1)%4),'Exam answers may change before submission');
+assert.equal(core.score(exam,a),39);
+assert.deepEqual(core.moduleScores(exam,a).map(x=>x.total),[7,7,7,6,6,7]);
+assert.equal(core.moduleScores(exam,a).reduce((s,x)=>s+x.correct,0),39);
+assert.equal(core.submit(exam,a),true);
+const damaged={read:['1',6],attempts:{exam:{...a,current:200,answers:[null,...a.answers.slice(1)],submitted:true}}};
+const repaired=core.restoreState(damaged,banks);
+assert.equal(repaired.attempts.exam.submitted,false);
+assert.equal(repaired.attempts.exam.current,39);
+assert.deepEqual(repaired.read,[6]);
+assert.deepEqual(core.restoreState({attempts:{exam:{answers:[]}}},banks).attempts,{});
+for(const q of [...data.practice,...data.exam]){assert.equal(q.options.length,4);assert.equal(q.shades[q.correct],'ขาว');assert(q.shades.includes('เทา'));assert(q.shades.includes('ดำ'));}
+console.log(JSON.stringify({banksChecked:checks,questions:70,practiceCounts:[5,5,5,5,5,5],examCount:40,checks:['grading','practice-lock','exam-edit-before-submit','missing-answers','final-lock','saved-state','corrupt-state','module-scores','distinct-banks'],status:'passed'}));

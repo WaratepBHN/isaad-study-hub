@@ -1,0 +1,328 @@
+{
+  "modules": [
+    {
+      "id": 1,
+      "title": "Best Practices of Software Engineering",
+      "subtitle": "มองอาการให้ถึงสาเหตุ แล้วใช้ 6 แนวปฏิบัติพาระบบไปถึงผู้ใช้",
+      "overview": "บทนี้ไม่ได้ให้ท่องชื่อเครื่องมือ แต่ให้เหตุผลว่าทำไมโครงการที่ดูเหมือนทำงานมากจึงยังล้มเหลวได้ เริ่มจากอาการ แยกสาเหตุ เลือกแนวปฏิบัติ และอ่าน Unified Process ให้เป็นวงรอบที่ส่งมอบของรันได้",
+      "sourceFile": "ISAAD-1-2026.pdf",
+      "sections": [
+        {
+          "title": "1. อาการเป็นจุดเริ่มวิเคราะห์ ไม่ใช่คำตอบสุดท้าย",
+          "body": [
+            "อาการที่สไลด์ยกมา ได้แก่ ระบบไม่ตอบโจทย์ ความต้องการเปลี่ยนบ่อย โมดูลต่อกันไม่ได้ ดูแลยาก เจอข้อบกพร่องช้า คุณภาพหรือประสบการณ์ผู้ใช้ไม่ดี ช้าเมื่อรับโหลด ทีมทำงานชนกัน และ build/release มีปัญหา ข้อสอบมักบรรยายอาการก่อนให้เลือกวิธีแก้",
+            "ต้องย้อนดูสาเหตุ เช่น requirements ไม่พอ สื่อสารกำกวม architecture เปราะ ความซับซ้อนมาก ทดสอบไม่ดี ประเมินจากความรู้สึก เปลี่ยนงานไร้การควบคุม หรือขาด automation อาการเดียวอาจเกิดหลายสาเหตุ จึงเลือกวิธีที่ตรงหลักฐานในโจทย์มากที่สุด"
+          ],
+          "bullets": ["6 แนวปฏิบัติ: Develop Iteratively, Manage Requirements, Use Component Architectures, Model Visually, Continuously Verify Quality, Manage Change", "ถามต่อเสมอ: เห็นอาการอะไร มีหลักฐานชี้สาเหตุใด และแนวปฏิบัติใดแก้ตรงนั้น"],
+          "example": {"scenario": "ระบบจองห้องทำครบตามรายการที่ทีมเขียน แต่เจ้าหน้าที่ใช้งานจริงไม่ได้ เพราะขั้นตอนอนุมัติผิด", "reasoning": "ปัญหาอาจอยู่ที่ความเข้าใจความต้องการและการสื่อสาร ต้องตรวจ user needs ก่อนเพิ่มคนเขียนโค้ดหรือเพิ่มเครื่อง server"},
+          "pitfall": {"wrong": "ระบบช้าแปลว่าต้องซื้อเครื่องเพิ่มเสมอ", "correction": "ความช้าเป็นอาการ ต้องตรวจโหลด การออกแบบ และการทดสอบก่อนระบุสาเหตุ"},
+          "sourcePages": [3, 4, 41]
+        },
+        {
+          "title": "2. Develop Iteratively: ใช้ของรันได้เปิดเผยความเสี่ยง",
+          "body": [
+            "Waterfall ตามข้อวิจารณ์ในสไลด์ยืนยันการลดความเสี่ยงสำคัญช้า เลื่อนและกอง integration/testing ไปท้ายโครงการ และอาจใช้เอกสารเป็นตัวแทนความก้าวหน้าที่ทำนายวันเสร็จได้ไม่ดี เมื่อพบปัญหาตอนท้ายจึงเกิดการวนแก้งานครั้งใหญ่โดยไม่ได้วางแผน",
+            "Iteration คือช่วงกิจกรรมที่มีแผนและเกณฑ์ประเมินชัดเจน ผลลัพธ์เป็น executable release ใช้ภายในหรือภายนอกก็ได้ แต่ละรอบทำให้เห็นพฤติกรรมระบบและรับ feedback ได้ การทำรอบสั้นจึงช่วยลดความเสี่ยงและปรับตาม requirements ที่เปลี่ยน"
+          ],
+          "bullets": ["หนึ่ง iteration ต้องมีผลลัพธ์ที่รันและประเมินได้ ไม่จำเป็นต้องเป็นผลิตภัณฑ์ครบทุกฟังก์ชัน", "เลือกทดสอบสมมติฐานที่เสี่ยงเร็ว แล้วใช้ผลจริงปรับแผนรอบต่อไป"],
+          "example": {"scenario": "ระบบลงทะเบียนเสี่ยงเชื่อมฐานข้อมูลเดิมไม่สำเร็จ ทีมทำเส้นทางลงทะเบียนขนาดเล็กที่เชื่อมจริงในรอบแรก", "reasoning": "แม้ฟีเจอร์ยังน้อย แต่ executable ทำให้ตรวจความเสี่ยงการเชื่อมต่อได้เร็วกว่าอ่านเอกสารออกแบบที่เสร็จทั้งหมด"},
+          "pitfall": {"wrong": "แบ่งเวลาทำเอกสาร 3 รอบแล้วเรียกว่า iterative ได้ทันที", "correction": "ดูผลลัพธ์ executable release แผน และเกณฑ์ประเมินของแต่ละรอบ ไม่ใช่ดูเพียงจำนวนรอบ"},
+          "sourcePages": [7, 9, 12, 13, 40]
+        },
+        {
+          "title": "3. Manage Requirements: ตอบโจทย์ให้ถูกและตามรอยได้",
+          "body": [
+            "Requirements management คือการค้นหา จัดระเบียบ บันทึก และจัดการความต้องการที่เปลี่ยน เพื่อ solve the right problem และ build the right system ลำดับความคิดเริ่มจากวิเคราะห์ปัญหา เข้าใจผู้ใช้ นิยามระบบ คุมขอบเขต แล้วค่อยขัดเกลารายละเอียด ไม่ใช่รีบยึดฟีเจอร์แรกที่ได้ยินเป็นคำตอบ",
+            "Traceability เชื่อม problem และ needs ไปยัง features, use cases/software requirements, design และ test procedures รวมถึงเอกสารผู้ใช้ เมื่อเปลี่ยนความต้องการจึงสืบได้ว่าต้องปรับอะไร และเมื่อทดสอบได้ก็ย้อนถามได้ว่ากำลังยืนยันความต้องการใด"
+          ],
+          "bullets": ["Problem space ตอบว่าปัญหาและความต้องการคืออะไร; solution space อธิบายสิ่งที่จะสร้างเพื่อตอบโจทย์", "User stories, use cases, stakeholder collaboration และ backlog ช่วยจัดการงาน แต่ยังต้องตรวจความเชื่อมโยงและ scope"],
+          "example": {"scenario": "ผู้ใช้ขอปุ่มส่งออก Excel เพราะต้องทำรายงานยอดรายวัน", "reasoning": "ความต้องการจริงคือได้รายงานยอดที่ใช้ทำงานต่อได้ ปุ่ม Excel เป็นแนวทางแก้หนึ่งแบบ ต้องยืนยันเหตุผลและเกณฑ์ก่อนกำหนด design/test"},
+          "pitfall": {"wrong": "มีรายการฟีเจอร์มากแปลว่าเข้าใจปัญหาและคุมขอบเขตแล้ว", "correction": "รายการต้องผูกกับ needs มีขอบเขตชัด และตามรอยผลกระทบเมื่อเปลี่ยนได้"},
+          "sourcePages": [15, 16, 17, 18]
+        },
+        {
+          "title": "4. Architecture และ UML: จัดความซับซ้อนและสื่อสารให้ตรง",
+          "body": [
+            "Component-based architecture แบ่งระบบเป็นส่วนที่มีขอบเขตและความรับผิดชอบชัด ทำให้ reuse/customize ส่วนเดิม เลือกส่วนสำเร็จรูป และค่อยพัฒนาระบบเดิมได้ สถาปัตยกรรมที่ resilient รองรับทั้งปัจจุบันและอนาคต ขยายได้ และห่อหุ้ม dependencies จึงช่วยจำกัดผลกระทบจากการเปลี่ยน",
+            "Model visually ใช้แบบจำลองสื่อโครงสร้างและพฤติกรรม แสดงว่าส่วนต่าง ๆ ประกอบกันอย่างไร และเลือกซ่อนหรือแสดงรายละเอียดตามผู้รับสาร UML ช่วยให้การสื่อสารกำกวมน้อยลงและตรวจ design กับ implementation ให้สอดคล้องกัน แต่ต้องเลือก diagram ให้ตรงคำถาม"
+          ],
+          "bullets": ["Use Case = ระบบทำอะไร; Activity = workflow; Sequence = interaction; Class = structure", "Architecture ยังเป็นฐานวางแผน คน และการส่งมอบ พร้อมช่วยคุมความซับซ้อนและความสอดคล้องของระบบ"],
+          "example": {"scenario": "ทีมแยกงานชำระเงินผ่าน interface และต้องอธิบายลำดับเรียกกันระหว่างหน้าจอ ตัวควบคุม และบริการจ่ายเงิน", "reasoning": "ขอบเขต component ช่วยจำกัด dependency ส่วน Sequence diagram เหมาะอธิบาย interaction; Class diagram ตอบโครงสร้างได้แต่ไม่ได้แทนลำดับข้อความนั้น"},
+          "pitfall": {"wrong": "วาด UML ครบทุกแบบหรือแยกบริการให้มากที่สุดแล้ว architecture จะดีเอง", "correction": "เลือกขอบเขตและระดับรายละเอียดที่ช่วยเข้าใจปัญหา ลดความซับซ้อน และตรวจการออกแบบได้จริง"},
+          "sourcePages": [20, 21, 22, 24, 26]
+        },
+        {
+          "title": "5. Quality และ Change ต้องทำตลอดทาง",
+          "body": [
+            "Continuously Verify Quality ตรวจตั้งแต่ต้นและบ่อยครั้ง เพราะข้อบกพร่องมีต้นทุนซ่อมและอาจทำให้เสียโอกาสหรือลูกค้า Functionality ถามว่าทำสิ่งที่ต้องการได้ไหม Reliability ถามว่าทำงานต่อเนื่องได้ไหม Performance ถามว่าตอบสนองยอมรับได้หรือไม่ภายใต้โหลดที่คาดและกรณีหนัก",
+            "Manage Change ทำให้การเปลี่ยนอยู่ภายใต้การควบคุม รองรับพื้นที่ทำงานแยกของ developer งานขนาน และ automated integration/build สไลด์เชื่อมไปยัง version control, issue tracking, configuration และ release management ส่วน UCM ติดตาม tasks, defects, enhancements และความก้าวหน้าตลอด lifecycle"
+          ],
+          "bullets": ["QA สมัยใหม่รวม automated testing, CI/CD, performance/security testing และ UX validation", "การควบคุม change ช่วยให้ปรับ baseline ทีละรอบและรวมงานของทีมได้อย่างตรวจสอบได้"],
+          "example": {"scenario": "ระบบจ่ายค่าเทอมคิดยอดถูกในครั้งเดียว แต่เปิดทิ้งไว้หลายชั่วโมงแล้วหยุดทำงาน และทีมแก้ไฟล์ทับกัน", "reasoning": "ผลคำนวณผ่านยังไม่ยืนยัน reliability; อีกปัญหาต้องแก้การจัดการ change/workspace ไม่ใช่หวังว่าการทดสอบครั้งท้ายจะจัดระเบียบโค้ดให้"},
+          "pitfall": {"wrong": "ผ่าน test ฟังก์ชันแล้วจึงสรุปว่าคุณภาพครบ และเก็บ Git อย่างเดียวถือว่าจัดการ change ครบ", "correction": "ต้องตรวจหลายมิติ และคุมทั้งการเปลี่ยน การรวมงาน build และ release ตามบริบท"},
+          "sourcePages": [28, 29, 30, 32, 33, 34, 36]
+        },
+        {
+          "title": "6. Unified Process: อ่าน phase แยกจาก iteration และ milestone",
+          "body": [
+            "Unified Process มี 4 phases: Inception กำหนดขอบเขต; Elaboration วางแผน ระบุ features และวาง baseline architecture; Construction สร้างผลิตภัณฑ์; Transition นำผลิตภัณฑ์เข้าสู่ชุมชนผู้ใช้ งานแต่ละ phase เน้นต่างกันแต่ไม่ได้บังคับว่าทำกิจกรรมได้ชนิดเดียว",
+            "ขอบเขต phase เป็น major milestone: จบ Inception = Lifecycle Objective (LCO), จบ Elaboration = Lifecycle Architecture (LCA), จบ Construction = Initial Operational Capability (IOC), จบ Transition = Product Release ส่วน release ของแต่ละ iteration เป็น minor milestone จึงต้องแยกสองระดับนี้"
+          ],
+          "bullets": ["หนึ่ง phase อาจมีหลาย iterations; iteration เป็นรอบงาน ส่วน phase เป็นช่วงเป้าหมายของ lifecycle", "6 best practices เสริมกัน: requirements นำทาง architecture, iteration เปิดความเสี่ยง, quality ตรวจบ่อย และ change คุม baseline"],
+          "example": {"scenario": "ทีมทดลอง architecture หลายรอบจนได้ baseline ที่ประเมินแล้ว ก่อนเข้าสู่ช่วงสร้างผลิตภัณฑ์หลัก", "reasoning": "สอดคล้องกับ Elaboration และ LCA ไม่ใช่แปลว่าต้องรอ Construction จึงมี executable หรือทำได้เพียงรอบเดียวต่อ phase"},
+          "pitfall": {"wrong": "4 phases คือ waterfall สี่ขั้น และหนึ่ง phase เท่ากับหนึ่ง iteration", "correction": "สไลด์แสดงหลาย iterations ภายใน phases โดยแต่ละรอบมี executable release ของตน"},
+          "sourcePages": [36, 38, 39, 40, 41]
+        }
+      ],
+      "recap": ["เริ่มจากอาการ แล้วเลือกแนวปฏิบัติตามสาเหตุที่โจทย์ให้หลักฐาน", "Iteration มี executable release และเกณฑ์ประเมิน ช่วยค้นความเสี่ยงเร็ว", "Requirements เชื่อมปัญหา–needs–สิ่งที่จะสร้าง–design–test และต้องคุม scope", "Architecture คุมความซับซ้อน; UML เลือกตาม structure, behavior และผู้รับสาร", "Quality ตรวจหลายมิติอย่างต่อเนื่อง; Change คุมการแก้ รวมงาน build และ release", "จำ Inception–Elaboration–Construction–Transition พร้อม LCO–LCA–IOC–Product Release"]
+    },
+    {
+      "id": 2,
+      "title": "Concepts of Object-Orientation",
+      "subtitle": "แยก object, class, หลัก OO และความสัมพันธ์ UML จากความหมายจริง",
+      "overview": "ฝึกอ่านโมเดลจากสิ่งที่มันสื่อ ไม่เดาจากคำศัพท์ที่คุ้น เริ่มจาก state–behavior–identity แล้วเชื่อมไปยัง abstraction, interface, หน่วยของระบบ และความสัมพันธ์ โดยอ่าน multiplicity จากหนึ่ง object อีกฝั่งเสมอ",
+      "sourceFile": "ISAAD-2-2026.pdf",
+      "sections": [
+        {
+          "title": "1. Model ย่อความจริง; Object มีตัวตน สถานะ และพฤติกรรม",
+          "body": [
+            "Model คือ simplification of reality ใช้เห็นภาพ ระบุ structure/behavior และเป็นแนวสร้างระบบ เพราะเราเข้าใจระบบซับซ้อนทั้งหมดพร้อมกันได้ยาก Object อาจแทนสิ่งกายภาพ เช่น รถ สิ่งเชิงแนวคิด เช่น กระบวนการ หรือสิ่งซอฟต์แวร์ เช่น linked list จึงไม่จำกัดเฉพาะวัตถุที่จับต้องได้",
+            "Object มี boundary และ identity ชัดเจน พร้อมห่อหุ้ม state และ behavior: state แทนด้วย attributes/relationships และเปลี่ยนตามเวลาได้; behavior คือการกระทำหรือตอบสนองต่อ messages; identity ทำให้แยกสอง object ออกจากกัน แม้ค่าของ state จะเหมือนกัน"
+          ],
+          "bullets": ["Object ใน UML เป็นสี่เหลี่ยม ชื่อมีขีดเส้นใต้: J Clark:Professor หรือ :Professor เมื่อไม่ระบุชื่อ", "Class อธิบายกลุ่ม objects ที่มี attributes, operations, relationships และ semantics ร่วมกัน; object เป็น instance ของ class"],
+          "example": {"scenario": "อาจารย์สองคนชื่อ J Clark และสอน Biology เหมือนกัน แต่เป็นคนละคน", "reasoning": "ค่าชื่อและวิชาที่เหมือนกันไม่ทำให้ identity รวมเป็นหนึ่ง เช่นเดียวกับ object สองตัวที่มี attribute เท่ากันยังแยกจากกันได้"},
+          "pitfall": {"wrong": "Professor เป็น object เพราะเป็นคำนาม และ object ที่ข้อมูลเท่ากันคือตัวเดียวกัน", "correction": "ถามว่าเป็นคำอธิบายแม่แบบหรือ instance เฉพาะ และแยก identity ออกจากค่าของ state"},
+          "sourcePages": [6, 7, 8, 9, 10, 11, 12, 13, 22, 24]
+        },
+        {
+          "title": "2. หลัก OO สี่ข้อ แก้คนละมุมของความซับซ้อน",
+          "body": [
+            "Abstraction เลือกลักษณะสำคัญที่แยกชนิดสิ่งหนึ่งออกจากสิ่งอื่น โดยขอบเขตขึ้นกับมุมมอง เช่น Course คือวิชา ส่วน Course Offering คือการเปิดสอนวิชานั้นตามช่วงเวลา Encapsulation ซ่อน implementation จาก clients ให้พึ่ง interface จึงเปลี่ยนภายในได้โดยไม่บังคับให้ผู้ใช้บริการรู้รายละเอียดทั้งหมด",
+            "Modularity แยกสิ่งซับซ้อนเป็นส่วนที่จัดการได้ เช่น แยก billing, courses และ student management ส่วน Hierarchy จัดลำดับ abstractions โดยสมาชิกระดับเดียวกันควรอยู่ระดับ abstraction เดียวกัน OO จึงช่วยให้โมเดลใกล้โดเมน reuse ได้ และปรับการเปลี่ยนแปลงโดยกระทบวงจำกัด"
+          ],
+          "bullets": ["Abstraction = เลือกสาระสำคัญตามมุมมอง; Encapsulation = ซ่อนวิธีทำหลัง interface", "Modularity = แบ่งเป็นส่วนจัดการได้; Hierarchy = จัดระดับความทั่วไป–เฉพาะอย่างสอดคล้อง"],
+          "example": {"scenario": "เจ้าหน้าที่ขอเปลี่ยนภาระสอนด้วย setMaxLoad(4) โดยไม่รู้ว่า Professor เก็บค่าภายในแบบใด", "reasoning": "นี่คือ encapsulation ผ่านบริการที่กำหนด ส่วนการเลือกให้ Professor สนใจภาระสอนแต่ไม่เก็บสีรองเท้าในระบบลงทะเบียนเป็น abstraction"},
+          "pitfall": {"wrong": "ซ่อนรายละเอียดทุกแบบเรียก abstraction หรือ encapsulation แทนกันได้หมด", "correction": "แยกการเลือกว่าจะจำลองสาระใด ออกจากการป้องกัน client ไม่ให้พึ่งวิธีทำภายใน"},
+          "sourcePages": [3, 5, 14, 15, 16, 17, 18, 19, 20, 21]
+        },
+        {
+          "title": "3. Class, Interface และ Polymorphism เชื่อมกันอย่างไร",
+          "body": [
+            "Class แสดงเป็นสี่เหลี่ยมแบ่งช่องชื่อ attributes และ operations โดย attribute เป็น named property ที่ระบุช่วงค่าที่ instances อาจมี เช่น studentID ส่วน operation คือบริการที่ร้องขอจาก object เพื่อส่งผลต่อพฤติกรรม เช่น addSchedule() อย่าสับสนชื่อ property กับค่าของ object เฉพาะตัว",
+            "Polymorphism ซ่อน implementations หลายแบบไว้หลัง interface เดียว จึงเป็น same interface, different behavior Interface ทำสัญญาบริการให้ชัดและรองรับ plug-and-play เช่น Shape ระบุ draw/move/scale/rotate ขณะที่ Tube, Pyramid, Cube ทำตามสัญญาด้วยวิธีต่างกัน ความสัมพันธ์ที่ทำตามสัญญาคือ realization"
+          ],
+          "bullets": ["Class อาจไม่มี attributes หรือไม่มี operations ก็ได้ ตามสิ่งที่โมเดลต้องสื่อ", "Interface แสดงได้ทั้ง <<interface>> แบบ class/stereotype และสัญลักษณ์ lollipop"],
+          "example": {"scenario": "ตัววาดเรียก draw() ผ่าน Shape แล้ววัตถุ Cube กับ Tube แสดงรูปร่างต่างกัน", "reasoning": "client ใช้สัญญาเดียว แต่แต่ละชนิดมี implementation ต่างกัน จึงเกิด polymorphism; การใช้ชื่อ method เหมือนกันโดยไม่มีสัญญาที่ใช้งานร่วมกันยังไม่อธิบายหลักนี้ครบ"},
+          "pitfall": {"wrong": "ใช้ interface เดียวแปลว่าทุก class ต้องทำงานภายในเหมือนกัน", "correction": "ต้องตอบสัญญาที่กำหนดร่วมกัน แต่รายละเอียดและพฤติกรรมเฉพาะชนิดต่างกันได้"},
+          "sourcePages": [23, 25, 26, 27, 28, 30, 47]
+        },
+        {
+          "title": "4. Package, Subsystem, Component: ดูหน้าที่และระดับโมเดล",
+          "body": [
+            "Package เป็นกลไกจัด model elements เป็นกลุ่ม บรรจุ model elements อื่นและใช้เป็นหน่วย configuration management ได้ แต่การรวมสิ่งใน package เพียงอย่างเดียวไม่ได้อธิบายบริการของระบบย่อย ส่วน Subsystem รวมคุณสมบัติ package ที่บรรจุองค์ประกอบ กับ class ที่มี behavior และ realizes interfaces ซึ่งนิยาม behavior นั้น",
+            "Component เป็นส่วนสำคัญที่เกือบอิสระและแทนที่ได้ ทำหน้าที่ชัดใน architecture อาจเป็น source code หรือ executable สไลด์แยก design model ที่ใช้ subsystem แทน abstraction ออกจาก implementation model ที่มี component เป็นการทำให้ design นั้นเกิดจริง จึงไม่ควรตัดสินจากขนาดไฟล์อย่างเดียว"
+          ],
+          "bullets": ["Package เน้นการจัดกลุ่ม; Subsystem เพิ่มขอบเขต behavior และ interface", "Component เน้นส่วนที่นำไปใช้จริงและแทนที่ได้ภายใต้ architecture ที่นิยามไว้"],
+          "example": {"scenario": "โมเดลจัดคลาสการจ่ายเงินไว้ใน package; ระบบย่อย Payment เปิดบริการผ่าน interface; ตอนติดตั้งมี payment.dll", "reasoning": "สามชื่อนี้อาจเกี่ยวข้องกับงานเดียวกัน แต่สื่อคนละด้าน: การจัดกลุ่ม หน่วยออกแบบที่มีพฤติกรรม และส่วน implementation"},
+          "pitfall": {"wrong": "Package, subsystem และ component เป็นชื่อแทนกันสำหรับกล่องที่มีไฟล์เยอะ", "correction": "อ่านว่ากล่องนั้นจัดกลุ่ม มี behavior ตาม interface หรือเป็นส่วน implementation ที่แทนที่ได้"},
+          "sourcePages": [31, 32, 33, 34]
+        },
+        {
+          "title": "5. อ่าน Association, Multiplicity, Aggregation และ Navigability",
+          "body": [
+            "Association เป็นความสัมพันธ์เชิงโครงสร้างที่บอกการเชื่อมระหว่าง instances ของ classifiers ส่วน multiplicity บอกจำนวน instances ที่สัมพันธ์กับ ONE instance ของอีกฝั่ง ต้องพิจารณาทั้งสองปลายแยกกัน ตัวเลขใกล้ Professor จึงตอบว่าหนึ่ง CourseOffering เชื่อม Professor ได้กี่คน",
+            "ภาพ M2 กำหนด Professor 0..1 และ CourseOffering 0..*: หนึ่ง offering มีผู้สอนศูนย์หรือหนึ่งคน และหนึ่ง professor สอน offering ได้ศูนย์รายการขึ้นไป Aggregation เป็น association แบบ whole–part ส่วน navigability บอกว่าตาม association ไปยังเป้าหมายได้หรือไม่ เป็นคนละคำถามกับจำนวน"
+          ],
+          "bullets": ["1 = หนึ่งพอดี; 0..1 = มีหรือไม่มีก็ได้; * หรือ 0..* = ศูนย์ขึ้นไป; 1..* = อย่างน้อยหนึ่ง", "2..4 = สองถึงสี่; 2,4..6 = สอง หรือสี่ถึงหก; ไม่ระบุ multiplicity อย่าเติมเองจากความคุ้นเคย"],
+          "example": {"scenario": "CourseOffering ใหม่ยังไม่จัดอาจารย์ แต่ professor หนึ่งคนยังไม่ได้รับรายวิชาใดในเทอมนี้", "reasoning": "ทั้งสองกรณีไม่ขัด M2 หน้า 36 เพราะค่าต่ำสุดทั้งสองฝั่งเป็น 0 การอ่านว่า offering ต้องมีอาจารย์หนึ่งคนเสมอจะตัดกรณีที่สไลด์ยอมให้มี"},
+          "pitfall": {"wrong": "เลขใกล้ Professor บอกจำนวน offering ของ professor หรือใช้ค่า 1 จากตัวอย่างโมดูลอื่นแทน", "correction": "ล็อกหนึ่ง object อีกฝั่งแล้วอ่านปลายตรงข้าม และใช้ข้อกำหนดของภาพ M2 นี้: 0..1"},
+          "sourcePages": [35, 36, 37, 38, 39]
+        },
+        {
+          "title": "6. ความสัมพันธ์ที่เหลือ และเครื่องหมายขยายความ UML",
+          "body": [
+            "Dependency เป็นความสัมพันธ์ using ที่ไม่ใช่โครงสร้าง: เปลี่ยน supplier อาจทำให้ client ต้องเปลี่ยน Generalization คือ is a kind of สร้าง hierarchy ที่ subclass สืบทอด attributes, operations และ relationships จาก superclass เพิ่มของตนหรือ redefine operations ได้อย่างระวัง ของร่วมควรอยู่ระดับสูงสุดที่ใช้ร่วมกันได้ ไม่ใช้แทนความเป็นส่วนประกอบหรือพ่อแม่ทางชีวภาพ",
+            "Realization คือฝ่ายหนึ่งเป็น contract อีกฝ่ายทำตาม เช่น interface กับ class/subsystem/component ที่ realize มัน ส่วน stereotype ขยายชนิด model element ให้สื่อภาษาโดเมน Note เป็นกล่องมุมพับสำหรับคำอธิบายและอาจผูกด้วยเส้นประ Tagged value ขยาย properties เช่น {location=server} ทั้งสามช่วยบอกข้อมูลเพิ่มแต่ไม่ใช่ความสัมพันธ์แบบเดียวกัน"
+          ],
+          "bullets": ["ถามความหมายก่อนเลือกเส้น: เชื่อมกัน = association; ส่วน–ทั้งหมด = aggregation; ใช้งาน = dependency; ชนิดย่อย = generalization; ทำตามสัญญา = realization", "Single inheritance มี superclass เดียว; multiple inheritance มีหลาย superclass และสไลด์เตือนให้ใช้เมื่อจำเป็นอย่างระวัง"],
+          "example": {"scenario": "Rose เป็นชนิดหนึ่งของ Flower; Flower เป็นส่วนหนึ่งของกิ่งไม้; รายงานใช้บริการแปลงไฟล์", "reasoning": "ความเป็นชนิดใช้ generalization ความเป็นส่วนประกอบพิจารณา aggregation และการใช้งานชั่วคราวพิจารณา dependency จึงไม่ใช้ inheritance ครอบทุกความเกี่ยวข้อง"},
+          "pitfall": {"wrong": "สองสิ่งเกี่ยวข้องกันหรือชื่อคล้ายกันจึงควรใช้ inheritance", "correction": "พิสูจน์ is a kind of ก่อน แล้วตรวจระดับ abstraction และสิ่งที่จะสืบทอด"},
+          "sourcePages": [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+        }
+      ],
+      "recap": ["Object = instance ที่มี state, behavior, identity; Class = คำอธิบายลักษณะร่วมของกลุ่ม objects", "Abstraction เลือกสาระ; Encapsulation ซ่อน implementation; Modularity แบ่งส่วน; Hierarchy จัดระดับ", "Interface เป็นสัญญา; Polymorphism ใช้ interface เดียวแต่ implementation ต่างกัน; Realization คือทำตามสัญญา", "แยก package ที่จัดกลุ่ม, subsystem ที่มี behavior และ component ใน implementation", "อ่าน multiplicity จากหนึ่ง instance อีกฝั่ง; M2 หน้า36 อนุญาต Professor 0..1 ต่อ offering", "Generalization ต้อง is a kind of; whole–part ไม่ใช่ inheritance และ dependency ไม่ใช่ structural link"]
+    }
+  ],
+  "practice": [
+    {
+      "id": "m1-p1", "module": 1, "topic": "Iteration: เลือกผลลัพธ์เพื่อลดความเสี่ยง", "stem": "ทีมพัฒนาระบบห้องสมุดมีความเสี่ยงหลักว่าเชื่อมระบบสมาชิกเดิมไม่ได้ ควรเลือกผลลัพธ์ใดสำหรับ iteration แรกเพื่อได้หลักฐานตรงความเสี่ยงที่สุด?",
+      "options": ["เอกสารหน้าจอทุกหน้าที่ผู้ใช้ลงนามรับรอง", "ระบบย่อยที่รันเส้นทางตรวจสมาชิกผ่านระบบเดิมได้", "ต้นแบบหน้าจอค้นหนังสือที่ยังใช้ข้อมูลจำลอง", "รายงานว่าทุกทีมเขียนโค้ดของตนเสร็จครึ่งหนึ่ง"], "correct": 1,
+      "shades": ["เทา", "ขาว", "เทา", "ดำ"],
+      "reasons": ["ช่วยยืนยันความเข้าใจหน้าจอ แต่ยังไม่ทดสอบความเสี่ยงเชื่อมระบบ", "เป็น executable ที่เปิดเผยความเสี่ยงหลักได้เร็วและประเมินผลได้", "รันได้และรับ feedback หน้าจอได้ แต่ข้อมูลจำลองหลบจุดเสี่ยงที่โจทย์ระบุ", "ร้อยละจากงานแยกส่วนไม่ยืนยันว่าระบบเชื่อมกันและใช้งานได้"],
+      "explanation": "Iteration ไม่ได้วัดด้วยปริมาณเอกสารหรือโค้ดเท่านั้น ต้องได้ executable release ที่ช่วยประเมินสมมติฐานและลดความเสี่ยงสำคัญของรอบนั้น", "source": {"file": "ISAAD-1-2026.pdf", "page": 9}
+    },
+    {
+      "id": "m1-p2", "module": 1, "topic": "Requirements traceability: สืบผลกระทบ", "stem": "มหาวิทยาลัยเปลี่ยนกฎคืนเงินค่าลงทะเบียน ทีมต้องรู้ว่าต้องแก้ design และ test ใด แนวทางใดให้คำตอบตาม requirements traceability ได้ดีที่สุด?",
+      "options": ["ให้ tester รันชุดทดสอบเดิมทั้งหมดแล้วค้นหาจุดที่ล้มเหลว", "ค้นคำว่า 'คืนเงิน' ในชื่อไฟล์และแก้ทุกไฟล์ที่พบ", "ถาม programmer ที่จำระบบได้ให้เลือกจุดแก้จากประสบการณ์", "ตามลิงก์กฎ/need ไป requirement แล้วตรวจ design และ test ที่ผูกไว้"], "correct": 3,
+      "shades": ["เทา", "ดำ", "เทา", "ขาว"],
+      "reasons": ["ช่วยพบผลเสียบางส่วน แต่ test เดิมอาจไม่ครอบคลุมกฎใหม่และไม่ให้สายเหตุผลครบ", "ชื่อไฟล์ไม่ได้รับประกันความสัมพันธ์เชิง requirement และอาจตกหล่นหรือแก้เกิน", "ความรู้คนช่วยได้ แต่การจำไม่ทดแทนความเชื่อมโยงที่ตรวจสอบได้", "เชื่อมเหตุผลของการเปลี่ยนไปยังสิ่งออกแบบและวิธีตรวจยืนยันโดยตรง"],
+      "explanation": "Traceability เชื่อม problem/needs กับ features, requirements, design และ test จึงใช้วิเคราะห์ผลกระทบและตรวจว่าการแก้ยังตอบความต้องการเดิมหรือใหม่ได้", "source": {"file": "ISAAD-1-2026.pdf", "page": 17}
+    },
+    {
+      "id": "m1-p3", "module": 1, "topic": "Component architecture: จำกัด dependency", "stem": "ระบบขายของต้องเปลี่ยนผู้ให้บริการชำระเงินทุกปี ปัจจุบันโค้ดของผู้ให้บริการกระจายอยู่ทุกหน้าจอ ทางเลือกใดสอดคล้องกับ resilient component-based architecture ที่สุด?",
+      "options": ["รวมบริการชำระเงินหลัง interface ชัดเจนและห่อหุ้ม dependency", "คัดลอกโค้ดผู้ให้บริการใหม่ลงทุกหน้าจอเพื่อแก้ได้อิสระ", "เพิ่มเอกสารขั้นตอนแก้แต่ละหน้าจอเมื่อมีผู้ให้บริการใหม่", "แยกทีมหน้าจอออกเป็นหลายทีมโดยยังเรียกผู้ให้บริการตรง"], "correct": 0,
+      "shades": ["ขาว", "ดำ", "เทา", "เทา"],
+      "reasons": ["สร้างขอบเขตส่วนที่แทนหรือพัฒนาเพิ่มได้และจำกัดการพึ่งพาภายนอก", "การคัดลอกกระจายเพิ่มจุดต้องเปลี่ยนและทำให้ dependency ยังคงรั่วไปทั่ว", "เอกสารช่วยทำงาน แต่ไม่แก้ความเปราะจาก dependency ที่กระจาย", "อาจช่วยจัดคน แต่การแบ่งทีมไม่ทำให้ขอบเขตทางสถาปัตยกรรมชัดขึ้นเอง"],
+      "explanation": "สไลด์เน้น extensibility, reuse และ encapsulates system dependencies การกำหนดขอบเขตบริการชำระเงินจึงแก้ปัญหาเชิงโครงสร้างที่โจทย์ให้มา", "source": {"file": "ISAAD-1-2026.pdf", "page": 20}
+    },
+    {
+      "id": "m1-p4", "module": 1, "topic": "Quality dimensions: เลือกการทดสอบตรงข้อกังวล", "stem": "ระบบจองตั๋วคำนวณราคาถูกและทำงานต่อเนื่องได้ แต่ผู้ใช้รอค้นที่นั่งนานเมื่อมีผู้ใช้พร้อมกันมาก หลักฐานเพิ่มใดตรงข้อกังวลนี้ที่สุด?",
+      "options": ["ทดสอบสูตรราคาทุกประเภทด้วยผู้ใช้หนึ่งคน", "เปิดระบบทิ้งไว้หนึ่งคืนและตรวจว่าไม่หยุดทำงาน", "วัดเวลาตอบสนองภายใต้โหลดคาดหมายและกรณีหนัก", "นับจำนวนฟังก์ชันที่ programmer ส่งมอบในสัปดาห์นี้"], "correct": 2,
+      "shades": ["เทา", "เทา", "ขาว", "ดำ"],
+      "reasons": ["ตรวจ functionality แต่ไม่ได้เพิ่มหลักฐานเรื่องเวลาตอบสนองเมื่อโหลดสูง", "ตรวจความต่อเนื่องด้าน reliability แต่ไม่ได้จำลองการใช้งานพร้อมกันที่เป็นปัญหา", "ตรง performance ทั้ง response และ expected/worst-case load ตามสไลด์", "จำนวนฟังก์ชันไม่วัดคุณภาพการตอบสนองของระบบ"],
+      "explanation": "คุณภาพมีหลายมิติ ผ่าน functionality หรือ reliability ไม่ทำให้ performance ผ่านอัตโนมัติ ต้องเลือกหลักฐานตรงความเสี่ยงที่กำลังถาม", "source": {"file": "ISAAD-1-2026.pdf", "page": 29}
+    },
+    {
+      "id": "m1-p5", "module": 1, "topic": "Unified Process: เป้าหมายของ phase", "stem": "โครงการกำลังวางแผน ระบุ features และยืนยัน baseline architecture ก่อนสร้างผลิตภัณฑ์ส่วนใหญ่ ข้อใดระบุ phase และเหตุผลของช่วงนี้ได้ครบตรงที่สุด?",
+      "options": ["Inception เพราะทุกงานที่ยังไม่ปล่อยจริงอยู่ phase นี้", "Elaboration เพราะเน้นแผน features และ baseline architecture", "เป็นช่วงที่อาจมี executable ทดลองสถาปัตยกรรมได้", "Transition เพราะกำลังเปลี่ยนจากเอกสารไปเป็นโค้ด"], "correct": 1,
+      "shades": ["ดำ", "ขาว", "เทา", "ดำ"],
+      "reasons": ["Inception เน้น scope ไม่ได้ครอบทุกงานก่อนปล่อยจริง", "ตรงรายการเป้าหมาย Elaboration ในสไลด์โดยตรง", "เป็นข้อสังเกตจริงเกี่ยวกับรอบทดลอง architecture แต่ยังไม่ระบุ phase และเป้าหมายทั้งหมดที่ถาม", "Transition ในสไลด์คือพาผลิตภัณฑ์เข้าสู่ end-user community"],
+      "explanation": "ระบุ phase จากเป้าหมายของงาน ไม่ใช่ตัดสินว่ามีโค้ดหรือยัง: Elaboration วางแผน ระบุ features และ baseline architecture", "source": {"file": "ISAAD-1-2026.pdf", "page": 38}
+    },
+    {
+      "id": "m2-p1", "module": 2, "topic": "Object identity: ค่าข้อมูลเท่ากัน", "stem": "โปรแกรมสร้าง Student สอง objects แยกกัน แต่ทั้งคู่มี name และ year เท่ากัน ข้อใดอธิบายได้ครบที่สุดว่าค่าที่เท่ากันไม่ทำให้เป็น object เดียวกัน?",
+      "options": ["เป็น object เดียวกัน เพราะค่าของ attributes ที่เห็นเท่ากัน", "name และ year เท่ากันแสดงเพียงว่าค่าสอง properties นี้เหมือนกัน", "เป็นคนละ object ได้ เพราะ identity แยกจาก state ที่เหมือนกัน", "ต้องรวมสอง objects เป็น object เดียวเพื่อให้โมเดลถูกต้อง"], "correct": 2,
+      "shades": ["ดำ", "เทา", "ขาว", "ดำ"],
+      "reasons": ["ความเหมือนของ state ไม่ลบ identity ของแต่ละ object", "บอกข้อเท็จจริงด้าน state ที่เห็นได้ แต่ยังไม่อธิบาย identity ที่ทำให้สอง objects แยกจากกัน", "สไลด์ยืนยันว่าแต่ละ object มี identity ของตนแม้ state เท่ากับอีกตัว", "ไม่มีหลัก OO ที่บังคับรวม instances เพียงเพราะ attributes บางส่วนเท่ากัน"],
+      "explanation": "State ตอบว่าตอนนี้มีค่า/สภาพอย่างไร Identity ตอบว่าตัวไหน การอัปเดต state ของ object หนึ่งจึงไม่ทำให้มันเปลี่ยนเป็นอีก object โดยอัตโนมัติ", "source": {"file": "ISAAD-2-2026.pdf", "page": 12}
+    },
+    {
+      "id": "m2-p2", "module": 2, "topic": "Abstraction: เลือกสาระตามมุมมอง", "stem": "ทีมออกแบบระบบลงทะเบียนแยก Course ที่แทนวิชา ออกจาก CourseOffering ที่แทนการเปิดสอนวิชานั้นตามวันเวลา การตัดสินใจนี้แสดงหลักใดโดยตรงที่สุด?",
+      "options": ["Abstraction เพราะแยกสาระสำคัญของสองแนวคิดในโดเมน", "Encapsulation เพราะกำหนดให้ attributes ทั้งหมดเป็น private แล้ว", "Modularity เพราะช่วยให้มองความซับซ้อนเป็นส่วนย่อยได้", "Hierarchy เพราะ CourseOffering ต้องสืบทอด Course เสมอ"], "correct": 0,
+      "shades": ["ขาว", "ดำ", "เทา", "ดำ"],
+      "reasons": ["เลือกความแตกต่างที่สำคัญต่อมุมมองลงทะเบียน ตรงตัวอย่าง abstraction ในสไลด์", "โจทย์ไม่ได้บอกการซ่อน implementation หรือ visibility", "การแยกแนวคิดช่วยจัดความซับซ้อนได้ แต่โจทย์ยังไม่ได้แบ่งระบบเป็นส่วนจัดการได้ตามหน้าที่", "เป็นวิชาและการเปิดสอนเกี่ยวข้องกัน แต่ไม่พิสูจน์ is a kind of และไม่บังคับ inheritance"],
+      "explanation": "Abstraction ต้องมองว่าลักษณะใดสำคัญต่อผู้มอง Course กับ CourseOffering แยกกันเพราะวันเวลาของการเปิดสอนไม่ใช่ตัววิชาเอง", "source": {"file": "ISAAD-2-2026.pdf", "page": 16}
+    },
+    {
+      "id": "m2-p3", "module": 2, "topic": "Polymorphism: สัญญาเดียว implementation ต่าง", "stem": "ตัวแสดงภาพเรียก draw() ผ่าน Shape กับ Cube และ Tube แล้วได้ภาพคนละแบบ ข้อใดอธิบาย polymorphism ตรงที่สุด?",
+      "options": ["client ใช้บริการ draw() โดยไม่ต้องรู้รายละเอียดการวาดภายใน", "ทุก class ต้องสืบทอด attributes เหมือนกันทุกตัวก่อน", "client ต้องรู้รายละเอียด Cube และ Tube ก่อนเลือกโค้ดวาดเอง", "client ใช้ interface เดียว แต่ implementations ให้พฤติกรรมต่างกัน"], "correct": 3,
+      "shades": ["เทา", "ดำ", "ดำ", "ขาว"],
+      "reasons": ["ถูกด้านซ่อน implementation แต่ยังไม่เจาะจงหลาย implementations และพฤติกรรมต่างหลังสัญญาเดียว", "การมี attributes ชุดเดียวไม่ใช่นิยาม same interface, different behavior", "ถ้า client ต้องเลือก implementation เองทั้งหมดก็ไม่อธิบายประโยชน์ของ interface ที่โจทย์ให้", "ตรงหลักการซ่อน implementations หลายแบบหลัง interface เดียว"],
+      "explanation": "Shape ทำสัญญาบริการร่วม ส่วน Cube และ Tube realize สัญญานั้นด้วยวิธีของตน Interface จึงช่วยให้แทนที่ผู้ให้บริการได้โดย client พึ่งสัญญาเดียว", "source": {"file": "ISAAD-2-2026.pdf", "page": 27}
+    },
+    {
+      "id": "m2-p4", "module": 2, "topic": "Multiplicity: อ่านภาพ M2 ตามปลายเส้น", "stem": "ภาพ M2 หน้า 36 วาง 0..1 ใกล้ Professor และ 0..* ใกล้ CourseOffering ทีมจะสร้าง offering ที่ยังไม่จัดผู้สอน ข้อใดใช้ค่าต่ำสุดตัดสินกรณีนี้ได้ตรงที่สุด?",
+      "options": ["Professor หนึ่งคนต้องมี CourseOffering หนึ่งรายการเสมอ", "CourseOffering หนึ่งรายการยังไม่มี Professor ได้", "CourseOffering หนึ่งรายการมี Professor ได้ไม่จำกัด", "CourseOffering หนึ่งรายการมี Professor ได้สูงสุดหนึ่งคน"], "correct": 1,
+      "shades": ["ดำ", "ขาว", "ดำ", "เทา"],
+      "reasons": ["ปลาย CourseOffering เป็น 0..* จึงไม่บังคับว่าต้องมีหนึ่งรายการ", "ค่า 0..1 ที่ปลาย Professor อนุญาตศูนย์หรือหนึ่งคนต่อหนึ่ง offering จึงตอบกรณียังไม่จัดผู้สอนโดยตรง", "0..1 จำกัดได้สูงสุดหนึ่ง Professor ต่อ offering", "เป็นข้อเท็จจริงด้านค่าสูงสุด แต่ยังไม่บอกว่าศูนย์คนซึ่งเป็นกรณีของโจทย์ได้รับอนุญาตหรือไม่"],
+      "explanation": "ล็อกหนึ่ง instance ของอีกฝั่งแล้วอ่านตัวเลขปลายที่กำลังถาม ภาพนี้อนุญาต offering ที่ยังไม่จัดผู้สอน และ professor ที่ยังไม่สอน offering ใด", "source": {"file": "ISAAD-2-2026.pdf", "page": 36}
+    },
+    {
+      "id": "m2-p5", "module": 2, "topic": "Generalization กับ Aggregation: ชนิดหรือส่วนประกอบ", "stem": "นักศึกษาต้องโมเดลว่า Rose เป็นชนิดหนึ่งของ Flower และ Wheel เป็นส่วนหนึ่งของ Car ควรเลือกความสัมพันธ์คู่ใด?",
+      "options": ["Rose–Flower เป็น generalization; Wheel–Car เป็น association ทั่วไป", "ทั้งสองคู่เป็น generalization เพราะมีสิ่งที่ใหญ่กว่ากับเล็กกว่า", "Rose–Flower เป็น generalization; Wheel–Car เป็น aggregation", "ทั้งสองคู่เป็น realization เพราะต่างมีอีกสิ่งหนึ่งอยู่เบื้องหลัง"], "correct": 2,
+      "shades": ["เทา", "ดำ", "ขาว", "ดำ"],
+      "reasons": ["คู่แรกตรงและ association บอกการเชื่อมได้กว้าง ๆ แต่ยังไม่สื่อ whole–part ของคู่หลังอย่างเฉพาะเจาะจง", "ขนาดไม่ใช่เกณฑ์ inheritance และล้อไม่ใช่ชนิดหนึ่งของรถ", "Rose is a kind of Flower; Wheel เป็น part ของ whole คือ Car", "Realization ใช้เมื่อฝ่ายหนึ่งทำตาม contract ไม่ใช่คำว่ามีอยู่เบื้องหลัง"],
+      "explanation": "ลองอ่านเป็นประโยคก่อนเลือกเส้น: 'กุหลาบเป็นดอกไม้ชนิดหนึ่ง' ผ่าน is a kind of แต่ 'ล้อเป็นรถชนิดหนึ่ง' ไม่ผ่าน จึงต้องแยกความเป็นส่วนประกอบ", "source": {"file": "ISAAD-2-2026.pdf", "page": 46}
+    }
+  ],
+  "exam": [
+    {
+      "id": "x-m1-1", "module": 1, "topic": "วินิจฉัย problem/need ก่อนยึด feature", "stem": "โรงอาหารขอระบบแจ้งเตือนทันทีเมื่ออาหารเสร็จ ทีมพบว่าปัญหาจริงคือผู้ซื้อรับอาหารผิดคิว และการแจ้งเตือนไม่ช่วยแยกเจ้าของรายการ ขั้นต่อไปใดสอดคล้องกับ Manage Requirements ที่สุด?",
+      "options": ["ทำ notification ให้เสร็จก่อน เพราะผู้ใช้ระบุชื่อฟีเจอร์มาแล้ว", "เพิ่มความเร็ว notification แล้วเก็บความเห็นเรื่องคิวภายหลัง", "ยืนยัน needs และขอบเขตใหม่กับผู้ใช้ ก่อนปรับนิยามระบบ", "เลือกเทคโนโลยีแจ้งเตือนจากระบบอื่นที่นำกลับมาใช้ได้"], "correct": 2,
+      "shades": ["ดำ", "เทา", "ขาว", "เทา"],
+      "reasons": ["ยึด solution ที่เสนอโดยไม่ตรวจว่าตอบปัญหาที่ค้นพบหรือไม่", "การเก็บความเห็นมีประโยชน์ แต่การเร่งฟีเจอร์ที่ยังไม่ตอบ need ไม่แก้เหตุหลัก", "ย้อนวิเคราะห์ปัญหา เข้าใจ user needs แล้ว refine system definition และ scope", "Reuse ช่วยด้าน solution แต่ยังไม่ตอบว่าควรสร้างความสามารถใดเพื่อลดการรับผิดคิว"],
+      "explanation": "Requirement management ต้องทำให้ solve the right problem การร้องขอฟีเจอร์เป็นข้อมูลเริ่มต้น แต่เมื่อพบหลักฐานใหม่ต้องตรวจ need และนิยามระบบให้ตรง", "source": {"file": "ISAAD-1-2026.pdf", "page": 16}
+    },
+    {
+      "id": "x-m1-2", "module": 1, "topic": "เลือก UML ให้ตรงคำถามการสื่อสาร", "stem": "รีวิวการออกแบบระบบยืมอุปกรณ์ต้องตอบว่า หน้าจอส่งคำขอใดให้ตัวควบคุม และตัวควบคุมติดต่อบริการคลังในลำดับใด Diagram ใดตรงคำถามหลักที่สุด?",
+      "options": ["Sequence diagram", "Activity diagram", "Class diagram", "Use Case diagram"], "correct": 0,
+      "shades": ["ขาว", "เทา", "เทา", "ดำ"],
+      "reasons": ["แสดง interaction และลำดับการติดต่อกันของ participants ตรงคำถาม", "แสดง workflow ได้และอาจประกอบการอธิบาย แต่โจทย์เจาะการติดต่อระหว่างส่วนของระบบ", "บอกโครงสร้างและความสัมพันธ์ได้ แต่ไม่ได้ตอบลำดับข้อความที่กำลังรีวิว", "บอกว่าระบบทำอะไร ไม่ใช่ลำดับการติดต่อภายในระหว่างหน้าจอและบริการ"],
+      "explanation": "เลือก diagram จากสิ่งที่อยากตรวจ: Sequence = interaction, Activity = workflow, Class = structure, Use Case = what system does", "source": {"file": "ISAAD-1-2026.pdf", "page": 26}
+    },
+    {
+      "id": "x-m1-3", "module": 1, "topic": "Manage Change: งานขนานและการรวม build", "stem": "ทีมสองกลุ่มแก้ระบบฝึกงานพร้อมกัน ไฟล์ทับกันบ่อยและสร้าง release เดิมซ้ำไม่ได้ มาตรการใดตรงขอบเขต Manage Change ครบที่สุดสำหรับอาการนี้?",
+      "options": ["เพิ่ม code review เฉพาะฟังก์ชันที่มีผู้ใช้มากที่สุด", "กำหนดให้ทุกคนส่งไฟล์ทางแชตเมื่อแก้เสร็จ", "ห้ามแก้ requirements ทุกชนิดจนกว่าจะส่งมอบ", "จัด workspace แยก คุมเวอร์ชัน และ automate integration/build"], "correct": 3,
+      "shades": ["เทา", "ดำ", "ดำ", "ขาว"],
+      "reasons": ["ช่วยตรวจโค้ด แต่ไม่คุมฐานเวอร์ชัน งานชนกัน และการสร้าง release ให้ทำซ้ำได้", "ไม่จัดการเวอร์ชันและการรวมงานอย่างเป็นระบบ จึงยังเสี่ยงไฟล์ชนและตกหล่น", "ไม่ใช่วัตถุประสงค์ของ change management ซึ่งต้องรองรับการเปลี่ยนอย่างควบคุมได้", "ตรง secure workspaces, parallel development และ automated integration/build ในสไลด์"],
+      "explanation": "Manage Change ทำให้ iterative และ parallel development เกิดได้อย่างคุมการเปลี่ยนแปลง การหยุดทุกการเปลี่ยนไม่ใช่คำตอบเดียวกับการจัดการมัน", "source": {"file": "ISAAD-1-2026.pdf", "page": 32}
+    },
+    {
+      "id": "x-m1-4", "module": 1, "topic": "ประเมินความก้าวหน้าจากหลักฐานการทำงานร่วมกัน", "stem": "หัวหน้ารายงานว่า design เสร็จ 100% และแต่ละโมดูลผ่าน unit test แต่ยังไม่เคยรวมระบบ เขาจึงคาดว่าจะส่งมอบได้แน่นอน ข้อโต้แย้งใดมีน้ำหนักตามสไลด์ที่สุด?",
+      "options": ["จำนวน test มากพอจะยืนยันเวลาส่งมอบได้ แม้ยังไม่ integrate", "ยังขาดหลักฐาน executable ที่รวมงานและยืนยันความเสี่ยงร่วมกัน", "ควรลดรายละเอียด design เพื่อให้เปอร์เซ็นต์เสร็จดูสมจริงขึ้น", "ควรรอทดสอบหลังทุก feature เสร็จ เพื่อประเมินครั้งเดียว"], "correct": 1,
+      "shades": ["ดำ", "ขาว", "เทา", "ดำ"],
+      "reasons": ["จำนวน test แยกส่วนไม่ยืนยัน integration หรือเวลาที่เหลือในการทำงานร่วมกัน", "ตรงข้อวิจารณ์ waterfall ว่า work-products อาจทำนายเวลาไม่ดีและการรวม/ทดสอบช้าซ่อนความเสี่ยง", "การดูรายละเอียดเอกสารอาจช่วยประเมินบางส่วน แต่ไม่ได้เติมหลักฐานระบบที่รวมกันจริง", "ยิ่งเลื่อน integration/testing ก็ยิ่งสะสมความเสี่ยงที่โจทย์กังวล"],
+      "explanation": "ข้อสอบนี้ทดสอบการวิจารณ์ตัวชี้วัดความก้าวหน้า การทำงานแยกส่วนครบไม่รับรองว่าระบบรวมสำเร็จ จึงต้องใช้ executable และการประเมินความเสี่ยงอย่างต่อเนื่อง", "source": {"file": "ISAAD-1-2026.pdf", "page": 7}
+    },
+    {
+      "id": "x-m1-5", "module": 1, "topic": "Major กับ minor milestone", "stem": "ทีมส่ง executable ภายในตอนจบ iteration ที่สองของ Elaboration ผู้จัดการบอกว่า release นี้ต้องเป็น IOC เพราะเป็น release แล้ว ข้อใดแก้ความเข้าใจได้ถูกที่สุด?",
+      "options": ["ถูกต้อง ทุก executable release เป็น IOC โดยไม่ขึ้นกับ phase", "Elaboration มี executable จากหลาย iterations ได้", "ไม่ถูก เพราะ major milestone ทุกตัวเรียกว่า Product Release", "release ของ iteration เป็น minor milestone; IOC อยู่ขอบเขตจบ Construction"], "correct": 3,
+      "shades": ["ดำ", "เทา", "ดำ", "ขาว"],
+      "reasons": ["สับสน release ของ iteration กับ major milestone ที่ผูกกับ phase boundary", "เป็นจริงและช่วยอธิบายว่าทำไมมี release ใน Elaboration ได้ แต่ยังไม่แยก minor milestone ออกจาก IOC ที่ผู้จัดการสับสน", "major milestones มีชื่อ LCO, LCA, IOC และ Product Release ตามขอบเขตต่างกัน", "แยกระดับ milestone และระบุ phase boundary ของ IOC ได้ตรง"],
+      "explanation": "คำว่า release ไม่ได้หมายถึง milestone เดียวกันทุกครั้ง: iteration releases เป็น minor milestones; major milestones อยู่ที่ขอบเขต phases", "source": {"file": "ISAAD-1-2026.pdf", "page": 39}
+    },
+    {
+      "id": "x-m1-6", "module": 1, "topic": "เหตุผลของ Continuous Quality และต้นทุน", "stem": "ร้านค้าออนไลน์เสนอเลื่อนการตรวจคุณภาพทั้งหมดไปก่อนเปิดจริงหนึ่งวัน เพราะเชื่อว่าค่าเสียหายมีเพียงค่าแก้โค้ด เหตุผลใดคัดค้านข้อเสนอนี้ได้ตรงบทเรียนที่สุด?",
+      "options": ["ปัญหาคุณภาพเสียทั้งค่าซ่อม โอกาส และลูกค้า จึงควรตรวจตั้งแต่ต้นและบ่อย", "ซื้อเครื่องมือ test แล้วจะป้องกันต้นทุนเสียโอกาสได้ทุกกรณี", "ทำ acceptance test วันสุดท้ายก็พอ ถ้าใช้กรณีทดสอบจำนวนมาก", "เพิ่มการตรวจรูปแบบโค้ดก่อนรวมงาน โดยยังเลื่อนการตรวจผู้ใช้ทั้งหมด"], "correct": 0,
+      "shades": ["ขาว", "ดำ", "ดำ", "เทา"],
+      "reasons": ["ตรงต้นทุนสามกลุ่มและหลัก continuously verify quality ที่ช่วยค้นปัญหาเร็ว", "เครื่องมือช่วยตรวจ แต่ไม่รับรองว่าจะป้องกันข้อบกพร่องและผลธุรกิจได้หมด", "จำนวนกรณีไม่ชดเชยการรู้ปัญหาช้าและเวลาที่เหลือแก้ไม่พอ", "ตรวจรูปแบบโค้ดเป็นประโยชน์บางส่วน แต่ไม่ครอบคลุม functionality, load หรือ UX ที่ยังถูกเลื่อน"],
+      "explanation": "สไลด์ชี้ว่าคุณภาพเชื่อมผลธุรกิจ ไม่ใช่แค่ค่าซ่อมซอฟต์แวร์ การตรวจต่อเนื่องจึงต้องมองหลายมิติพร้อมผลต่อการใช้งาน", "source": {"file": "ISAAD-1-2026.pdf", "page": 28}
+    },
+    {
+      "id": "x-m1-7", "module": 1, "topic": "Architecture เป็นฐานบริหารโครงการ", "stem": "หัวหน้าทีมต้องวางแผนคนและลำดับส่งมอบระบบเวชระเบียนที่ซับซ้อน เหตุใดการกำหนด component architecture จึงช่วยงานนี้ตามสไลด์?",
+      "options": ["ทำให้ไม่ต้องจัดการ requirements เพราะแบ่ง component แล้ว", "รับรองว่าใช้คนเท่ากันทุก component และเสร็จพร้อมกัน", "เป็นฐานวางแผน staffing และ delivery พร้อมคุม complexity/integrity", "ช่วยนำ component และ architecture กลับมาใช้ซ้ำในระบบอื่น"], "correct": 2,
+      "shades": ["ดำ", "ดำ", "ขาว", "เทา"],
+      "reasons": ["Architecture ต้องตอบ requirements ไม่ได้ยกเลิกการจัดการความต้องการ", "ความซับซ้อนและภาระงานแต่ละ component ต่างได้ สไลด์ไม่ได้รับรองเวลาหรือจำนวนคนตายตัว", "ตรงสามบทบาท: reuse, project management และ intellectual control", "เป็นประโยชน์จริงของ architecture แต่ยังไม่ตอบโจทย์การวางแผนคนและลำดับส่งมอบโดยตรง"],
+      "explanation": "Component architecture มีคุณค่ามากกว่าการนำโค้ดกลับมาใช้ มันทำให้แบ่งความรับผิดชอบ วางแผนส่งมอบ และมองความซับซ้อนของระบบได้", "source": {"file": "ISAAD-1-2026.pdf", "page": 21}
+    },
+    {
+      "id": "x-m2-1", "module": 2, "topic": "แยก notation ของ instance กับ class", "stem": "ในแบบจำลองต้องแสดงนักศึกษาคนหนึ่งชื่อ Mali ซึ่งเป็น instance ของ Student โดยไม่ต้องแสดงข้อมูลทุกค่า ข้อใดใช้ notation ตรงบทเรียน?",
+      "options": ["สี่เหลี่ยมชื่อ Mali:Student และขีดเส้นใต้ชื่อนั้น", "สี่เหลี่ยมชื่อ Student แบบ class แล้วขีดเส้นใต้ชื่อ", "สี่เหลี่ยมชื่อ :Student และขีดเส้นใต้ชื่อนั้น", "สี่เหลี่ยม <<interface>> Mali พร้อม operation ของ Student"], "correct": 0,
+      "shades": ["ขาว", "ดำ", "เทา", "ดำ"],
+      "reasons": ["ตรง named object: objectName:ClassName พร้อมชื่อมีขีดเส้นใต้", "ขีดเส้นใต้สื่อ object แต่ Student ตามข้อเสนอยังไม่สื่อ instance ชื่อ Mali ตามที่โจทย์ต้องการ", "เป็น notation ของ unnamed Student object ที่ถูกต้อง แต่ยังไม่แสดงชื่อ Mali ตามข้อมูลเฉพาะที่โจทย์ต้องการ", "Interface เป็นสัญญาบริการ ไม่ใช่ notation แทนนักศึกษาหนึ่ง instance"],
+      "explanation": "การเลือก instance notation ต้องสื่อทั้งตัวตนเฉพาะและ class ของมัน เช่น Mali:Student ส่วน :Student ใช้เมื่อไม่ระบุชื่อ object และยังต้องขีดเส้นใต้", "source": {"file": "ISAAD-2-2026.pdf", "page": 13}
+    },
+    {
+      "id": "x-m2-2", "module": 2, "topic": "Package–Subsystem–Component ในสองระดับโมเดล", "stem": "ทีมต้องแทน 'ระบบย่อยจัดส่ง' ใน design ซึ่งบรรจุ model elements มี behavior ผ่าน interfaces แล้วเชื่อมไปยังโมดูล executable ที่ติดตั้งจริง คำอธิบายใดแม่นที่สุด?",
+      "options": ["ใช้ package ก็อธิบาย behavior และ realization ของบริการครบโดยตัวมันเอง", "ใช้ component ใน design เพราะ subsystem ใช้จัดกลุ่มอย่างเดียว", "ใช้ class แทนทุกระดับ เพราะ component มีได้เฉพาะ source file", "ใช้ subsystem ใน design และ component เป็นส่วน implementation ที่ทำให้เกิดจริง"], "correct": 3,
+      "shades": ["เทา", "ดำ", "ดำ", "ขาว"],
+      "reasons": ["Package ช่วยจัดกลุ่มจริง แต่ไม่เพิ่มความหมายด้าน behavior/realized interfaces ตามนิยาม subsystem", "Subsystem มีทั้งคุณสมบัติ package และ class ไม่ใช่จัดกลุ่มอย่างเดียว", "Component อาจเป็น source code หรือ executable จึงไม่ถูกจำกัดแบบที่กล่าว", "ตรง subsystem ใน design model และ component เป็น physical realization ใน implementation model"],
+      "explanation": "โจทย์ให้ทั้ง containment และ behavior จึงชี้ subsystem ส่วนส่วนที่ติดตั้ง/แทนที่ได้เป็น component ใน implementation ไม่ควรรวมความหมายทั้งหมดไว้ที่ package", "source": {"file": "ISAAD-2-2026.pdf", "page": 34}
+    },
+    {
+      "id": "x-m2-3", "module": 2, "topic": "Dependency: การใช้บริการที่ไม่ใช่ structural link", "stem": "ReportExporter เรียก FormatConverter เฉพาะระหว่าง export และหาก converter เปลี่ยนสัญญา exporter อาจต้องแก้ โจทย์ย้ำว่าไม่ได้ต้องการโมเดลการเชื่อม instances แบบโครงสร้าง ความสัมพันธ์ใดตรงที่สุด?",
+      "options": ["Association เพราะชื่อทั้งสองอยู่ในระบบเดียวกัน", "Dependency เพราะเป็น using relationship ที่การเปลี่ยน supplier กระทบ client ได้", "Generalization เพราะ exporter ขอใช้ความสามารถ converter", "Aggregation เพราะ exporter ทำงานไม่ได้ถ้าการแปลงล้มเหลว"], "correct": 1,
+      "shades": ["เทา", "ขาว", "ดำ", "ดำ"],
+      "reasons": ["Association เป็น structural connection แต่โจทย์เจาะการพึ่งบริการและปฏิเสธความหมายเชิงโครงสร้างนี้", "ตรงนิยาม non-structural using และผลกระทบจาก supplier ไป client", "การใช้ความสามารถไม่พิสูจน์ว่า exporter เป็นชนิดหนึ่งของ converter", "การต้องพึ่งเพื่อทำงานไม่เท่ากับ whole–part"],
+      "explanation": "Dependency ตอบว่าใครพึ่งใครและการเปลี่ยนหนึ่งฝ่ายอาจกระทบอีกฝ่าย ไม่ได้ต้องหมายถึงการเก็บ structural association ระหว่าง instances", "source": {"file": "ISAAD-2-2026.pdf", "page": 40}
+    },
+    {
+      "id": "x-m2-4", "module": 2, "topic": "Navigability เป็นคนละมิติกับจำนวน", "stem": "แบบจำลองกำหนดว่า Schedule สามารถตาม association ไปหา CourseOffering ได้ นักศึกษาสรุปจาก navigability เพียงอย่างเดียวว่า offering หนึ่งต้องมี Schedule หนึ่งรายการ ข้อใดอธิบายข้อจำกัดของการสรุปจำนวนนี้ได้ครบที่สุด?",
+      "options": ["ถูก เพราะการตามไปถึงได้บังคับจำนวนปลายเส้นเป็น 1", "ถูก ถ้า Schedule อยู่ใน package เดียวกับ CourseOffering", "ยังสรุปจำนวนไม่ได้ เพราะต้องอ่าน multiplicity แยกจาก navigability", "Navigability ระบุการตาม association ไปยังเป้าหมายได้"], "correct": 2,
+      "shades": ["ดำ", "ดำ", "ขาว", "เทา"],
+      "reasons": ["Navigability บอกการเข้าถึงตาม association ไม่ได้กำหนดจำนวน instances", "Package ไม่ได้ทำให้ navigability กลายเป็นข้อกำหนดจำนวน", "สองคุณสมบัติตอบคนละคำถาม ต้องดูตัวเลข multiplicity เพื่อสรุปจำนวน", "นิยาม navigability ถูกต้อง แต่ยังไม่ชี้ว่าการสรุปจำนวนต้องใช้อีกข้อมูลคือ multiplicity"],
+      "explanation": "Navigability ถามว่าไปถึงเป้าหมายได้หรือไม่ Multiplicity ถามว่าหนึ่ง instance อีกฝั่งสัมพันธ์กับกี่ instances ห้ามใช้ข้อมูลอย่างหนึ่งแทนอีกอย่าง", "source": {"file": "ISAAD-2-2026.pdf", "page": 39}
+    },
+    {
+      "id": "x-m2-5", "module": 2, "topic": "Inheritance: ย้ายของร่วมไป highest applicable level", "stem": "Savings และ Checking เป็นชนิดของ Account ทั้งคู่มี balance และ withdraw() ร่วมกัน และ Checking มีวงเงินเฉพาะตน การจัดโมเดลใดสอดคล้องกับสไลด์ที่สุด?",
+      "options": ["วาง balance/withdraw() ที่ Account และวางวงเงินที่ Checking", "วางทุกอย่างที่ Account รวมวงเงินที่ใช้เฉพาะ Checking", "คัดลอก balance/withdraw() ที่ subclasses และไม่ใช้ของร่วมที่ Account", "ให้ Account สืบทอด Savings และ Checking เพราะรวมคุณสมบัติได้มากกว่า"], "correct": 0,
+      "shades": ["ขาว", "ดำ", "เทา", "ดำ"],
+      "reasons": ["วางลักษณะร่วมที่ระดับสูงสุดที่ใช้ร่วมกันได้ และให้ subclass เพิ่มรายละเอียดเฉพาะ", "ทำให้ superclass บรรทุกสิ่งที่ไม่ใช้ร่วมกับทุกชนิดในโจทย์", "อาจวาดให้มีข้อมูลครบได้ แต่ซ้ำของร่วมและไม่ใช้หลัก inheritance leverages similarities", "กลับทิศ is a kind of; Account ไม่ใช่ชนิดย่อยของบัญชีแต่ละชนิด"],
+      "explanation": "Subclass สืบทอด attributes, operations และ relationships และเพิ่มของตนได้ หลัก highest applicable level ลดความซ้ำโดยไม่ยกคุณสมบัติเฉพาะขึ้นสูงเกินความหมาย", "source": {"file": "ISAAD-2-2026.pdf", "page": 44}
+    },
+    {
+      "id": "x-m2-6", "module": 2, "topic": "Stereotype, Note และ Tagged value", "stem": "ทีมต้องเพิ่ม property ที่แยกชื่อและค่าเป็น location=server ให้ object พร้อมคำอธิบายยาวข้าง diagram โดยไม่สร้างชนิด model element ใหม่ วิธีใดสื่อทั้ง property และ comment ได้ตรงบทบาทที่สุด?",
+      "options": ["Stereotype สำหรับ location และ Generalization สำหรับคำอธิบาย", "Tagged value สำหรับ location และ Note สำหรับคำอธิบาย", "เขียน location=server และคำอธิบายทั้งหมดใน Note", "Stereotype สำหรับทั้งสองอย่างเพราะเป็นข้อมูลเพิ่มเหมือนกัน"], "correct": 1,
+      "shades": ["ดำ", "ขาว", "เทา", "ดำ"],
+      "reasons": ["Location เป็น property ส่วน generalization เป็นความสัมพันธ์ชนิดย่อย ไม่ใช่คำอธิบาย", "ตรงตัวอย่าง {location=server} และ note ที่เพิ่ม comment บน diagram", "Note สื่อข้อความให้คนอ่านได้จริง แต่ location จะเป็นเพียง comment แทนการกำหนดเป็น property ด้วย tagged value ตามที่โจทย์ขอ", "Stereotype สร้างความหมายชนิด model element เพิ่ม ไม่ได้แทน properties และ comments ทั้งหมด"],
+      "explanation": "แยกประเภทข้อมูล: stereotype ขยายชนิดองค์ประกอบ, tagged value ขยาย properties, note ให้คำอธิบาย สามอย่างเป็นการขยายความต่างบทบาท", "source": {"file": "ISAAD-2-2026.pdf", "page": 50}
+    },
+    {
+      "id": "x-m2-7", "module": 2, "topic": "Encapsulation: เปลี่ยนภายในโดย client พึ่ง interface", "stem": "คลาส Meter เปลี่ยนวิธีเก็บค่าจากตัวเลขเดียวเป็นโครงสร้างหลายฟิลด์ แต่ยังให้ client เรียก readValue() ด้วยสัญญาเดิม ข้อใดอธิบายครบที่สุดว่า encapsulation ช่วยจำกัดผลกระทบต่อ client อย่างไร?",
+      "options": ["Client ยังคงร้องขอบริการ readValue() จาก Meter ได้", "การเปลี่ยนวิธีเก็บค่าทำให้ Meter กลายเป็น interface โดยอัตโนมัติ", "การแบ่งฟิลด์เพิ่มแปลว่าเกิด modularity ของทั้งระบบครบแล้ว", "Client พึ่งบริการเดิม จึงไม่จำเป็นต้องรู้ implementation ที่เปลี่ยน"], "correct": 3,
+      "shades": ["เทา", "ดำ", "ดำ", "ขาว"],
+      "reasons": ["บอกผลจริงว่าบริการยังเรียกได้ แต่ยังไม่อธิบายการซ่อนรายละเอียดภายในซึ่งเป็นเหตุผลที่จำกัดผลกระทบ", "Interface เป็น contract ไม่เกิดอัตโนมัติเพียงเปลี่ยนโครงสร้างเก็บข้อมูล", "การจัดข้อมูลอาจช่วยจัดความซับซ้อนบางส่วน แต่ไม่ใช่หลักฐานว่าแบ่งทั้งระบบเป็นส่วนจัดการได้ครบ", "ตรง hide implementation from clients และ clients depend on interface ซึ่งช่วย resiliency"],
+      "explanation": "Encapsulation จำกัดสิ่งที่ client ต้องรู้ เมื่อ interface และความหมายบริการยังคงเดิม รายละเอียดการจัดเก็บภายในเปลี่ยนได้โดยไม่บังคับ client เปลี่ยนตามทุกฟิลด์", "source": {"file": "ISAAD-2-2026.pdf", "page": 17}
+    }
+  ]
+}

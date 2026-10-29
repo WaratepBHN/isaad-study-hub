@@ -1,0 +1,1074 @@
+{
+  "modules": [
+    {
+      "id": 5,
+      "title": "Architectural Analysis",
+      "subtitle": "จัดโครงสร้างระบบให้เปลี่ยนต่อได้ ก่อนลงรายละเอียดเทคโนโลยี",
+      "overview": "เปลี่ยน Requirements และ Use Cases ให้เป็น Architecture, Analysis Mechanisms และ Key Abstractions เพื่อ scalability, maintainability และ security เริ่มจัด packages/dependencies เลือกหลักโครงสร้าง แยกกลไกเทคนิคจากแกนธุรกิจ แล้วตรวจผ่าน realization",
+      "sections": [
+        {
+          "title": "1. Package และทิศ Dependency: ใครพึ่งใคร",
+          "body": [
+            "Package รวม model elements เป็นกลุ่มเพื่อจัดระเบียบ model หรือใช้เป็นหน่วย configuration management ไม่ได้แปลว่าโฟลเดอร์โค้ดอย่างเดียว ลูกศร A → B อ่านว่า A เป็น Client ที่พึ่ง B ซึ่งเป็น Supplier",
+            "Supplier เปลี่ยนอาจกระทบ Client และ Client reuse โดยอิสระจาก Supplier ไม่ได้ คำว่าอาจสำคัญ เพราะบางส่วนที่เปลี่ยนอาจไม่กระทบสิ่งที่ Client ใช้ dependency จึงบอกจุดตรวจผลกระทบ ไม่ได้บังคับให้แก้ทั้งระบบทุกครั้ง"
+          ],
+          "bullets": [
+            "Package จัดกลุ่ม elements; dependency บอกการพึ่งพาระหว่างกลุ่ม",
+            "ลูกศร Client → Supplier; ตรวจผลเมื่อ Supplier เปลี่ยน",
+            "reuse Client ต้องพิจารณาสิ่งที่ Client พึ่งด้วย"
+          ],
+          "example": {
+            "scenario": "แพ็กเกจลงทะเบียนเรียกบริการตรวจสถานะนักศึกษา จึงมี Registration → StudentRecord",
+            "reasoning": "Registration พึ่งข้อตกลงบริการของ StudentRecord ถ้าเปลี่ยนข้อตกลงนั้นต้องตรวจ Registration แต่ภาพยังไม่บอกว่า StudentRecord พึ่ง Registration กลับ"
+          },
+          "pitfall": {
+            "wrong": "ลูกศร A → B หมายถึง B พึ่ง A และ A เปลี่ยนแล้ว B ต้องเปลี่ยนเสมอ",
+            "correction": "อ่านหัวลูกศรไปยัง Supplier และใช้คำว่าอาจกระทบ Client"
+          },
+          "sourcePages": [
+            7,
+            8
+          ]
+        },
+        {
+          "title": "2. วงจร Dependency แก้ด้วยโครงสร้าง ไม่ใช่เปลี่ยนชื่อ",
+          "body": [
+            "A → B → C → A เป็น circular dependency แม้ทุกคู่ไม่ได้มีลูกศรกลับโดยตรง การ reuse แพ็กเกจหนึ่งจะผูกกับอีกหลายแพ็กเกจ จึงต้องไล่เส้นทางอ้อมด้วย ไม่ดูแค่ลูกศรข้างกล่อง",
+            "ภาพแก้ปัญหาแยก A′ และจัดทิศ dependency ใหม่ สิ่งสำคัญคือต้องย้ายองค์ประกอบ/หน้าที่ที่ถูกพึ่งและเปลี่ยน edges จริง การเปลี่ยนชื่อ A เป็น A′ โดยคงลูกศรเดิมยังเหลือวงจรครบ"
+          ],
+          "bullets": [
+            "ไล่ลูกศรต่อกันจนสุด ถ้ากลับจุดเริ่มได้คือวงจร",
+            "หลังแยกส่วน ตรวจ graph ใหม่อีกครั้ง",
+            "ตรวจ responsibility และ dependency ควบคู่กัน"
+          ],
+          "example": {
+            "scenario": "ระบบทุนมี Application → Review → Student → Application ทีมเสนอเปลี่ยน Student เป็น StudentCore โดยคงการเรียกทั้งหมด",
+            "reasoning": "ยังเดิน Application → Review → StudentCore → Application ได้เหมือนเดิม ต้องปรับขอบเขตงานและทิศพึ่งพาจริง เช่นแยกส่วนร่วมให้เป็นปลายทางที่ไม่อ้างย้อน"
+          },
+          "pitfall": {
+            "wrong": "มีแพ็กเกจเพิ่มหรือชื่อเปลี่ยนแล้วแปลว่าตัดวงจรสำเร็จ",
+            "correction": "ใช้เส้นทางใน graph พิสูจน์ ต้องไม่มีทางตามลูกศรกลับจุดเดิม"
+          },
+          "sourcePages": [
+            8,
+            10
+          ]
+        },
+        {
+          "title": "3. Pattern, Framework และการแบ่ง Layers",
+          "body": [
+            "Pattern เป็นแบบทางออกใช้ซ้ำกับปัญหาออกแบบที่พบบ่อย โดยพิจารณาปัญหา วิธีแก้ ผลและ trade-offs ส่วน Framework เป็นฐานซอฟต์แวร์ที่ใช้ซ้ำได้ เช่น MVC เป็น pattern และ Spring เป็น framework",
+            "Layered จัดของระดับ abstraction เดียวกัน แยก concerns และลด dependency ข้ามชั้น เช่น Presentation/Business/Data Access/Database ชื่อชั้นไม่ใช่กฎตายตัว MVC แยก Model ดู business data/logic, View ดู UI, Controller ประสาน requests ต้องตรวจหน้าที่จริงไม่ใช่แค่ชื่อกล่อง"
+          ],
+          "bullets": [
+            "Layering: ระดับใกล้กันอยู่กลุ่มเดียว แยก concerns และ minimize dependencies",
+            "ใช้ stereotyped package <<layer>> แสดง layer ได้",
+            "Client-Server และ Microservices ในบทนี้เป็นภาพรวม ไม่ได้ลง trade-offs ลึก"
+          ],
+          "example": {
+            "scenario": "เว็บขอห้องเรียนมีหน้าแบบฟอร์ม กฎอนุมัติ และส่วนติดต่อฐานข้อมูล",
+            "reasoning": "แยก Presentation, Business และ Data Access ตามหน้าที่ช่วยให้เปลี่ยนวิธีแสดงผลโดยไม่กระจายกฎอนุมัติไปทุกหน้า ต้องตรวจการเรียกข้ามชั้นให้มีเหตุผลด้วย"
+          },
+          "pitfall": {
+            "wrong": "Minimize dependencies หมายถึงห้ามมีลูกศรระหว่าง layers ทุกกรณี",
+            "correction": "สไลด์ต้องการลดและจัดทิศ dependency ไม่ใช่ตัดการร่วมงานระหว่างชั้นทั้งหมด"
+          },
+          "sourcePages": [
+            12,
+            13,
+            14,
+            17,
+            19,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "title": "4. Mechanism สามระดับ: Persistence → RDBMS → MySQL",
+          "body": [
+            "Analysis mechanisms ระบุ technical concerns ระดับแนวคิด เช่น Persistency, Security, Messaging, Distribution, Error Handling, Legacy Interface เพื่อใช้ภาษาร่วม ลดความซับซ้อน เลื่อนการเลือกเทคโนโลยี และเพิ่มความสอดคล้อง",
+            "กลไกชัดขึ้นเป็น Analysis แบบ conceptual ว่าทำอะไร → Design แบบ concrete ว่าทำงานเชิงโครงสร้างอย่างไร → Implementation แบบ actual technology ตัวอย่าง Persistence → RDBMS → MySQL/PostgreSQL ก่อนเลือกต้องระบุ granularity, volume, duration, access mechanism/frequency แยก CRUD และ reliability"
+          ],
+          "bullets": [
+            "Analysis: ต้องเก็บข้อมูลอย่างไรในเชิงความต้องการ",
+            "Design: ใช้รูปแบบกลไก เช่น RDBMS",
+            "Implementation: ใช้เทคโนโลยีเฉพาะ เช่น MySQL"
+          ],
+          "example": {
+            "scenario": "ระบบทุนต้องเก็บใบสมัครหลายปีและมีการอ่านสูงช่วงประกาศผล",
+            "reasoning": "บันทึก duration, volume และ read frequency เป็นลักษณะ Persistence ก่อน จากนั้นจึงเลือก design mechanism และผลิตภัณฑ์ให้รองรับความต้องการ"
+          },
+          "pitfall": {
+            "wrong": "ระบุว่าใช้ MySQL ก็ถือว่าวิเคราะห์ปริมาณ อายุเก็บ และความถี่ครบแล้ว",
+            "correction": "ชื่อผลิตภัณฑ์ตอบ implementation ส่วนลักษณะงานต้องมีหลักฐานแยกต่างหาก"
+          },
+          "sourcePages": [
+            25,
+            26,
+            27,
+            28,
+            29,
+            33
+          ]
+        },
+        {
+          "title": "5. Key Abstractions: แกนธุรกิจไม่ใช่รายการเทคโนโลยี",
+          "body": [
+            "Key abstractions เป็นแนวคิดธุรกิจหลักจาก requirements และ domain model ทบทวน glossary หา candidate analysis classes แล้วกำหนด relationships เช่น Customer, Shopping Cart, Order, Payment, Shipment ยังต้องตรวจ candidates ไม่สร้างทุกคำนามเป็น class สุดท้าย",
+            "แยกสิ่งที่ธุรกิจจัดการออกจากความสามารถเทคนิค Payment อาจเป็นรายการชำระเงิน ส่วน Payment Interface เป็นงานเชื่อมบริการ และ Persistence เป็นความต้องการเก็บข้อมูล จึงดูบริบทไม่เดาจากชื่อคำเดียว"
+          ],
+          "bullets": [
+            "Requirements + domain model + glossary → candidates → relationships",
+            "Order เป็นแนวคิดธุรกิจ; Security เป็น technical mechanism",
+            "ชื่อ actor ไม่ได้ทำให้กลายเป็น class ในระบบโดยอัตโนมัติ"
+          ],
+          "example": {
+            "scenario": "ห้องสมุดจัดการสมาชิก หนังสือ และการยืม พร้อมความต้องการรักษาสิทธิ์เข้าถึง",
+            "reasoning": "Member, Book และ Loan เป็น candidate business abstractions ส่วน Security เป็นกลไกสนับสนุน ต้องตรวจความสัมพันธ์และหน้าที่ของ candidates ต่อ"
+          },
+          "pitfall": {
+            "wrong": "รายชื่อ Spring, MySQL, Security คือ Key Abstractions ของห้องสมุดครบแล้ว",
+            "correction": "แยกเทคโนโลยีและกลไกออก แล้วหาแนวคิดที่แสดงงานธุรกิจจริง"
+          },
+          "sourcePages": [
+            31,
+            34,
+            35,
+            37
+          ]
+        },
+        {
+          "title": "6. ใช้ Realization ตรวจว่าภาพสถาปัตยกรรมทำงานได้",
+          "body": [
+            "Use-Case Realization เชื่อม use case/specification ไปสู่ objects ที่ร่วมทำพฤติกรรม ผ่าน Sequence, Collaboration และ Class Diagrams รายชื่อ Student/Schedule ยังไม่ตอบว่าใครรับ ตรวจ และบันทึกคำขอ",
+            "ใช้ realization ตรวจว่า abstractions มีหน้าที่ครบ ต้องใช้ mechanisms ตรงไหน และการสื่อสารเคารพ layer boundaries หรือไม่ หากขั้นหนึ่งใน use case ไม่มี object รับผิดชอบคือช่องว่างที่ต้องแก้ก่อนออกแบบต่อ"
+          ],
+          "bullets": [
+            "Use case บอกเป้าหมาย/พฤติกรรม; realization บอก objects ร่วมมือให้เกิดผลอย่างไร",
+            "เชื่อม abstractions, mechanisms และ layers เข้ากับ scenario",
+            "ตรวจ traceability กลับไปยัง requirements"
+          ],
+          "example": {
+            "scenario": "นักศึกษาเลือกวิชา ระบบตรวจสิทธิ์ ดึงข้อมูล catalog และบันทึกตาราง",
+            "reasoning": "แสดง objects ที่ประสานขั้นตอนพร้อมจุดใช้ Security, Legacy Interface และ Persistence จึงตรวจได้ทั้งพฤติกรรมและผลต่อสถาปัตยกรรม"
+          },
+          "pitfall": {
+            "wrong": "แค่เลือก database หรือวาดกล่องรายชื่อคลาสก็เป็น realization ครบแล้ว",
+            "correction": "ต้องเห็นการร่วมมือที่ทำพฤติกรรมของ use case ให้เกิดขึ้น"
+          },
+          "sourcePages": [
+            6,
+            33,
+            38,
+            39,
+            40
+          ]
+        }
+      ],
+      "recap": [
+        "Inputs: Requirements/Use Cases; outputs: Architecture/Analysis Mechanisms/Key Abstractions",
+        "อ่าน Client → Supplier และตรวจวงจรจากเส้นทาง",
+        "Pattern = แบบทางออก; framework = ฐานซอฟต์แวร์",
+        "Layers แยก concerns และลด dependency",
+        "Persistence → RDBMS → MySQL",
+        "Realization ตรวจโครงสร้างกับพฤติกรรมจริง"
+      ],
+      "sourceFile": "ISAAD-5-2026.pdf"
+    },
+    {
+      "id": 6,
+      "title": "Use-Case Analysis",
+      "subtitle": "จาก flow สู่ BCE, messages และภาพรวมคลาสที่ตรวจสอบได้",
+      "overview": "ใช้ Use Cases, Business Model และ Architecture หา Analysis Classes/Interaction Diagrams: ทำ flow ให้ชัด → หา BCE → แจกงาน/ส่ง messages → เติม operations/attributes/relationships → map mechanisms → unify และตรวจ model ก่อน design/code",
+      "sections": [
+        {
+          "title": "1. เริ่มจากพฤติกรรมที่ชัด และกระจายงานให้ครบ",
+          "body": [
+            "เติม flow ให้เห็นแหล่งข้อมูลและงาน เช่นดึงวิชาปัจจุบันจาก legacy catalog แล้วแจกทุกขั้นให้ analysis classes ลำดับหน้า 6 คือ Supplementary Description → Find Classes → Distribute Behavior → Attributes & Associations → Responsibilities → Analysis Mechanisms → Unify Classes"
+          ],
+          "bullets": [
+            "Inputs: Use Cases, Business Model, Architecture",
+            "Outputs: Analysis Classes และ Interaction Diagrams",
+            "Analysis class ยังไม่ใช่ source code หรือ executable"
+          ],
+          "example": {
+            "scenario": "ระบบแจ้งผลทุน ต้องดึงสถานะจากระบบทุนเดิมก่อนแสดงให้นักศึกษา",
+            "reasoning": "การเพิ่มแหล่งข้อมูลทำให้เห็นงานติดต่อ legacy system และผู้รับผิดชอบการประสาน flow ไม่ใช่มีเพียงจอแสดงผล"
+          },
+          "pitfall": {
+            "wrong": "Use-Case Analysis จบด้วย executable โดยตรง",
+            "correction": "สไลด์ยังมี Analysis Classes → Design Elements → Source Code → Exec"
+          },
+          "sourcePages": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "title": "2. BCE: แบ่งตามหน้าที่ ไม่เดาจากชื่อ",
+          "body": [
+            "Boundary เชื่อมภายนอกผ่าน UI/system/device ตาม actor/use-case pair เน้นข้อมูลหรือ protocol ที่ต้องกำหนด ยังไม่ลงวิธี implement Control ประสาน workflow เป็น use-case dependent/environment independent โดย usually มี major control หนึ่งตัว ส่วน Entity ดูข้อมูลธุรกิจและ environment independent"
+          ],
+          "bullets": [
+            "Boundary รับ input/แสดง output และเชื่อม external system/device",
+            "Control จัด workflow; โดยทั่วไปมี major control หนึ่งตัวต่อ use case",
+            "Entity ดู business information เช่น Student, Schedule, CourseOffering"
+          ],
+          "example": {
+            "scenario": "นักศึกษาขอเปลี่ยนกลุ่มผ่านเว็บ และระบบตรวจที่นั่งจากระบบทะเบียนภายนอก",
+            "reasoning": "มี boundary สำหรับนักศึกษาและ boundary สำหรับระบบทะเบียน Control ประสานการตรวจและยืนยัน ส่วนข้อมูลการเลือกวิชาอยู่กับ entities ที่เกี่ยวข้อง"
+          },
+          "pitfall": {
+            "wrong": "Boundary เท่ากับหน้าจอ และทุก use case ต้องมี Control exactly หนึ่งคลาส",
+            "correction": "Boundary มีหลายประเภท; รักษาคำว่า usually one major control ตามสไลด์"
+          },
+          "sourcePages": [
+            9,
+            11,
+            13,
+            14,
+            15,
+            16,
+            20,
+            21,
+            24
+          ]
+        },
+        {
+          "title": "3. Noun Filter: คำนามเป็นจุดเริ่ม ไม่ใช่เฉลย",
+          "body": [
+            "ขีด noun clauses ใน flow แล้วคัดคำซ้ำ คำคลุมเครือ actor นอก scope implementation constructs attributes และ operations ออก Attributes เก็บไว้พิจารณาทีหลัง Student actor คือบทบาทภายนอก แต่ Student entity คือข้อมูลในระบบ ชื่อเหมือนกันจึงไม่ใช่เหตุให้ลบ entity อัตโนมัติ"
+          ],
+          "bullets": [
+            "ขีดคำนาม → คัดตาม scope/ความหมาย → ตรวจ candidates",
+            "ข้อมูลเน้นค่า เป็นของ object เดียว และไม่มี behavior อาจเป็น attribute",
+            "Student(ID, Name) และ Course(Code, Credits) เป็นตัวอย่าง attributes"
+          ],
+          "example": {
+            "scenario": "ข้อความว่า นักศึกษาระบุรหัสนักศึกษาแล้วเลือกวิชาเพื่อสร้างตารางเรียน",
+            "reasoning": "Student, CourseOffering, Schedule อาจเป็น entities; รหัสนักศึกษาอาจเป็น attribute และคำว่าเลือกเป็น operation ต้องตรวจตามความหมาย ไม่สร้าง class ทุกคำ"
+          },
+          "pitfall": {
+            "wrong": "Student เป็น actor จึงห้ามมี Student entity ใน model",
+            "correction": "Actor กับข้อมูลนักศึกษาภายในระบบเป็นคนละความหมายแม้ใช้คำเดียวกัน"
+          },
+          "sourcePages": [
+            17,
+            19,
+            38
+          ]
+        },
+        {
+          "title": "4. แจก Responsibilities และเลือก Interaction Diagram",
+          "body": [
+            "แต่ละ flow ต้องมี classes รับผิดชอบครบ งาน UI ให้ Boundary, workflow ให้ Control, data management ให้ Entity Sequence อ่านเวลาบนลงล่าง; Communication อ่าน messages ตาม numbering บน links Reflexive message ส่งถึงตัวเอง จำนวนภาพไม่ตายตัว ควรพิจารณาแยก alternative flow ที่ซับซ้อน ไม่บังคับวาดทุกชนิดคู่กัน"
+          ],
+          "bullets": [
+            "Sequence ช่วยดู time order; Communication ช่วยดู object relationships และ messages",
+            "ตรวจ basic flow และ alternative flows ที่สำคัญ",
+            "ทุกขั้นใน flow ต้องหาเจ้าของ responsibility ได้"
+          ],
+          "example": {
+            "scenario": "ลงทะเบียนสำเร็จเป็น flow หลัก แต่ถ้า catalog ล่มต้องลองใหม่และแจ้งผลหลายขั้น",
+            "reasoning": "ใช้ Sequence อ่านลำดับการประสานงาน และพิจารณาแยก alternative flow ที่ซับซ้อนเพื่อตรวจว่ามี objects รับงานครบ"
+          },
+          "pitfall": {
+            "wrong": "Communication Diagram ไม่มีลำดับข้อความ จึงเหมาะรวมทุก flow โดยไม่คิดความซับซ้อน",
+            "correction": "มี message numbering และยังต้องพิจารณาความชัดเจนของแต่ละ flow"
+          },
+          "sourcePages": [
+            27,
+            28,
+            29,
+            31,
+            33,
+            34,
+            35
+          ]
+        },
+        {
+          "title": "5. จาก Message ไป Operation และ Relationship",
+          "body": [
+            "Client ส่ง PerformResponsibility ไป Supplier จึงเพิ่ม operation ที่ class ผู้รับคือ Supplier ใช้ตรวจ interaction กับ class model ให้ตรงกัน Links จากการร่วมงานช่วยหา associations แต่ไม่พิสูจน์ whole-part ต้องมีเหตุผลเพิ่มเพื่อใช้ aggregation และ default to association เมื่อไม่แน่ใจ"
+          ],
+          "bullets": [
+            "Incoming message → responsibility/operation ของผู้รับ",
+            "Collaboration links เป็นหลักฐานพิจารณา associations",
+            "Aggregation ใช้ whole-part; ไม่แน่ใจเลือก association"
+          ],
+          "example": {
+            "scenario": "RequestController ส่ง saveRequest() ไป Request และส่งแจ้งผลไป NotificationBoundary",
+            "reasoning": "saveRequest() เป็น operation ของ Request ผู้รับ ส่วน link ที่ใช้ประสานงานไม่ได้บอกว่า NotificationBoundary เป็นส่วนย่อยของ Controller"
+          },
+          "pitfall": {
+            "wrong": "ใครส่ง message ต้องเป็นเจ้าของ operation และทุก link คือ aggregation",
+            "correction": "ดูผู้รับเพื่อวาง operation และตรวจ whole-part แยกจากการร่วมงาน"
+          },
+          "sourcePages": [
+            36,
+            38,
+            39,
+            40,
+            46
+          ]
+        },
+        {
+          "title": "6. Multiplicity อ่านจากอีกฝั่ง และยึดภาพของบทนี้",
+          "body": [
+            "ยึด object ฝั่งหนึ่งแล้วอ่านจำนวนที่ปลายอีกฝั่ง M6 หน้า 41: CourseOffering หนึ่งมี Professor 1 คน ส่วน Professor หนึ่งมี CourseOffering 0..* รายการ อย่านำ 0..1 ที่ปลาย Professor จากตัวอย่าง M2 มาทับภาพนี้ ถ้าโจทย์ให้ diagram ใหม่ต้องใช้ค่าที่ระบุใน diagram นั้น"
+          ],
+          "bullets": [
+            "M6: CourseOffering → Professor เท่ากับ 1",
+            "M6: Professor → CourseOffering เท่ากับ 0..*",
+            "Multiplicity บอกจำนวน instances; message numbering บอกลำดับข้อความ"
+          ],
+          "example": {
+            "scenario": "อาจารย์เพิ่งเข้ามหาวิทยาลัยและยังไม่ได้รับมอบหมายวิชาที่เปิดสอน",
+            "reasoning": "ยังสอดคล้องกับ 0..* ที่ปลาย CourseOffering แต่รายการ CourseOffering แต่ละรายการในภาพต้องมี Professor หนึ่งคนตามเลข 1"
+          },
+          "pitfall": {
+            "wrong": "Module 6 อนุญาต CourseOffering ไม่มี Professor เพราะเคยเห็น 0..1 ในบทก่อน",
+            "correction": "ภาพหน้า 41 ของ Module 6 เขียน 1 จึงไม่อนุญาตศูนย์ในความสัมพันธ์ตัวอย่างนี้"
+          },
+          "sourcePages": [
+            41
+          ]
+        },
+        {
+          "title": "7. Mechanisms, Unify และ VOPC: เก็บงานให้พร้อมออกแบบต่อ",
+          "body": [
+            "Map mechanisms ตามความต้องการ: Student/Schedule ใช้ Persistency+Security; Course/CourseOffering ใช้ Persistency+Legacy Interface; RegistrationController ใช้ Distribution ตรวจงานซ้ำข้ามคลาสก่อนงานไม่เข้ากันในคลาส Unify รวมส่วนซ้ำไม่รวม BCE ทุกอย่าง VOPC รวบรวม BCE พร้อม responsibilities/attributes/relationships ไม่ใช่เส้นเวลา"
+          ],
+          "bullets": [
+            "Schedule ตัวอย่าง: volume สูงสุด 2,000; create 500/วัน; read 2,000/ชั่วโมง",
+            "ตรวจ responsibilities ลบคลาสซ้ำ และให้เหตุผลทุก association",
+            "VOPC เน้น participating class structure; Sequence เน้น interaction ตามเวลา"
+          ],
+          "example": {
+            "scenario": "ทีมพบ StudentData กับ StudentInfo รับผิดชอบข้อมูลเดียวกัน และ form ทำกฎอนุมัติซ้ำ Controller",
+            "reasoning": "ทบทวนงานซ้ำ ปรับหน้าที่ แล้วพิจารณารวมคลาสที่ซ้ำ พร้อม map กลไกตามความต้องการและแสดงโครงสร้างสุดท้ายใน VOPC"
+          },
+          "pitfall": {
+            "wrong": "Unify คือรวม Boundary, Control และ Entity ทุกตัวเป็นคลาสเดียว",
+            "correction": "รวมเฉพาะความซ้ำซ้อนโดยยังรักษาการกระจายหน้าที่และตรวจความสัมพันธ์"
+          },
+          "sourcePages": [
+            37,
+            42,
+            43,
+            44,
+            45,
+            46
+          ]
+        }
+      ],
+      "recap": [
+        "หา BCE จาก flow และแจกพฤติกรรมให้ครบ",
+        "Boundary: UI/system/device; Control: usually one major",
+        "แยก Student actor กับ Student entity ตาม scope",
+        "Message → operation ผู้รับ; link ไม่เท่ากับ aggregation",
+        "M6 Professor 1 ↔ CourseOffering 0..*",
+        "Map mechanisms ตรวจงานซ้ำ unify และสรุป VOPC"
+      ],
+      "sourceFile": "ISAAD-6-2026.pdf"
+    }
+  ],
+  "practice": [
+    {
+      "id": "m5-p1",
+      "module": 5,
+      "topic": "Dependency direction",
+      "stem": "Registration → StudentRecord ในระบบมหาวิทยาลัย ข้อใดสรุปทั้งทิศพึ่งพาและผลกระทบได้ดีที่สุด?",
+      "options": [
+        "Registration เป็น Client ที่ต้องอาศัยบริการของ StudentRecord ซึ่งเป็น Supplier ตามทิศลูกศรใน package diagram",
+        "StudentRecord ต้องเปลี่ยนทุกครั้งที่ Registration เปลี่ยน",
+        "Registration พึ่ง StudentRecord; Supplier เปลี่ยนอาจกระทบ Client",
+        "StudentRecord เป็น Client และ Registration เป็น Supplier"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "ถูกเรื่อง Client แต่ยังไม่บอกผลจาก Supplier เปลี่ยนตามที่ถาม",
+        "กลับทิศผลกระทบและเพิ่มคำว่าทุกครั้งโดยไม่มีหลักฐาน",
+        "ครบทั้ง Client → Supplier และคำว่าอาจกระทบ",
+        "อ่านหัวลูกศร dependency กลับด้าน"
+      ],
+      "explanation": "ลูกศรชี้ไปยัง Supplier จึงต้องตรวจผลต่อ Registration เมื่อสิ่งที่มันพึ่งเปลี่ยน การเปลี่ยนไม่ได้กระทบทุกกรณี",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 8
+      }
+    },
+    {
+      "id": "m5-p2",
+      "module": 5,
+      "topic": "Circular dependency",
+      "stem": "ทีมทุนมี A → B → C → A และตั้งชื่อ A ใหม่ว่า Core โดยคงลูกศรเดิม ต้องแนะนำอย่างไรจึงแก้ปัญหาที่ต้นเหตุ?",
+      "options": [
+        "ปรับขอบเขตงานและลูกศรจนไม่มีเส้นทางย้อนเป็นวง",
+        "วงจรเดิมยังคงอยู่หลังเปลี่ยนชื่อ",
+        "ชื่อ Core ทำให้ dependency ยกระดับเป็น layer จึงหมดวงจร",
+        "เพิ่มลูกศรย้อนทุกคู่เพื่อให้ทุกแพ็กเกจ reuse ได้เดี่ยว"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "บอกทั้งสาเหตุเชิงโครงสร้างและเกณฑ์ตรวจหลังแก้",
+        "วินิจฉัยถูกแต่ยังไม่เสนอการแก้ตามโจทย์",
+        "ชื่อไม่เปลี่ยนเส้นทางใน graph",
+        "เพิ่มการผูกกันไม่ได้ทำให้ reuse อย่างอิสระ"
+      ],
+      "explanation": "วงจรเป็นคุณสมบัติของเส้นทาง dependency ต้องเปลี่ยนโครงสร้างงานและ edges จริง แล้วไล่ตรวจ graph ใหม่",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 10
+      }
+    },
+    {
+      "id": "m5-p3",
+      "module": 5,
+      "topic": "Pattern and layers",
+      "stem": "ทีมระบบจองห้องขอหลักทบทวนทั้งการแบ่ง layers และความต่างระหว่าง pattern กับ framework ข้อใดตอบครบที่สุด?",
+      "options": [
+        "Spring เป็น framework ที่ให้ฐานซอฟต์แวร์สำหรับนำกลับมาใช้ซ้ำได้ จึงไม่ต้องเริ่มสร้างพื้นฐานซอฟต์แวร์ทุกส่วนใหม่",
+        "Layered บังคับห้ามการติดต่อระหว่างชั้นโดยสิ้นเชิง",
+        "MVC คือ framework และ Spring คือ architectural pattern",
+        "Pattern ใช้แบบทางออก; framework ใช้ฐานซอฟต์แวร์; layers แยก concerns"
+      ],
+      "correct": 3,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "นิยามตัวอย่างถูก แต่ยังไม่ครอบคลุม pattern และ layers",
+        "สไลด์ให้ minimize ไม่ใช่ห้าม dependencies ทั้งหมด",
+        "สลับประเภทตัวอย่างจากสไลด์",
+        "แยกประเภทและสรุปหลักจัด layers ได้ตรงหน้าที่"
+      ],
+      "explanation": "การ reuse design solution ต่างจากการ reuse software foundation ส่วน layers ต้องแยก concerns และลดการพึ่งข้ามระดับ",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 12
+      }
+    },
+    {
+      "id": "m5-p4",
+      "module": 5,
+      "topic": "Mechanism maturation",
+      "stem": "ระบบใบสมัครระบุว่าต้องเก็บข้อมูล แล้วเลือก RDBMS และลงมือใช้ MySQL ข้อใดจัดกลไกทั้งสามระดับตามลำดับได้ครบ?",
+      "options": [
+        "Persistence อยู่ระดับ Analysis",
+        "Analysis → Design → Implementation",
+        "Design → Implementation → Analysis",
+        "MySQL เป็น Analysis ส่วน RDBMS เป็น Implementation"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "ถูกเฉพาะรายการแรก แต่ไม่จัดครบสามรายการ",
+        "Persistence เป็นแนวคิด RDBMS เป็นกลไกโครงสร้าง MySQL เป็นเทคโนโลยีจริง",
+        "สลับระดับของทั้งลำดับ",
+        "วางชื่อผลิตภัณฑ์และประเภทกลไกผิดระดับ"
+      ],
+      "explanation": "จำระดับจากความชัด: ต้องการอะไร → กลไกทำงานอย่างไร → ใช้ผลิตภัณฑ์ใดจริง",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 26
+      }
+    },
+    {
+      "id": "m5-p5",
+      "module": 5,
+      "topic": "Key abstractions and realization",
+      "stem": "ระบบร้านสหกรณ์มี Customer, Order, Payment แล้ว ทีมควรทำอะไรต่อเพื่อเชื่อมแบบจำลองกับ use case ซื้อสินค้าให้ชัด?",
+      "options": [
+        "แสดง object collaboration ของการซื้อและจุดใช้กลไกที่เกี่ยวข้อง",
+        "ทบทวน glossary เพื่อให้ชื่อ Order และ Payment ชัดเจน",
+        "เปลี่ยนชื่อ Payment เป็น MySQL เพื่อให้เป็น business abstraction",
+        "ถือว่ารายชื่อ entities คือ sequence ที่แสดงเวลาครบแล้ว"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "realization แสดงว่าวัตถุร่วมทำพฤติกรรมจริงอย่างไร",
+        "ช่วยปรับความหมาย candidates แต่ยังไม่แสดงการร่วมงานตาม flow",
+        "MySQL เป็น implementation technology ไม่ใช่ธุรกิจ",
+        "รายชื่อ classes ไม่ได้แสดงการโต้ตอบตามเวลา"
+      ],
+      "explanation": "Abstractions ระบุสิ่งสำคัญในธุรกิจ ส่วน realization ต้องแสดงการร่วมมือของ objects เพื่อตอบพฤติกรรม use case",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 38
+      }
+    },
+    {
+      "id": "m6-p1",
+      "module": 6,
+      "topic": "BCE boundary and control",
+      "stem": "Use case ขอเอกสารมีนักศึกษากับระบบทะเบียนภายนอกเป็น actors ข้อใดเหมาะที่สุดสำหรับเริ่มหา boundary และ control?",
+      "options": [
+        "มี boundary สำหรับรับคำขอและแสดงข้อมูลให้นักศึกษา โดยเป็นตัวกลางการโต้ตอบของ actor นักศึกษากับ use case ขอเอกสาร",
+        "ใช้ Entity เป็น interface ภายนอกทั้งหมดและไม่ต้องมี Boundary",
+        "Boundary ตาม actor/use-case pair; usually มี major control หนึ่งตัว",
+        "ทุก use case ต้องมี boundary หนึ่งตัวและ control ได้หนึ่งคลาสเท่านั้น"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "ถูกแต่ยังไม่รวม actor ระบบภายนอกและแนวทาง Control",
+        "system interface เป็นชนิดของ Boundary",
+        "ครอบคลุมทั้ง actor pairs และรักษาคำว่า usually ของ Control",
+        "นับ boundary แบบเหมารวมและเปลี่ยน usually เป็นข้อบังคับ"
+      ],
+      "explanation": "Boundary มีทั้ง UI/system/device ไม่ใช่เฉพาะหน้าจอ และ Control ใช้ usually one major control ต่อ use case",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 20
+      }
+    },
+    {
+      "id": "m6-p2",
+      "module": 6,
+      "topic": "Noun filtering",
+      "stem": "Flow ระบุว่า Student ป้อน student ID เพื่อสร้าง Schedule วิธีคัด candidates ใดเหมาะที่สุด?",
+      "options": [
+        "สร้าง class ให้ Student, ID, ป้อน, และ Schedule เพราะทุกคำสำคัญ",
+        "ตัด Student ทั้งหมดทันทีเพราะคำนี้เป็น actor ด้วย",
+        "พิจารณา student ID เป็น attribute ของ Student เพราะเป็นค่าข้อมูลระบุตัวนักศึกษา ไม่จำเป็นต้องยกเป็น entity แยกจาก Student",
+        "แยก Student actor/entity; ID เป็น attribute และ Schedule เป็น candidate"
+      ],
+      "correct": 3,
+      "shades": [
+        "ดำ",
+        "ดำ",
+        "เทา",
+        "ขาว"
+      ],
+      "reasons": [
+        "noun filter ต้องคัดทั้ง operations และ attributes ไม่สร้างทุกคำ",
+        "ชื่อเดียวกันไม่ทำให้ actor กับ entity เป็นสิ่งเดียวกัน",
+        "ถูกเฉพาะ ID แต่ยังไม่แก้ความสับสน actor/entity",
+        "พิจารณาความหมายและ scope พร้อมแยกข้อมูลค่าจาก entity"
+      ],
+      "explanation": "Filter actors ที่อยู่นอก scope ไม่ได้ห้ามข้อมูลนักศึกษาเป็น entity สไลด์ยังมี Student เป็น candidate entity",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 19
+      }
+    },
+    {
+      "id": "m6-p3",
+      "module": 6,
+      "topic": "Responsibility assignment",
+      "stem": "เว็บยืมอุปกรณ์ต้องรับรายการที่เลือก ประสานการอนุมัติ และดูข้อมูลการยืม ข้อใดแจกหน้าที่ครบและตรง BCE?",
+      "options": [
+        "ให้ Form เก็บข้อมูลธุรกิจและให้ Loan แสดงปุ่มทั้งหมด",
+        "Form รับข้อมูล; Control ประสาน; Loan จัดการข้อมูล",
+        "Control รับผิดชอบประสาน workflow การอนุมัติการยืม โดยจัดลำดับงานที่เกี่ยวข้องให้พฤติกรรมของ use case ดำเนินไปได้",
+        "ให้ทุกคลาสตรวจทุกกฎซ้ำกันเพื่อลดความเสี่ยงงานตกหล่น"
+      ],
+      "correct": 1,
+      "shades": [
+        "ดำ",
+        "ขาว",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "สลับ UI และ entity responsibilities",
+        "จับคู่ครบทั้งรับข้อมูล ประสานงาน และข้อมูลธุรกิจ",
+        "ส่วน Control ถูก แต่ยังไม่แจกอีกสองงาน",
+        "responsibilities ซ้ำเป็นประเด็นต้องตรวจแก้ ไม่ใช่เป้าหมาย"
+      ],
+      "explanation": "แจกพฤติกรรมตามบทบาท Boundary/Control/Entity แล้วใช้ interaction ตรวจว่าแต่ละขั้นมีผู้รับผิดชอบ",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 28
+      }
+    },
+    {
+      "id": "m6-p4",
+      "module": 6,
+      "topic": "Messages and operations",
+      "stem": "RegistrationController ส่ง addCourse() ไป Schedule ทีมต้องเติม class model อย่างไรให้สอดคล้องกับข้อความนี้?",
+      "options": [
+        "เพิ่ม addCourse() ที่ Schedule ผู้รับ",
+        "ตรวจ responsibility ของ Schedule ว่ารองรับข้อความ addCourse ก่อนเติม operations",
+        "เพิ่ม addCourse() ที่ Controller เพราะเป็นผู้เริ่มส่ง",
+        "เปลี่ยน link ทุกเส้นเป็น aggregation แล้วไม่ต้องมี operation"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "incoming message ระบุความสามารถที่ผู้รับต้องมี",
+        "ตรวจผู้รับและ responsibility ตรงกับ message แต่ยังไม่ได้ระบุให้เพิ่ม addCourse() ที่ Schedule ตามที่โจทย์ถาม",
+        "ผู้ส่งเรียกใช้ operation ของผู้รับ ไม่ได้เป็นเจ้าของจากการส่ง",
+        "link ไม่บังคับ whole-part และไม่แทน operation"
+      ],
+      "explanation": "อ่านหัว message ว่าเข้าหา object ใด แล้ววาง operation ที่ class ของ object นั้น",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 36
+      }
+    },
+    {
+      "id": "m6-p5",
+      "module": 6,
+      "topic": "Multiplicity Module 6",
+      "stem": "ยึดภาพ M6 หน้า 41: Professor ปลาย 1 และ CourseOffering ปลาย 0..* ข้อใดอ่านข้อจำกัดทั้งสองด้านได้ครบ?",
+      "options": [
+        "Professor หนึ่งคนสัมพันธ์กับ CourseOffering ได้ศูนย์ถึงหลายรายการ จึงมีอาจารย์ที่ยังไม่มีรายการสอนและอาจารย์ที่สอนหลายรายการได้",
+        "CourseOffering อาจไม่มี Professor เพราะใช้ค่า 0..1 จาก M2",
+        "แต่ละ CourseOffering มี Professor 1; แต่ละ Professor มี CourseOffering 0..*",
+        "Professor ทุกคนต้องสอนอย่างน้อยหนึ่งรายการเพราะมีเลข 1"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "อ่าน 0..* ถูก แต่ยังไม่อธิบายอีกปลาย",
+        "โจทย์ระบุ M6 จึงต้องใช้ 1 ตามภาพ ไม่ทับด้วยภาพบทอื่น",
+        "อ่าน multiplicity ที่ปลายตรงข้ามของแต่ละ instance ได้ครบ",
+        "นำเลขที่ปลาย Professor ไปบังคับจำนวน CourseOffering ผิดด้าน"
+      ],
+      "explanation": "ยืนที่ object ฝั่งหนึ่งแล้วอ่านจำนวนที่ปลายอีกฝั่ง อย่านำข้อจำกัดคนละ diagram มาผสม",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 41
+      }
+    }
+  ],
+  "exam": [
+    {
+      "id": "x-m5-1",
+      "module": 5,
+      "topic": "Impact and independent reuse",
+      "stem": "หอพักจะนำ Billing package ไปใช้ในอีกมหาวิทยาลัย โดย Billing → Tariff ข้อใดประเมิน reuse และจุดตรวจผลกระทบได้ครบที่สุด?",
+      "options": [
+        "Billing นำไปใช้เดี่ยวได้แน่นอน เพราะลูกศรออกจาก Billing",
+        "ต้องพิจารณา Tariff ด้วย; Tariff เปลี่ยนอาจกระทบ Billing",
+        "การเปลี่ยน Tariff อาจมีผลต่อ Billing",
+        "Tariff พึ่ง Billing จึงต้องย้าย Billing ทุกครั้งที่แก้ Tariff"
+      ],
+      "correct": 1,
+      "shades": [
+        "ดำ",
+        "ขาว",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "ลูกศรออกบอกว่ามีสิ่งที่พึ่ง จึงสรุปว่าอิสระไม่ได้",
+        "ครอบคลุมทั้งข้อจำกัด reuse และผลกระทบจาก Supplier",
+        "ถูกด้านผลกระทบ แต่ยังไม่ประเมิน reuse ตามโจทย์",
+        "กลับทิศ Client/Supplier และเพิ่มข้อบังคับทุกครั้ง"
+      ],
+      "explanation": "Dependency เป็นข้อผูกพันของ Client ต่อ Supplier จึงใช้ดูได้ทั้งผลการเปลี่ยนและสิ่งที่ต้องพิจารณาเมื่อนำ Client ไปใช้ใหม่",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 8
+      }
+    },
+    {
+      "id": "x-m5-2",
+      "module": 5,
+      "topic": "Verify dependency refactoring",
+      "stem": "หลังแยก A′ ทีมได้ A → B, B → C, C → A′ และ A → A′ โดย A′ ไม่พึ่งใคร หลักฐานใดพิสูจน์ว่าตัดวงจรได้ตรงประเด็นที่สุด?",
+      "options": [
+        "A′ ไม่มี dependency ออกไปยังแพ็กเกจอื่น",
+        "จำนวนแพ็กเกจเพิ่มจากสามเป็นสี่แล้ว",
+        "เครื่องหมาย prime ในชื่อรับรองว่าเป็น abstraction",
+        "ตามลูกศรทุกเส้นทางแล้วกลับจุดเริ่มไม่ได้"
+      ],
+      "correct": 3,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "เป็นข้อเท็จจริงที่ช่วยตรวจ แต่เงื่อนไขของกล่องเดียวไม่ใช่เกณฑ์พิสูจน์ทั้ง graph",
+        "มีสี่แพ็กเกจก็ยังวนได้ จำนวนไม่ใช่เกณฑ์",
+        "ชื่อไม่ได้รับรองโครงสร้างหรือระดับ abstraction",
+        "ใช้คุณสมบัติของ directed graph ตรวจวงจรโดยตรง"
+      ],
+      "explanation": "การไม่มีเส้นทางตามทิศลูกศรกลับจุดเริ่มเป็นเกณฑ์ตรวจวงจร ส่วนชื่อและจำนวนกล่องไม่เพียงพอ",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 10
+      }
+    },
+    {
+      "id": "x-m5-3",
+      "module": 5,
+      "topic": "Layering abstraction and coupling",
+      "stem": "ระบบครุภัณฑ์ติดป้าย Presentation/Business/Data Access แล้ว แต่กฎตัดค่าเสื่อมกระจายอยู่ทุกหน้าและทุกชั้นเรียกกันไปมา ควรปรับอะไรสำคัญที่สุด?",
+      "options": [
+        "จัด responsibilities ตาม concerns/ระดับ abstraction และลด dependency ข้ามชั้น",
+        "รวบรวมกฎตัดค่าเสื่อมที่กระจายบนหน้าจอให้เป็น responsibility ฝั่ง Business",
+        "เพิ่มชื่อ Database อีกชั้นจะทำให้ coupling หายไปเอง",
+        "ลบการติดต่อข้ามชั้นทุกเส้นเพื่อให้ระบบไม่ต้องร่วมงานกัน"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "แก้ปัญหาหน้าที่กระจายและการพึ่งพาที่ผิดเจตนา layering",
+        "แก้การกระจาย business concern บนหน้าจอได้จริง แต่ยังไม่จัดระดับ abstraction และลด dependency ข้ามชั้นทั้งหมด",
+        "เพิ่มชื่อไม่ย้ายหน้าที่หรือปรับ dependencies",
+        "minimize ไม่ใช่ปิดการร่วมงานทั้งหมด"
+      ],
+      "explanation": "คุณภาพของ layering อยู่ที่ความรับผิดชอบและทิศ dependency ไม่ได้เกิดจากชื่อกล่องหรือ stereotype เพียงอย่างเดียว",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 21
+      }
+    },
+    {
+      "id": "x-m5-4",
+      "module": 5,
+      "topic": "MVC responsibilities",
+      "stem": "ระบบสั่งอาหารโรงอาหารมีข้อมูล/กฎคำนวณยอด จอแสดงรายการ และส่วนประสานคำขอผู้ใช้ หากใช้ MVC ควรแบ่งหน้าที่ครบทั้งสามอย่างไร?",
+      "options": [
+        "View แสดงรายการอาหารและยอดให้ผู้ใช้เห็น โดยรับผิดชอบการนำเสนอส่วนติดต่อผู้ใช้ตามบทบาท UI ของระบบ",
+        "Model แสดงหน้าจอ; View ประสานคำขอ; Controller เก็บข้อมูลและกฎธุรกิจ",
+        "Model ดูข้อมูล/กฎธุรกิจ; View แสดง UI; Controller ประสานคำขอ",
+        "Controller แสดง UI; Model ประสานคำขอ; View จัดการกฎคำนวณยอด"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "ระบุบทบาท View ถูก แต่ยังไม่แจกส่วนข้อมูล/กฎธุรกิจและการประสานคำขอ",
+        "สลับหน้าที่ทั้งสามจาก MVC ตามสไลด์",
+        "ตรงครบทั้ง Model สำหรับ business data/logic, View สำหรับ UI และ Controller สำหรับ requests",
+        "ย้าย UI ไป Controller และกฎธุรกิจไป View จึงไม่ตรงบทบาท MVC"
+      ],
+      "explanation": "จับคู่ MVC จากหน้าที่จริงใน scenario: ข้อมูลและกฎธุรกิจไป Model การนำเสนอไป View และการประสาน requests ไป Controller ไม่เดาจากชื่อคลาส",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 23
+      }
+    },
+    {
+      "id": "x-m5-5",
+      "module": 5,
+      "topic": "Persistency characteristics",
+      "stem": "คลังวิจัยต้องวิเคราะห์ Persistence ก่อนเลือกระบบจัดเก็บ รายการใดให้ข้อมูลเพื่อการตัดสินใจครบด้านกว่าการบอกจำนวนไฟล์เพียงอย่างเดียว?",
+      "options": [
+        "จำนวนข้อมูลสะสมเป็น volume ซึ่งควรบันทึก",
+        "ขนาด/ปริมาณ/อายุเก็บ วิธีเข้าถึง ความถี่ CRUD และ reliability",
+        "ชื่อ MySQL และสีหน้าจอค้นหาสำหรับผู้ใช้แต่ละกลุ่ม",
+        "เลือก RDBMS แล้วถือว่าไม่ต้องเก็บข้อมูลลักษณะงานเพิ่ม"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "volume ถูกแต่เป็นเพียงมิติเดียวของลักษณะกลไก",
+        "ครอบคลุมกลุ่ม characteristics ของ persistency ตามบท",
+        "ชื่อผลิตภัณฑ์เป็น implementation และสีจอไม่ตอบ persistency characteristics",
+        "design mechanism ไม่แทนความต้องการที่ใช้ประเมินมัน"
+      ],
+      "explanation": "ลักษณะการเก็บและเข้าถึงข้อมูลเป็นฐานเลือกกลไก ไม่สามารถอนุมานจากชื่อ database หรือปริมาณรวมเพียงค่าเดียว",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 29
+      }
+    },
+    {
+      "id": "x-m5-6",
+      "module": 5,
+      "topic": "Architectural analysis outputs",
+      "stem": "ทีมโรงพยาบาลมี Use Cases และ Requirements พร้อมแล้ว จะเริ่ม Architectural Analysis ผลงานชุดใดตรงขอบเขตบทมากที่สุด?",
+      "options": [
+        "Source code, executable และไฟล์ติดตั้งที่เสร็จทันที",
+        "Candidate Patient กับ Appointment จากแนวคิดธุรกิจ",
+        "Glossary และ Use Cases ที่ถือเป็น outputs ใหม่ทั้งหมด",
+        "Architecture, Analysis Mechanisms และ Key Abstractions"
+      ],
+      "correct": 3,
+      "shades": [
+        "ดำ",
+        "เทา",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "ข้ามการออกแบบและ implementation หลัง architectural analysis",
+        "เป็นส่วนของ abstractions ที่เหมาะสม แต่ไม่ครบ outputs",
+        "Use Cases เป็น input ในภาพ ไม่ใช่เปลี่ยนเป็น output ตามอำเภอใจ",
+        "ตรงชุด outputs ใน architectural analysis overview"
+      ],
+      "explanation": "บทนี้กำหนดทั้งโครงสร้างระบบ กลไกวิเคราะห์ และแกนธุรกิจ ยังไม่ใช่ขั้นสร้าง executable โดยตรง",
+      "source": {
+        "file": "ISAAD-5-2026.pdf",
+        "page": 6
+      }
+    },
+    {
+      "id": "x-m6-1",
+      "module": 6,
+      "topic": "Input output and refinement",
+      "stem": "Use case เบิกทุนเขียนเพียงแสดงสถานะ ทีมพบว่าต้องอ่านข้อมูลจากระบบการเงินเดิม ข้อใดเป็นการก้าวหน้าของ Use-Case Analysis ที่เหมาะที่สุด?",
+      "options": [
+        "ทำ flow ให้ชัด แล้วหา classes และ interactions รองรับงานนั้น",
+        "เพิ่มรายละเอียดแหล่งข้อมูลในคำอธิบาย use case",
+        "เลือก executable แทน analysis model เพื่อข้าม design elements",
+        "วาง protocol implementation ทุกบรรทัดก่อนหา responsibilities"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "เชื่อม refinement ของพฤติกรรมกับ outputs ทั้ง classes/interactions",
+        "เป็นขั้นแรกที่ถูก แต่ยังไม่แจกงานหรือแสดงการร่วมมือ",
+        "ลัดข้าม model และขั้นตอนสู่ executable",
+        "ช่วง analysis เน้น responsibilities ไม่ใช่ implement protocol ก่อน"
+      ],
+      "explanation": "การเติม flow ช่วยเปิดเผยสิ่งที่ต้องมีผู้รับผิดชอบ แล้วจึงแปลงเป็น analysis classes และ interaction diagrams",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 7
+      }
+    },
+    {
+      "id": "x-m6-2",
+      "module": 6,
+      "topic": "Boundary abstraction level",
+      "stem": "ทีมทำ interface เครื่องอ่านบัตรใน use case เข้าอาคาร คำอธิบายใดกำหนดงาน Boundary ในช่วง analysis ได้เหมาะที่สุด?",
+      "options": [
+        "เน้นข้อมูลและ protocol ที่ต้องกำหนดเพื่อคุยกับอุปกรณ์",
+        "Boundary เป็นตัวกลางระหว่างระบบกับสิ่งแวดล้อมภายนอก",
+        "ต้องเขียน driver และรายละเอียดสายสัญญาณครบก่อนกำหนดหน้าที่",
+        "เครื่องอ่านบัตรเป็น device จึงไม่เกี่ยวกับ Boundary Class"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "ตอบชนิด interface และระดับรายละเอียดที่ต้องเน้นตามโจทย์",
+        "นิยามถูก แต่ยังไม่กำหนดว่าช่วง analysis ควรเน้นอะไร",
+        "ลง implementation details ก่อน responsibilities ซึ่งขัดแนวทาง",
+        "Boundary มี device interface ได้ตามสไลด์"
+      ],
+      "explanation": "สำหรับ system/device interface เน้น protocol ที่ต้องกำหนด ยังไม่ลงวิธี implement protocol ในช่วงวิเคราะห์",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 14
+      }
+    },
+    {
+      "id": "x-m6-3",
+      "module": 6,
+      "topic": "Alternative flows and representations",
+      "stem": "Use case จองห้องสอบมี flow ปกติสั้น แต่กรณีห้องถูกจองตัดหน้ามีหลายขั้น ทีมอยากดูทั้งลำดับเวลาและความร่วมมือ ข้อเสนอใดถูกที่สุด?",
+      "options": [
+        "Communication Diagram แสดง links ระหว่าง objects ได้",
+        "หนึ่ง use case ต้องมี Sequence เดียวและห้ามแยก error flow",
+        "เลือก diagram ตามมุมมอง และพิจารณาแยก flow ซับซ้อน",
+        "ต้องสร้าง Sequence และ Communication ทุก flow เสมอ"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "บอกจุดเด่นชนิดหนึ่งถูก แต่ไม่จัดการความซับซ้อนของ alternative flow",
+        "ไม่มีข้อบังคับหนึ่งภาพต่อ use case และสไลด์ชี้ว่าอาจไม่พอ",
+        "รักษาทั้งการเลือกมุมมองและความจำเป็นตาม complexity",
+        "สไลด์เสนอ representations ไม่ได้บังคับวาดทั้งคู่ทุก flow"
+      ],
+      "explanation": "Sequence เน้นเวลา Communication เน้น objects/links กับ numbering จำนวน diagrams พิจารณาจาก flows และความซับซ้อน",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 34
+      }
+    },
+    {
+      "id": "x-m6-4",
+      "module": 6,
+      "topic": "Association versus aggregation",
+      "stem": "ใน Communication Diagram ของการจ่ายค่าหอ ReceiptService ส่งข้อความไป StudentAccount แต่ยังไม่มีหลักฐาน whole-part ควรเลือก relationship เบื้องต้นอย่างไร?",
+      "options": [
+        "Aggregation เพราะทุก message แปลว่าผู้รับเป็นส่วนหนึ่งของผู้ส่ง",
+        "Association เพราะ link สนับสนุนการร่วมงานและยังไม่ชัด whole-part",
+        "ตรวจ link ว่า objects ทั้งสองร่วมทำงานกันอย่างไร",
+        "ไม่ต้องมี relationship เพราะมีได้เฉพาะ classes ชนิด Entity"
+      ],
+      "correct": 1,
+      "shades": [
+        "ดำ",
+        "ขาว",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "message ไม่ได้ยืนยันความสัมพันธ์ส่วนรวม/ส่วนย่อย",
+        "ตรงหลัก default to association เมื่อไม่แน่ใจ aggregation",
+        "เป็นขั้นตรวจที่ถูก แต่ยังไม่เลือกชนิดตามโจทย์",
+        "association ไม่ได้จำกัดเฉพาะ Entity และ link มีประโยชน์ต่อการหา relationship"
+      ],
+      "explanation": "การร่วมงานสนับสนุน association ส่วน aggregation ต้องมี whole-part เพิ่มเติม ไม่อนุมานจากการเรียก message อย่างเดียว",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 39
+      }
+    },
+    {
+      "id": "x-m6-5",
+      "module": 6,
+      "topic": "Consistency review priorities",
+      "stem": "ก่อนส่ง model ระบบทุน ทีมพบสองคลาสตรวจสิทธิ์ชุดเดียวกัน คลาสหนึ่งไม่มีงาน และอีกคลาสคุยกับหลายคลาส ตามลำดับ criticality ของสไลด์ควรเริ่มตรวจสิ่งใด?",
+      "options": [
+        "เริ่มลบคลาสที่คุยกับหลายคลาสทั้งหมดโดยไม่ตรวจหน้าที่",
+        "ตรวจคลาสที่ไม่มี responsibility ว่าจำเป็นหรือไม่",
+        "ตรวจกรณีหลายคลาสมี responsibility ตรวจสิทธิ์ซ้ำ",
+        "เริ่มรวม BCE ทั้งหมดเป็นคลาสเดียวเพื่อให้เหลือเส้นน้อยที่สุด"
+      ],
+      "correct": 2,
+      "shades": [
+        "ดำ",
+        "เทา",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "การติดต่อหลายคลาสเป็นจุดทบทวน ไม่ใช่คำสั่งลบอัตโนมัติ",
+        "เป็นรายการตรวจจริง แต่ priority อยู่หลัง redundant responsibilities",
+        "redundant responsibilities across classes อยู่ลำดับแรกในรายการ",
+        "unify ไม่ใช่ทำลายการแบ่งหน้าที่ BCE ทั้งหมด"
+      ],
+      "explanation": "โจทย์ถามลำดับความสำคัญตามสไลด์ ต้องเริ่มงานซ้ำข้ามคลาสก่อน แล้วจึงทบทวนปัญหาประเภทอื่นตามรายการ",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 37
+      }
+    },
+    {
+      "id": "x-m6-6",
+      "module": 6,
+      "topic": "Mechanism mapping and CRUD",
+      "stem": "Schedule ต้องเก็บถาวรและป้องกันข้อมูลส่วนตัว ทีมกำลังบันทึกลักษณะกลไก ข้อใดครบกว่าแค่เขียนว่าใช้ database?",
+      "options": [
+        "Map Schedule กับ Persistency/Security และแยกขนาด ปริมาณ ความถี่ CRUD",
+        "บันทึกว่าต้องอ่าน Schedule บ่อยช่วงลงทะเบียน",
+        "ให้ทุก analysis class ใช้ Distribution เท่านั้นโดยอัตโนมัติ",
+        "ใช้ read ต่อชั่วโมงแทน create ต่อวันได้เพราะเป็น access เหมือนกัน"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "ผูกกลไกตามความต้องการและบรรยายลักษณะ persistency แยกมิติ",
+        "เป็นข้อมูล read frequency ที่เกี่ยวข้อง แต่ยังไม่ครอบคลุมชนิดงานและความปลอดภัย",
+        "ตาราง map ไม่เหมือนกันทุก class และไม่มีกฎนี้",
+        "ชนิด operation และหน่วยเวลาต่างกัน ใช้แทนกันไม่ได้"
+      ],
+      "explanation": "Mapping บอก class ต้องใช้กลไกใด ส่วน characteristics อธิบายภาระงาน ตัวอย่างแยก create/read/update/delete ชัดเจน",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 44
+      }
+    },
+    {
+      "id": "x-m6-7",
+      "module": 6,
+      "topic": "Unification and VOPC",
+      "stem": "ระบบห้องสมุดมี MemberInfo กับ MemberData หน้าที่ซ้ำ และต้องส่งภาพรวมคลาสที่ร่วม use case ยืมหนังสือ ขั้นต่อไปใดเหมาะที่สุด?",
+      "options": [
+        "ใช้ VOPC แสดง Boundary, Control และ Entity ที่ร่วม use case",
+        "เปลี่ยน VOPC เป็นเส้นเวลาแล้วลบ responsibilities ออกทั้งหมด",
+        "เก็บคลาสซ้ำไว้เสมอเพราะใช้ชื่อต่างกันแล้วถือว่าไม่ซ้ำ",
+        "ทบทวน/รวมส่วนซ้ำ แล้วทำ VOPC พร้อมหน้าที่ attributes และ relationships"
+      ],
+      "correct": 3,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "บอกชนิดคลาสในภาพถูก แต่ยังไม่แก้ส่วนซ้ำหรือเติมรายละเอียดที่เกี่ยวข้อง",
+        "VOPC เน้น class structure ไม่ได้เป็น Sequence time order",
+        "ความซ้ำต้องตรวจความหมายและพฤติกรรม ไม่ใช่ชื่ออย่างเดียว",
+        "แก้ redundancy และสรุป participating class structure ครบตามเป้าหมาย"
+      ],
+      "explanation": "Unify ช่วยให้ classes กระชับ ส่วน VOPC รวม BCE กับ responsibilities, attributes และ relationships เพื่อเห็นภาพที่สอดคล้องกัน",
+      "source": {
+        "file": "ISAAD-6-2026.pdf",
+        "page": 45
+      }
+    }
+  ]
+}

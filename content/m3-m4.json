@@ -1,0 +1,510 @@
+{
+  "modules": [
+    {
+      "id": 3,
+      "title": "Requirements Overview",
+      "subtitle": "จากสิ่งที่ผู้เกี่ยวข้องต้องการ สู่พฤติกรรมระบบที่ตรวจสอบได้",
+      "overview": "บทนี้คือจุดตั้งต้นของ Analysis and Design: ก่อนคิดว่าจะสร้างด้วยเทคโนโลยีใด ต้องตกลงให้ชัดว่าระบบควรทำอะไร ขอบเขตอยู่ตรงไหน และจะรู้ได้อย่างไรว่าทำได้ตามที่ต้องการ อ่านให้เชื่อมกันตั้งแต่กระบวนการ requirements ไปจนถึง Use-Case Model, Specification, Glossary และ Supplementary Specification",
+      "sections": [
+        {
+          "title": "1. Requirements คือข้อตกลงที่ต้องดูแลตลอดโครงการ",
+          "body": [
+            "Requirements ช่วยสร้างและรักษาข้อตกลงกับลูกค้าและ stakeholder ว่าระบบควรทำอะไร นักพัฒนาใช้เพื่อเข้าใจโจทย์ กำหนดขอบเขต วางเนื้อหาแต่ละ iteration ประมาณเวลาและต้นทุน รวมถึงกำหนด UI ดังนั้นประโยชน์จึงต่อไปถึงทั้งการวางแผนและการออกแบบ",
+            "สไลด์วางงานห้าส่วนเป็น Elicit → Analyze → Specify → Validate → Manage ให้คิดเป็นการค้นหา ทำความเข้าใจ บันทึก ตรวจสอบ และดูแล requirements เมื่อเปลี่ยนแปลง งานเหล่านี้ใช้ได้กับ Waterfall, Agile, DevOps และงานที่มี AI ช่วย โดยการร่วมมือกับ stakeholder ยังจำเป็น"
+          ],
+          "bullets": [
+            "แยกระดับ Stakeholder Needs → Features → Use Cases และ Supplementary Requirements แล้วเชื่อมกับ Test Cases / Acceptance",
+            "ความต้องการระดับกว้างต้องแปลงให้เห็นพฤติกรรมและหลักฐานการยอมรับได้ ไม่ใช่หยุดที่คำว่าใช้งานดี",
+            "AI ช่วยร่าง user stories/use cases หา ambiguity และช่วยสร้าง test cases ได้ตามหัวข้อหน้า 25"
+          ],
+          "example": {
+            "scenario": "นักศึกษาบอกว่าอยากลงทะเบียนสะดวก ทีมคุยเพิ่มจนได้ความสามารถค้นหารายวิชา เลือกกลุ่มเรียน และเห็นผลการลงทะเบียน",
+            "reasoning": "คำแรกเป็นความต้องการกว้าง การถามเพิ่มและวิเคราะห์ทำให้ระบุความสามารถได้ จากนั้นต้องเขียนและตรวจร่วมกับผู้เกี่ยวข้อง จึงมีฐานให้ทีมออกแบบและทดสอบตรงกัน"
+          },
+          "pitfall": {
+            "wrong": "เก็บ requirements ครั้งแรกแล้วถือว่าจบ เพราะมีรายการ features แล้ว",
+            "correction": "ต้องรักษาข้อตกลงและจัดการ requirements ต่อไป รายการ features ยังต้องเชื่อมกับรายละเอียดและการตรวจรับ"
+          },
+          "sourcePages": [4, 5, 6, 25]
+        },
+        {
+          "title": "2. แยก FURPS โดยดูสิ่งที่ข้อความกำลังเน้น",
+          "body": [
+            "Functionality มองความสามารถที่ระบบมี ส่วนคุณภาพด้านอื่นช่วยบอกว่าความสามารถนั้นควรใช้งานหรือทำงานได้ดีอย่างไร การอ่านโจทย์จึงต้องจับคำที่เป็นหลักฐาน เช่น response time บอก Performance และ recovery บอก Reliability อย่าเห็นคำว่าระบบแล้วจัดทุกข้อความเป็น Functionality",
+            "ต้องยึดตารางของอาจารย์หน้า 7: Security อยู่ใต้ Functionality ส่วน Robustness อยู่ Supportability ชื่อบางคำอาจชวนให้นึกถึงอีกหมวด แต่ข้อสอบที่อ้างตารางนี้ให้ตอบตามการจัดของสไลด์"
+          ],
+          "bullets": [
+            "F: Functionality — feature set/capabilities, generality, security",
+            "U: Usability — human factors, aesthetics, consistency, documentation",
+            "R: Reliability — failure frequency/severity, recovery, predictability, accuracy, MTBF",
+            "P: Performance — speed, efficiency, resource usage, throughput, response time",
+            "S: Supportability — testability, extensibility, adaptability, maintainability, compatibility, configurability, serviceability, installability, localizability, robustness"
+          ],
+          "example": {
+            "scenario": "ระบบห้องสมุดค้นหาหนังสือได้ ตอบกลับภายในเวลาที่กำหนด และกู้กลับหลังความล้มเหลวได้",
+            "reasoning": "ค้นหาได้คือ capability จึงเน้น F; เวลาตอบกลับเน้น P; การกู้กลับเน้น R แยกข้อกำหนดเป็นประโยคจะช่วยไม่ให้ความสามารถและคุณภาพปะปนกัน"
+          },
+          "pitfall": {
+            "wrong": "Security ต้องถูกจัดนอก Functionality ทุกครั้งโดยไม่ดูแหล่งอ้างอิง",
+            "correction": "ตารางหน้า 7 ของวิชานี้วาง Security ใน Functionality จึงต้องระบุกรอบอ้างอิงก่อนตอบ"
+          },
+          "sourcePages": [7, 31]
+        },
+        {
+          "title": "3. รู้หน้าที่ artifacts แล้วเลือกใช้ให้ตรงคำถาม",
+          "body": [
+            "Use-Case Model ให้ภาพ intended functionality และสิ่งแวดล้อมผ่าน use cases กับ actors ส่วน Use-Case Specification ลงรายละเอียดแต่ละ use case โดยหน้า 8 ระบุ 1 Use case = 1 Use case Spec ภาพรวมกับรายละเอียดจึงช่วยกันตอบคนละระดับ",
+            "Glossary เป็นพจนานุกรม domain ของทีม มี working definitions ที่ชัดและใช้สม่ำเสมอ อาจช่วยเป็น informal data dictionary ได้ ส่วน Supplementary Specification บันทึกข้อกำหนดประกอบ หน้า 24 มีทั้ง Functionality, Usability, Reliability, Performance, Supportability และ Design constraints แม้สไลด์สรุปจะเน้น quality attributes"
+          ],
+          "bullets": [
+            "อยากรู้ใครโต้ตอบกับระบบและทำอะไร: เริ่มที่ Use-Case Model",
+            "อยากรู้ flow และรายละเอียด use case เดียว: เปิด Use-Case Specification",
+            "อยากตกลงความหมายคำเฉพาะ: ใช้ Glossary",
+            "อยากดูคุณภาพและข้อจำกัดประกอบ: ตรวจ Supplementary Specification"
+          ],
+          "example": {
+            "scenario": "ทีมใช้คำว่า Course กับ Course Offering ปนกัน จึงแยกนิยามวิชาออกจากการเปิดสอนในเทอมและวันเวลาที่เจาะจง",
+            "reasoning": "แก้ที่ Glossary แล้วใช้คำตามนิยามเดียวกันใน use cases จะลดการเข้าใจผิดเรื่องการลงทะเบียนรายวิชากับการเลือกกลุ่มเรียน"
+          },
+          "pitfall": {
+            "wrong": "มี diagram แล้วไม่ต้องมี spec และ Supplementary ห้ามมี Functionality",
+            "correction": "diagram ไม่แทนรายละเอียดทั้งหมด และรายการหน้า 24 มี Functionality อย่างชัดเจน"
+          },
+          "sourcePages": [8, 14, 18, 23, 24, 31]
+        },
+        {
+          "title": "4. Actor, Use Case และ Scenario มองคนละระดับ",
+          "body": [
+            "Actor แทนสิ่งที่โต้ตอบกับระบบ โดย checkpoint ให้ตรวจว่าเป็น role จริงหรือไม่ จึงไม่ใช่รายชื่อบุคคลทุกคน และไม่จำกัดแค่มนุษย์ ภาพลงทะเบียนหน้า 16 ยังมี Course Catalog และ Billing System เป็น actors ด้วย ต้องพิจารณาความสัมพันธ์กับขอบเขตระบบ",
+            "Use case คือ sequence of actions ที่ระบบทำจนได้ observable result of value แก่ actor ส่วน system behavior เป็นสิ่งที่ระบบ acts/reacts ซึ่งมองเห็นภายนอกและทดสอบได้ Scenario เป็น instance ของ use case จึงเป็นการเกิดขึ้นหนึ่งกรณี ไม่ใช่ use case ทั้งก้อน Use cases แบบละเอียดสามารถเสริม Agile user stories ได้"
+          ],
+          "bullets": [
+            "อ่าน model ให้ได้ว่าใครโต้ตอบกับความสามารถใด และระบบมีหน้าที่อะไร",
+            "ใช้ model คุยกับ end users/domain experts เพื่อความเข้าใจร่วมและตรวจความครบ",
+            "อย่าใช้ชื่อหน้าจอหรือรายชื่อ classes ภายในแทนเป้าหมายและผลลัพธ์ของ use case โดยอัตโนมัติ"
+          ],
+          "example": {
+            "scenario": "Use case คือ Register for Courses; เหตุการณ์ที่นักศึกษาคนหนึ่งเลือกกลุ่มเรียนที่ว่างและลงทะเบียนสำเร็จเป็น scenario หนึ่ง",
+            "reasoning": "Use case ครอบคลุมพฤติกรรมและทางเลือกที่เกี่ยวข้อง ส่วน scenario เล่า instance ที่เจาะจง การมีหลาย scenario จึงไม่บังคับให้มีหลาย use cases"
+          },
+          "pitfall": {
+            "wrong": "Actor ต้องเป็นคน และทุก instance ของการใช้งานต้องสร้าง use case ใหม่",
+            "correction": "Actor อาจเป็นระบบภายนอก และหลาย instances สามารถอยู่ภายใต้ use case เดียวกันได้"
+          },
+          "sourcePages": [9, 10, 13, 14, 15, 16, 20, 27]
+        },
+        {
+          "title": "5. Specification ทำให้ flow เริ่ม จบ และมีทางเลือกชัด",
+          "body": [
+            "Spec ไม่ใช่เพียงย่อหน้าบอกว่าผู้ใช้ทำอะไร หน้า 18 แสดง Name, Brief description, Flows of Events, Activity diagrams, Special requirements, Pre-conditions และ Post-conditions ต้องมองว่าชิ้นส่วนเหล่านี้ช่วยให้อ่าน use case เดียวกันแล้วเข้าใจการทำงานตรงกัน",
+            "Flows of Events มี normal/basic flow หนึ่งเส้นและ alternative flows ได้หลายเส้น ทางเลือกอาจเป็น regular variants, odd cases หรือ exceptional flows ที่จัดการ error จึงไม่ควรเหมารวมว่าทางเลือกทุกเส้นคือความผิดพลาด Checkpoints ให้ถามทั้งใครต้องการทำ จุดประสงค์คืออะไร เริ่ม/จบเมื่อใด และแลกข้อมูลอะไร"
+          ],
+          "bullets": [
+            "ตรวจชื่อให้ unique, intuitive และอธิบายหน้าที่จนลูกค้าเข้าใจ",
+            "ตรวจ model ว่าครบ functional requirements ไม่มี behavior เกินจำเป็นและอ่านเข้าใจ",
+            "ตรวจ actors/use cases ว่าสัมพันธ์กับอย่างน้อยหนึ่ง use case/actor ตามลำดับ และทบทวนความซ้ำ",
+            "ตรวจ Glossary ว่านิยามชัดกระชับ ถูกใช้ใน descriptions และใช้สม่ำเสมอ"
+          ],
+          "example": {
+            "scenario": "ยืมหนังสือตามปกติสำเร็จ แต่บางกรณีผู้ใช้เลือกหนังสือที่ถูกยืมอยู่ และบางกรณีระบบอ่านบัตรไม่ได้",
+            "reasoning": "เขียนเส้นทางปกติและทางเลือกให้เห็นจุดเปลี่ยนกับผลลัพธ์ จะสื่อสารได้มากกว่าประโยคว่ารองรับการยืมหนังสือ โดยไม่ต้องถือว่าทุก alternative เป็น use case ใหม่"
+          },
+          "pitfall": {
+            "wrong": "Use case มีทางเลือกได้เฉพาะเมื่อระบบ error และมีรูปแล้วถือว่าครบ",
+            "correction": "Alternatives มีได้หลายชนิด และยังต้องตรวจ flow, actor interactions, ข้อมูลและความครบของ requirements"
+          },
+          "sourcePages": [18, 19, 26, 27, 28, 29, 30]
+        },
+        {
+          "title": "6. Activity Diagram: แยกเลือกทางออกจากทำพร้อมกัน",
+          "body": [
+            "Activity diagram ใน use-case model จับกิจกรรมและ flow of control จาก activity หนึ่งไปอีก activity หนึ่ง อ่านโดยตามลูกศรจากจุดเริ่มไปจุดจบ แล้วดูเงื่อนไขกำกับทางเดิน อย่าอ่านเป็นเพียงกล่องรายการขั้นตอน เพราะโครงสร้างการไหลเป็นสาระหลัก",
+            "หน้า 22 แสดง decision รูปเพชรแยก [add course] กับ [delete course] ส่วนทางเพิ่มวิชามี fork แยก Check Schedule และ Check Pre-requisites เป็น concurrent threads แล้ว join รวมก่อน decision ผลตรวจ Guard condition ในวงเล็บเหลี่ยมบอกเงื่อนไขของทางนั้น เช่น [student added to the course] ก่อน Update schedule"
+          ],
+          "bullets": [
+            "Decision + guard: ใช้แยกทางตามเงื่อนไข",
+            "Fork: แยก flow ให้เห็นงานที่ทำพร้อมกันได้",
+            "Join: รวม concurrent threads ก่อนดำเนินต่อ",
+            "แถบ fork/join กับเพชร decision มีหน้าที่ต่างกัน จึงสลับแทนกันไม่ได้"
+          ],
+          "example": {
+            "scenario": "อ่านเส้นทางเพิ่มวิชา: Select Course → fork → ตรวจตารางและวิชาบังคับก่อน → join → ผลตรวจสำเร็จจึง Assign to Course → เพิ่มสำเร็จจึง Update schedule",
+            "reasoning": "ต้องเห็นทั้งการตรวจคู่ขนานและเงื่อนไขหลังการตรวจ หากอ่านว่าเลือกตรวจอย่างใดอย่างหนึ่งจะทำให้ความหมายของ flow เปลี่ยนไป"
+          },
+          "pitfall": {
+            "wrong": "สองลูกศรออกจากแถบหมายถึงเลือกทำเพียงหนึ่งอย่างเหมือน decision",
+            "correction": "ดูชนิดสัญลักษณ์และป้ายกำกับ แถบในภาพคือ synchronization bar สำหรับ concurrent threads"
+          },
+          "sourcePages": [21, 22]
+        }
+      ],
+      "recap": [
+        "Requirements สร้างและรักษาข้อตกลง ใช้ทั้งกำหนดขอบเขต วาง iteration และเป็นฐานให้ Analysis and Design",
+        "FURPS แยก capability/quality โดย Security อยู่ Functionality ตามตารางของวิชานี้",
+        "Model = ภาพรวม; Spec = รายละเอียด use case; Glossary = ศัพท์; Supplementary = ข้อกำหนดประกอบรวม Functionality และ constraints",
+        "Actor คือบทบาทที่โต้ตอบ; Use case ให้ผลลัพธ์มีคุณค่า; Scenario คือ instance",
+        "Basic flow หนึ่งเส้นมี alternatives ได้หลายเส้น; decision เลือกตาม guard ส่วน fork/join จัด concurrent threads"
+      ],
+      "sourceFile": "ISAAD-3-2026.pdf"
+    },
+    {
+      "id": 4,
+      "title": "Analysis and Design Overview",
+      "subtitle": "เข้าใจปัญหา ออกแบบทางออก และเชื่อม requirements สู่วัตถุที่ร่วมมือกัน",
+      "overview": "บทนี้เชื่อม requirements กับระบบที่จะสร้างจริง Analysis ช่วยให้เข้าใจปัญหา Design กำหนดทางออก Architecture กำกับการตัดสินใจสำคัญ และ Use-Case Realization แสดงว่าวัตถุจะร่วมมือกันทำ use case ได้อย่างไร ทั้งหมดพัฒนาไปได้ในแต่ละ iteration",
+      "sections": [
+        {
+          "title": "1. Analysis ถาม What ส่วน Design ถาม How",
+          "body": [
+            "Analysis เน้นทำความเข้าใจปัญหา: ระบบควรทำอะไร ดู behavior, system structure และ functional requirements เป็น idealized design ที่มี model ขนาดเล็กกว่า Design เน้นทำความเข้าใจทางออก: ระบบจะทำได้อย่างไร จึงลง operations, attributes, object lifecycles, performance และ non-functional requirements ใกล้โค้ดจริงและมี model ใหญ่ขึ้น",
+            "ความต่างนี้คือจุดเน้น ใช้ช่วยแยกเหตุผลของกิจกรรม ไม่ใช่กำแพงห้ามอีกฝั่งสนใจประเด็นใดเลย ภาพรวมหน้า 4 คือ Requirements → Analysis Model → Design Model → Implementation เป้าหมาย A&D ยังรวมการปรับ architecture และทำให้ design เหมาะกับสภาพใช้งานจริง"
+          ],
+          "bullets": [
+            "โจทย์ถาม actors, use cases, business rules: มองความเข้าใจปัญหา",
+            "โจทย์ถาม UI, database, APIs, architecture: มองทางออกตามตัวอย่างหน้า 8",
+            "อย่าสับสนการตัดสินใจออกแบบกับการลงมือเขียนโค้ดเท่านั้น"
+          ],
+          "example": {
+            "scenario": "ร้านอาหารต้องการรับคำสั่งซื้อ ทีมเริ่มคุยว่าใครสั่งได้และยกเลิกได้เมื่อใด แล้วจึงออกแบบ UI, API และฐานข้อมูล",
+            "reasoning": "ช่วงแรกทำให้รู้ what และกฎของปัญหา ช่วงหลังตัดสิน how เพื่อทำให้ความต้องการเกิดขึ้นจริง จึงเชื่อมกันโดยมีเป้าหมายเดียวกัน"
+          },
+          "pitfall": {
+            "wrong": "ถ้ากิจกรรมเริ่มจาก requirements แปลว่าทุกกิจกรรมหลังจากนั้นเป็น Analysis",
+            "correction": "พิจารณาว่ากำลังเข้าใจปัญหาหรือกำหนดวิธีแก้ ความสัมพันธ์กับ requirements ไม่ได้ทำให้ Design หายไป"
+          },
+          "sourcePages": [3, 4, 5, 7, 8]
+        },
+        {
+          "title": "2. จำ artifacts เป็นทิศ Input → Output",
+          "body": [
+            "หน้า 10 แสดง Use-Case Model, Glossary และ Supplementary Specification เป็นข้อมูลเข้าของ Analysis and Design แล้วได้ Design Model, Architecture Document และ Data Model เป็นผลลัพธ์ อ่านลูกศรให้ถูกจะช่วยแยกเอกสารที่บอกโจทย์ออกจากเอกสารที่บันทึกทางออก",
+            "เหตุผลของชุด input คือทีมต้องรู้ behavior ที่ต้องรองรับ ความหมาย domain terms และคุณภาพหรือข้อจำกัดก่อนตัดสินโครงสร้าง ชุด output จึงทำให้การออกแบบมีสิ่งที่อ้างอิงร่วมกัน ทั้งภาพ design การตัดสินใจ architecture และโครงสร้างข้อมูล"
+          ],
+          "bullets": [
+            "Input: Use-Case Model + Glossary + Supplementary Specification",
+            "Output: Design Model + Architecture Document + Data Model",
+            "จับคู่ให้ครบตามภาพเมื่อโจทย์ถามทั้งชุด อย่าหยุดที่คู่ Use-Case Model → Design Model เพียงคู่เดียว"
+          ],
+          "example": {
+            "scenario": "ทีมออกแบบระบบยืมอุปกรณ์อ่าน use cases นิยามคำว่าอุปกรณ์/รายการยืม และข้อกำหนดคุณภาพ แล้วบันทึก design กับ architecture และ data model",
+            "reasoning": "ใช้เอกสารหลายชนิดร่วมกันเพราะแต่ละชนิดตอบคนละคำถาม หากไม่อ่านศัพท์ให้ตรงกัน แม้ออกแบบละเอียดก็อาจออกแบบสิ่งที่คนละฝ่ายเข้าใจไม่เหมือนกัน"
+          },
+          "pitfall": {
+            "wrong": "Architecture Document เป็น input และ Glossary เป็น output ของ A&D ตามภาพหน้า 10",
+            "correction": "ทิศในภาพกลับกัน Architecture Document อยู่ฝั่งผลลัพธ์ ส่วน Glossary อยู่ฝั่งข้อมูลเข้า"
+          },
+          "sourcePages": [10]
+        },
+        {
+          "title": "3. Architecture คือการตัดสินใจโครงสร้างที่กำกับงานต่อ",
+          "body": [
+            "Architecture ครอบคลุม significant decisions เกี่ยวกับการจัดระบบ: เลือก structural elements และ interfaces ระบุ behavior จากการร่วมมือกัน รวมเป็น subsystems และใช้ architectural style กำกับ จึงอธิบายย่อได้ว่า high-level structure ที่กำหนด components, interfaces และ interactions",
+            "Architecture ชี้นำ implementation และการเปลี่ยนแปลงระบบในอนาคต อีกทั้ง constrain design/implementation การเปลี่ยนจึงอาจส่งผลต่อหลายส่วนตามกันมา นี่เป็นเหตุผลที่ต้องคิดเกินการเลือกรายชื่อเครื่องมือ และเหตุผลที่สไลด์เรียก architecture ว่า blueprint ซึ่งช่วยลดต้นทุนระยะยาว"
+          ],
+          "bullets": [
+            "Architectural decisions: technology stack, layered organization, communication style, deployment strategy",
+            "Technology stack ในภาพมี front end, back end, languages, databases, DevOps/infrastructure และ platforms/OS",
+            "ภาพตัวอย่างร้านค้าออนไลน์เชื่อม User/Front-end → Web Server → Database Server",
+            "Architecture เชื่อมประเด็น scalability, performance/security และ maintainability ตามภาพหน้า 14"
+          ],
+          "example": {
+            "scenario": "ระบบจองห้องกำหนดส่วนหน้าบ้าน ส่วนประมวลผล และข้อมูล พร้อม interfaces ที่ใช้สื่อสารก่อนแตกงานออกแบบรายละเอียด",
+            "reasoning": "ทีมกำลังตกลงโครงสร้างและการทำงานร่วมกันที่มีผลต่อหลายส่วน การเลือกฐานข้อมูลเป็นส่วนหนึ่งได้ แต่ยังต้องเห็นความสัมพันธ์และข้อกำกับของระบบรวม"
+          },
+          "pitfall": {
+            "wrong": "เขียนชื่อภาษาและฐานข้อมูลได้สองชื่อก็อธิบาย architecture ครบแล้ว",
+            "correction": "รายชื่อเทคโนโลยีไม่แสดง interfaces, interactions, subsystems และ style ที่เป็นสาระของ architecture"
+          },
+          "sourcePages": [12, 13, 14, 15, 16, 17, 22, 24]
+        },
+        {
+          "title": "4. 4+1 Views คือมองระบบเดียวกันผ่านความสนใจต่างกัน",
+          "body": [
+            "สถาปัตยกรรมเดียวต้องสื่อสารกับผู้เกี่ยวข้องหลายกลุ่ม 4+1 จึงช่วยแยกมุมมองตามสิ่งที่แต่ละกลุ่มต้องเข้าใจ ไม่ใช่แบ่งเป็นห้าระบบอิสระ Use-Case View อยู่กลางเพื่อยึดโยงมุมมองอื่นกับ functions ที่ end users ต้องการ",
+            "ให้จำคู่ความสนใจและผู้เกี่ยวข้องจากหน้า 20-21: Logical มอง structure สำหรับ analysts/designers; Implementation มองการจัดการซอฟต์แวร์สำหรับ programmers; Process มอง performance และการประมวลผล/การขยายตัวสำหรับ system integrators; Deployment มองกายภาพ เครือข่ายและการติดตั้งสำหรับ system engineering"
+          ],
+          "bullets": [
+            "Logical View: โครงสร้างเชิงตรรกะ",
+            "Implementation View: การจัดการซอฟต์แวร์",
+            "Process View: ประสิทธิภาพและการประมวลผล",
+            "Deployment View: โครงสร้างกายภาพ เครือข่าย และการติดตั้ง",
+            "+1 = Use-Case View: functions ของผู้ใช้และจุดยึดโยงทุกมุมมอง"
+          ],
+          "example": {
+            "scenario": "ระบบลงทะเบียนเดียวกัน โปรแกรมเมอร์อยากเห็นการจัดซอฟต์แวร์ ทีมติดตั้งอยากเห็นเครื่องและเครือข่าย ส่วนผู้ใช้อยากรู้ว่าลงทะเบียนได้อย่างไร",
+            "reasoning": "เลือก Implementation, Deployment และ Use-Case View ตามลำดับ ความต่างอยู่ที่คำถามที่ถามต่อระบบ ไม่ใช่คุณภาพว่ามุมมองใดสำคัญกว่าเสมอ"
+          },
+          "pitfall": {
+            "wrong": "+1 หมายถึง Data View และ Implementation View ใช้แทนตำแหน่งเครื่องจริง",
+            "correction": "+1 คือ Use-Case View ส่วนโครงสร้างกายภาพและเครือข่ายให้ดู Deployment View"
+          },
+          "sourcePages": [20, 21]
+        },
+        {
+          "title": "5. Deployment Strategies: อ่านเป้าหมายก่อนจับชื่อ",
+          "body": [
+            "ภาพหน้า 19 ยกห้ากลยุทธ์ระดับภาพรวม Blue/Green เน้นสลับเวอร์ชันทันทีเพื่อลด downtime; Canary ทยอยปล่อยให้ผู้ใช้บางส่วนเพื่อลดความเสี่ยง; A/B Testing เปรียบเทียบฟีเจอร์; Feature Flag ควบคุมเปิดปิดการทำงานแบบ real time; Rolling ทยอยเปลี่ยนเพื่อให้ระบบทำงานต่อเนื่อง",
+            "วิธีทำโจทย์คือจับเจตนาที่เด่น เช่น ทดลองกับบางส่วนเพื่อดูความเสี่ยงต่างจากแบ่งเพื่อเปรียบเทียบฟีเจอร์ แม้ต่างก็มีการแบ่งผู้ใช้ได้ สไลด์ไม่ได้ลงเงื่อนไขปฏิบัติการละเอียด จึงไม่ควรเพิ่มคำรับประกันที่ไม่มีในภาพ"
+          ],
+          "bullets": [
+            "Blue/Green: สลับทันที ลด downtime",
+            "Canary: ปล่อยบางส่วนก่อน ลดความเสี่ยง; ตัวเลข 10%/90% ในภาพเป็นตัวอย่าง",
+            "A/B Testing: เปรียบเทียบฟีเจอร์",
+            "Feature Flag: เปิด/ปิดฟีเจอร์แบบ real time",
+            "Rolling: ทยอยเปลี่ยนเพื่อความต่อเนื่อง"
+          ],
+          "example": {
+            "scenario": "ทีมจะให้ผู้ใช้กลุ่มเล็กลองรุ่นใหม่ก่อนขยายวง และอีกทีมอยากสลับเปิดฟีเจอร์บนระบบที่ใช้อยู่ได้ทันที",
+            "reasoning": "เจตนาแรกตรง Canary ส่วนเจตนาหลังตรง Feature Flag การตอบตามเป้าหมายช่วยแยกชื่อที่ดูเกี่ยวกับการปล่อยระบบเหมือนกัน"
+          },
+          "pitfall": {
+            "wrong": "Canary ต้องเริ่มที่ 10% เสมอ และทุกกลยุทธ์รับประกัน zero downtime",
+            "correction": "10% เป็นภาพตัวอย่าง และสไลด์อธิบายเป้าหมายภาพรวม ไม่ได้ให้คำรับประกันทุกสถานการณ์"
+          },
+          "sourcePages": [16, 19]
+        },
+        {
+          "title": "6. Use-Case Realization เป็นสะพานและทำได้ในแต่ละ iteration",
+          "body": [
+            "Use-Case Realization เปลี่ยน use case ไปเป็น design objects และอธิบาย object collaboration ให้เห็นว่าส่วนต่าง ๆ ร่วมมือกันตอบ behavior ที่ต้องการได้อย่างไร จึงเชื่อม Analysis กับ Design ไม่ใช่เพียงเปลี่ยนชื่อเอกสาร requirements ให้ดูเป็นเอกสารออกแบบ",
+            "หน้า 27 เชื่อม Use Case + Spec ใน Use-Case Model ไปสู่ Use-Case Realization ใน Design Model พร้อม Sequence Diagrams, Collaboration Diagrams และ Class Diagrams ส่วนหน้า 28 แสดงการทำตาม iteration โดย use cases และ realizations พัฒนาตามรอบ เช่น core features → enhancement → optimization"
+          ],
+          "bullets": [
+            "Use case บอก behavior ที่ต้องการ; realization แสดง design objects ที่ร่วมมือกันทำให้เกิด behavior",
+            "Sequence/Collaboration ช่วยเห็นการร่วมมือ ส่วน Class Diagram แสดงโครงสร้างที่เกี่ยวข้องตามภาพ",
+            "ไม่ต้องรอให้วิเคราะห์ทุก use case ของระบบครบแล้วจึงเริ่ม design ทั้งหมด",
+            "บทบาทในภาพมี Software Architect, Designer และ Database Designer ที่สร้าง artifacts ต่างกันแต่เกี่ยวข้องกัน"
+          ],
+          "example": {
+            "scenario": "รอบแรกทีมทำ use case ยืมอุปกรณ์หลักและ realization ของมัน รอบถัดไปเพิ่มความสามารถ แล้วจึงปรับให้เหมาะสมขึ้น",
+            "reasoning": "มีทั้งความต้องการและงานออกแบบในแต่ละรอบ ทำให้พัฒนา design ไปพร้อมขอบเขตของ iteration โดยยังเชื่อมว่าการร่วมมือของ objects รองรับ use case ใด"
+          },
+          "pitfall": {
+            "wrong": "มี use-case description แล้วเท่ากับมี realization ครบ และ iteration ต้องไม่มีงาน design",
+            "correction": "ยังต้องแสดง object collaboration และภาพหน้า 28 วาง realizations อยู่ในกระบวนการแบบ iterative"
+          },
+          "sourcePages": [23, 25, 27, 28]
+        }
+      ],
+      "recap": [
+        "Analysis เข้าใจปัญหา/what; Design เข้าใจทางออก/how โดยเป็นความต่างเรื่องจุดเน้น",
+        "Input: Use-Case Model, Glossary, Supplementary Specification → Output: Design Model, Architecture Document, Data Model",
+        "Architecture กำหนดโครงสร้าง interfaces และ interactions พร้อมการตัดสินใจสำคัญที่กำกับงานต่อ",
+        "4+1 คือ Logical, Implementation, Process, Deployment และ Use-Case View ที่ยึดโยงตรงกลาง",
+        "แยก deployment strategies ตามเป้าหมาย และเชื่อม use case สู่ object collaboration ผ่าน realization ในแต่ละ iteration"
+      ],
+      "sourceFile": "ISAAD-4-2026.pdf"
+    }
+  ],
+  "practice": [
+    {
+      "id": "m3-p1", "module": 3, "topic": "Requirements process",
+      "stem": "ทีมทำระบบยืมกล้องได้รายการความต้องการจากเจ้าหน้าที่แล้ว แต่ยังไม่แน่ใจว่าทุกฝ่ายเข้าใจคำว่าอนุมัติยืมเหมือนกัน หากต้องจัดงาน requirements ให้ครบแนวหน้า 4-5 ข้อใดเหมาะที่สุด?",
+      "options": ["วิเคราะห์ บันทึก ตรวจร่วมกัน และจัดการการเปลี่ยนแปลง", "บันทึกรายการที่เก็บมาเป็นข้อความชัดเจน ให้นักพัฒนาอ่านแล้วเข้าใจว่าความสามารถที่เจ้าหน้าที่ต้องการคืออะไร", "ตรวจความเข้าใจของคำว่าอนุมัติยืมกับเจ้าหน้าที่ที่เกี่ยวข้อง", "ข้ามการคุยและ validation แล้วเลือกฐานข้อมูลเพื่อแทน requirements ทั้งหมด"],
+      "correct": 0, "shades": ["ขาว", "เทา", "เทา", "ดำ"],
+      "reasons": ["ครอบคลุมงานถัดจากการค้นหาและเป้าหมายรักษาข้อตกลงร่วม", "เป็นส่วน Specify ที่มีประโยชน์ แต่ยังไม่ครอบคลุมการวิเคราะห์ ตรวจสอบและจัดการ", "ตรงปัญหาความเข้าใจร่วมและเป็นส่วน Validate แต่โจทย์ถามการจัดงาน requirements ให้ครบแนว", "การเลือกทางออกทางเทคนิคไม่แทนการตกลงความต้องการและ validation"],
+      "explanation": "Elicit ไม่ใช่จุดจบ งานห้าส่วน Elicit, Analyze, Specify, Validate, Manage ช่วยเปลี่ยนข้อมูลจากผู้เกี่ยวข้องให้เป็นข้อตกลงที่ดูแลต่อได้",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 4}
+    },
+    {
+      "id": "m3-p2", "module": 3, "topic": "FURPS ตามตารางสไลด์",
+      "stem": "ระบบจองห้องระบุ (ก) มีการควบคุม Security (ข) ตอบกลับภายในเวลาที่กำหนด (ค) ติดตั้งได้สะดวก หากจัดทั้งสามรายการตามตาราง FURPS หน้า 7 ข้อใดครบและตรงที่สุด?",
+      "options": ["เวลาตอบกลับเป็นข้อกำหนดที่เน้น response time จึงตรง Performance ตามตาราง FURPS ของสไลด์", "จัด Security ไว้ Reliability และติดตั้งไว้ Usability", "Functionality → Performance → Supportability ตามลำดับ", "จัด Security ไว้ Functionality และติดตั้งไว้ Supportability"],
+      "correct": 2, "shades": ["เทา", "ดำ", "ขาว", "เทา"],
+      "reasons": ["จับ response time ได้ถูก แต่ยังไม่ตอบอีกสองรายการ", "ขัดการจัด Security และ Installability ในตารางหน้า 7", "ตรงทั้ง Security, Response Time และ Installability ตามตาราง", "สองรายการนี้ถูกตามตาราง แต่ยังไม่ได้จัดเวลาตอบกลับ"],
+      "explanation": "ใช้คีย์เวิร์ดในตารางเป็นหลักฐาน: Security อยู่ F, Response Time อยู่ P, Installability อยู่ S หลีกเลี่ยงการจำชื่อหมวดจากความรู้สึก",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 7}
+    },
+    {
+      "id": "m3-p3", "module": 3, "topic": "เลือก artifacts",
+      "stem": "โครงการติดตามพัสดุมีสามงาน: ตกลงความหมายคำว่าเที่ยวจัดส่ง, อธิบาย flow ของ use case รับพัสดุหนึ่งรายการ, และเก็บข้อกำหนดคุณภาพ/ข้อจำกัด ควรเลือกเอกสารครบทั้งสามอย่างไร?",
+      "options": ["ทำ Glossary กำหนด working definition ของเที่ยวจัดส่ง แล้วใช้ศัพท์นี้ในเอกสารโครงการให้ตรงกันเพื่อลดความเข้าใจคลาดเคลื่อน", "ใช้ Glossary, Use-Case Specification และ Supplementary Specification ตามลำดับ", "ใช้ Use-Case Specification อธิบาย flow รับพัสดุ", "ใช้ Glossary แทน flow และใช้รายชื่อ actors แทนข้อกำหนดคุณภาพทั้งหมด"],
+      "correct": 1, "shades": ["เทา", "ขาว", "เทา", "ดำ"],
+      "reasons": ["ตรงงานศัพท์ แต่ยังไม่จัดการสองงานที่เหลือ", "ตรงหน้าที่ของเอกสารทั้งสามตามโจทย์", "ตรงงานรายละเอียด use case แต่ยังไม่มีคำตอบเรื่องศัพท์และข้อกำหนดประกอบ", "สลับบทบาทเอกสารและรายชื่อ actors ไม่แทนข้อกำหนดคุณภาพ"],
+      "explanation": "เลือก artifacts จากคำถามที่ต้องตอบ ไม่ใช่เลือกเอกสารเดียวใส่ทุกอย่าง Glossary ช่วยศัพท์ Spec ช่วยรายละเอียด use case และ Supplementary ช่วยข้อกำหนดประกอบ",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 8}
+    },
+    {
+      "id": "m3-p4", "module": 3, "topic": "Actor กับ flow และ scenario",
+      "stem": "ระบบเบิกอุปกรณ์โต้ตอบกับเจ้าหน้าที่และระบบบัญชีภายนอก การเบิกปกติสำเร็จได้ แต่มีเส้นทางเมื่อยอดคงเหลือไม่พอ ข้อใดอธิบายทั้ง actor, use case และ scenario ได้ดีที่สุด?",
+      "options": ["ระบบบัญชีภายนอกอาจเป็น actor เพราะโต้ตอบกับระบบเบิก โดย actor ไม่จำกัดแค่เจ้าหน้าที่ที่เป็นมนุษย์", "ใช้ alternative flow อธิบายกรณียอดคงเหลือไม่พอ", "กำหนด actor เป็นอุปกรณ์ทุกชิ้นภายใน และให้หนึ่ง use case มีได้หนึ่ง instance เท่านั้น", "Actor คือ role; use case รวม flows; scenario คือการเบิกหนึ่ง instance"],
+      "correct": 3, "shades": ["เทา", "เทา", "ดำ", "ขาว"],
+      "reasons": ["ถูกเรื่อง actor ไม่จำกัดมนุษย์ แต่ยังไม่อธิบาย use case/scenario", "ถูกเรื่องทางเลือก แต่ยังไม่อธิบาย actor และ instance", "สิ่งภายในไม่เป็น actor อัตโนมัติ และ use case ไม่จำกัดหนึ่ง instance", "เชื่อม role, ผู้โต้ตอบภายนอก, flows และ scenario ได้ครบ"],
+      "explanation": "Use case อธิบายพฤติกรรมโดยรวมที่ให้ผลมีคุณค่า ส่วน scenario เป็น instance การมีกรณีทางเลือกไม่ได้บังคับให้สร้าง use case ใหม่ทุกครั้ง",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 20}
+    },
+    {
+      "id": "m3-p5", "module": 3, "topic": "Activity: decision และ fork/join",
+      "stem": "ภาพกิจกรรมตรวจคำขอมี fork ไปตรวจสิทธิ์กับตรวจตาราง จากนั้น join แล้วมี decision [ผ่าน] หรือ [ไม่ผ่าน] ข้อใดอ่านการไหลทั้งหมดได้ตรงที่สุด?",
+      "options": ["ตรวจคู่ขนาน → join → decision เลือกตาม guard", "decision หลัง join ใช้เงื่อนไขแยกทางผ่านกับไม่ผ่าน", "fork ให้เลือกตรวจอย่างใดอย่างหนึ่ง และ join ทำให้เริ่ม use case ใหม่", "การตรวจสิทธิ์และตรวจตารางถูกแยกเป็นงานที่ทำพร้อมกันได้"],
+      "correct": 0, "shades": ["ขาว", "เทา", "ดำ", "เทา"],
+      "reasons": ["ครอบคลุมความหมาย fork, join, decision และ guard ตามลำดับ", "อ่านส่วน decision ถูก แต่ยังไม่อธิบาย fork/join ที่โจทย์ให้", "สับสนการแตกงานคู่ขนานกับเลือกทางและเพิ่มความหมายเริ่ม use case ใหม่", "อ่าน concurrent threads ถูก แต่ยังไม่ครอบคลุมการรวมและแยกทางหลังตรวจ"],
+      "explanation": "สัญลักษณ์แถบกับเพชรตอบคนละเรื่อง แถบจัด concurrent threads ส่วนเพชรกับ guard เลือกทางตามเงื่อนไข",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 22}
+    },
+    {
+      "id": "m4-p1", "module": 4, "topic": "Analysis vs Design",
+      "stem": "ทีมคลินิกตรวจว่าใครขอนัดได้และกฎเลื่อนนัดคืออะไร แล้ววาง UI, API และฐานข้อมูล ข้อใดจำแนกสองช่วงพร้อมเหตุผลได้ดีที่สุด?",
+      "options": ["ช่วงแรกเกี่ยวกับ actors และ business rules ซึ่งช่วยเข้าใจปัญหา", "ช่วงแรกเป็น Analysis ที่เน้น what; ช่วงหลังเป็น Design ที่กำหนด how", "ช่วงหลังมี UI/API ซึ่งเป็นตัวอย่างงานกำหนดทางออก", "ช่วงแรกเป็น Design ส่วนช่วงหลังเป็น Analysis เพราะฐานข้อมูลเก็บข้อมูลปัญหา"],
+      "correct": 1, "shades": ["เทา", "ขาว", "เทา", "ดำ"],
+      "reasons": ["อธิบายช่วงแรกถูก แต่ยังไม่จำแนกช่วงหลัง", "ตรงทั้งสองจุดเน้นตามตัวอย่างหน้า 8", "อธิบายช่วงหลังถูก แต่ยังไม่จำแนกช่วงแรก", "กลับทิศระหว่างความเข้าใจปัญหากับการสร้างทางออก"],
+      "explanation": "ถามว่าแต่ละงานกำลังตอบอะไร: actors/business rules ช่วยเข้าใจ what ส่วน UI/API/database ช่วยกำหนด how ตามตัวอย่างสไลด์",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 8}
+    },
+    {
+      "id": "m4-p2", "module": 4, "topic": "Input และ Output artifacts",
+      "stem": "หัวหน้าขอรายการส่งต่องาน A&D ที่ตรงภาพหน้า 10 ครบทั้ง input และ output ข้อใดตอบได้ดีที่สุด?",
+      "options": ["ส่ง Use-Case Model เข้าและรับ Design Model ออก", "ส่ง Glossary และ Supplementary Specification เข้ากระบวนการ", "ส่ง Design Model เข้าแล้วให้ Use-Case Model เป็นผลออก", "Input คือ Use-Case Model, Glossary, Supplementary Specification; Output คือ Design Model, Architecture Document, Data Model"],
+      "correct": 3, "shades": ["เทา", "เทา", "ดำ", "ขาว"],
+      "reasons": ["คู่ทิศทางนี้ถูก แต่ไม่ครบทุกรายการที่โจทย์ขอ", "เป็นสอง input ที่ถูก แต่ยังไม่ครบ input และไม่มี outputs", "กลับทิศของ artifacts ในภาพ", "ตรงครบทั้งสองฝั่งของภาพ A&D"],
+      "explanation": "จำลูกศรและหน้าที่เป็นชุด เอกสาร requirements เป็น input ส่วนเอกสารแสดงทางออกเป็น output ของภาพนี้",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 10}
+    },
+    {
+      "id": "m4-p3", "module": 4, "topic": "ขอบเขตของ Architecture",
+      "stem": "ทีมระบบติดตามรถจะอธิบาย architecture ให้ทีมออกแบบทำงานต่อได้ ข้อใดครอบคลุมสาระของ architecture ตามหน้า 12-16 มากที่สุด?",
+      "options": ["ระบุ technology stack ครอบคลุม front end, back end, languages, databases และ infrastructure ที่ทีมเลือก", "ระบุ interfaces ระหว่าง components", "การจัดโครงสร้าง interfaces, collaborations, subsystems และ style", "ใช้รายการสีปุ่มเพียงอย่างเดียวแทนโครงสร้างและการทำงานร่วมกันทั้งหมด"],
+      "correct": 2, "shades": ["เทา", "เทา", "ขาว", "ดำ"],
+      "reasons": ["เป็น architectural decision ประเภทหนึ่ง แต่ยังแคบกว่าขอบเขตที่โจทย์ขอ", "interfaces เป็นส่วนสำคัญจริง แต่ยังไม่ครอบคลุมโครงสร้างและ behavior รวม", "ตรงนิยาม architecture ที่รวม structural/behavioral elements และการจัดระบบ", "สีปุ่มเพียงอย่างเดียวไม่แทน significant decisions ระดับระบบ"],
+      "explanation": "Architecture ไม่จบที่เครื่องมือหรือแผนภาพหนึ่งรูป ต้องสื่อการจัดระบบ interfaces และ collaborations ที่กำกับ design/implementation ต่อได้",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 12}
+    },
+    {
+      "id": "m4-p4", "module": 4, "topic": "4+1 Views",
+      "stem": "ระบบร้านค้าต้องสื่อสารสามเรื่อง: การจัดซอฟต์แวร์ให้โปรแกรมเมอร์, โครงสร้างกายภาพ/เครือข่ายให้ทีมติดตั้ง, และ functions ให้ผู้ใช้ คำตอบใดจัด view ครบตรงตามลำดับ?",
+      "options": ["Implementation View สำหรับการจัดซอฟต์แวร์", "Logical, Process, Deployment", "Deployment View สำหรับโครงสร้างกายภาพและเครือข่าย", "Implementation, Deployment, Use-Case View"],
+      "correct": 3, "shades": ["เทา", "ดำ", "เทา", "ขาว"],
+      "reasons": ["ตรงเรื่องแรก แต่ยังไม่จับคู่อีกสองเรื่อง", "ไม่ตรงการจับคู่ทั้งสามความสนใจตามภาพ", "ตรงเรื่องที่สอง แต่ยังไม่จับคู่อีกสองเรื่อง", "ตรงทั้ง programmers, system engineering และ end users ตามลำดับ"],
+      "explanation": "เลือก view จากความสนใจ: ซอฟต์แวร์ → Implementation; กายภาพ/เครือข่าย → Deployment; functions ของ end users → Use-Case View",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 21}
+    },
+    {
+      "id": "m4-p5", "module": 4, "topic": "Realization ใน iterative process",
+      "stem": "รอบแรกทีมทำ use case ชำระค่าบริการพื้นฐานและต้องแสดง design ที่รองรับมัน ข้อใดเชื่อม realization กับวิธีทำงานแบบ iterative ได้ดีที่สุด?",
+      "options": ["แสดง objects ที่ร่วมทำ use case แล้วปรับ realization ตาม iteration", "ระบุ objects ที่ร่วมมือกันเพื่อรองรับการชำระค่าบริการ", "หยุดที่ชื่อ use case เพราะชื่อเดียวกันคือ realization ที่สมบูรณ์แล้ว", "วางแผนรอบแรกให้รองรับ core features แล้วเพิ่ม enhancement ในรอบถัดไป ก่อน optimization ตามตัวอย่างหน้า 28"],
+      "correct": 0, "shades": ["ขาว", "เทา", "ดำ", "เทา"],
+      "reasons": ["เชื่อม object collaboration กับการพัฒนาตาม iterations ครบ", "ตรงสาระ realization แต่ยังไม่ตอบเรื่องการทำต่อเป็นรอบ", "ชื่อ use case ไม่แสดงการร่วมมือของ design objects", "ตรงแนวตัวอย่าง iterative แต่ยังไม่แสดง realization ของ use case"],
+      "explanation": "Realization เป็นสะพานจาก use case สู่ design objects และเกิดได้ตามขอบเขตแต่ละ iteration ไม่จำเป็นต้องแยก analysis ทั้งระบบออกจาก design ทั้งระบบ",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 28}
+    }
+  ],
+  "exam": [
+    {
+      "id": "x-m3-1", "module": 3, "topic": "ระดับ requirements และการตรวจรับ",
+      "stem": "ผู้บริหารอยากให้คนไข้รอคิวน้อยลง ทีมจึงระบุ feature ดูสถานะคิว และเขียน use case ตรวจคิว หากต้องอธิบายภาพ requirements หลายระดับให้ครบแกนหน้า 6 ข้อใดเหมาะที่สุด?",
+      "options": ["มองเป้าหมายลดเวลารอเป็น stakeholder need และดูสถานะคิวเป็น feature", "เขียน use case เพียงชื่อเดียวแล้วถือว่าแทนทั้งความต้องการและหลักฐานตรวจรับครบ", "เชื่อม need กับ feature/use case พร้อม supplementary requirements และ test cases/acceptance ที่แสดงว่าระบบทำได้จริง", "กำหนด test cases/acceptance เป็นหลักฐานว่าระบบรองรับความต้องการ"],
+      "correct": 2, "shades": ["เทา", "ดำ", "ขาว", "เทา"],
+      "reasons": ["จัดสองระดับแรกได้ถูก แต่ยังไม่ครบภาพที่โจทย์ขอ", "ชื่อ use case ไม่แทน requirements ทุกระดับหรือหลักฐานตรวจรับ", "เชื่อมระดับความต้องการ พฤติกรรม ข้อกำหนดประกอบ และหลักฐานได้ครบ", "ถูกเรื่องหลักฐาน แต่ยังไม่อธิบายการเชื่อมหลายระดับทั้งหมด"],
+      "explanation": "หน้า 6 ช่วยให้เห็นทั้งความต้องการกว้าง ความสามารถ ปฏิสัมพันธ์ ข้อกำหนดประกอบ และการยืนยันผล อย่าสับสนรายการพฤติกรรมกับหลักฐานว่าทำได้จริง",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 6}
+    },
+    {
+      "id": "x-m3-2", "module": 3, "topic": "อ่านขอบเขต Supplementary Specification",
+      "stem": "ผู้ตรวจถามว่า Supplementary Specification ตามรายการหน้า 24 ของอาจารย์รองรับหมวดใดบ้าง ข้อใดให้ขอบเขตครบที่สุด?",
+      "options": ["Usability, Reliability และ Performance", "Functionality, Usability, Reliability, Performance, Supportability และ Design constraints", "Supportability และ Design constraints", "เฉพาะชื่อ actors กับชื่อ use cases โดยไม่มีคุณภาพหรือ constraints"],
+      "correct": 1, "shades": ["เทา", "ขาว", "เทา", "ดำ"],
+      "reasons": ["สามหมวดนี้อยู่จริง แต่รายการยังไม่ครบ", "ตรงรายการทั้งหมดหน้า 24 รวม Functionality", "สองหมวดนี้อยู่จริง แต่ยังไม่ครบขอบเขตเอกสาร", "ไม่ตรงรายการและตัด quality attributes/constraints ออก"],
+      "explanation": "สไลด์สรุปเน้น quality attributes แต่รายการหน้า 24 มี Functionality ด้วย คำตอบที่ดีที่สุดต้องรักษาทั้งรายการตามแหล่งอ้างอิงที่โจทย์ระบุ",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 24}
+    },
+    {
+      "id": "x-m3-3", "module": 3, "topic": "ตรวจคุณภาพ Use-Case Model และ actors",
+      "stem": "ก่อนส่ง model ระบบหอพัก ทีมพบ actor ชื่อผู้เช่า1 และผู้เช่า2 ที่มีบทบาทเดียวกัน และยังไม่เคยตรวจความครบของ functional requirements ข้อใดเป็นแนวตรวจที่ตอบปัญหาทั้งสองตาม checkpoints?",
+      "options": ["ทบทวน actors ในฐานะ roles ว่าควรรวม/แยกหรือไม่ และตรวจ model ว่าเข้าใจได้ ครบ requirements และไม่มี behavior เกินจำเป็น", "ทบทวนว่าผู้เช่า1 กับผู้เช่า2 เล่น role เดียวกันหรือไม่", "ตรวจว่า model ครบ functional requirements และอ่านเข้าใจหรือไม่", "เก็บ actor แยกตามทุกคนเสมอ และถือว่ามี diagram เท่ากับ requirements ครบ"],
+      "correct": 0, "shades": ["ขาว", "เทา", "เทา", "ดำ"],
+      "reasons": ["ใช้ทั้ง actor checkpoint และ model checkpoint ตรงปัญหาครบ", "ตรงปัญหาบทบาทซ้ำ แต่ยังไม่ตรวจความครบของ model", "ตรงปัญหา model แต่ยังไม่ทบทวน roles ที่ซ้ำ", "actor เน้น role และการมี diagram ไม่ยืนยันความครบ"],
+      "explanation": "Checkpoints เป็นคำถามตรวจคุณภาพ ไม่ใช่เพียงตรวจว่ามีรูปหรือมีชื่อครบ แยกปัญหาความซ้ำของ role กับความครบของ model แล้วตรวจทั้งคู่",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 27}
+    },
+    {
+      "id": "x-m3-4", "module": 3, "topic": "Checkpoint: ชื่อและความซ้ำของ use cases",
+      "stem": "ระบบแจ้งซ่อมมี use cases ชื่อทำรายการกับจัดการเรื่อง ซึ่งอธิบาย flow คล้ายกันมาก ผู้ใช้ยังแยกไม่ออกว่าสองชื่อนี้ต่างกันอย่างไร ตาม checkpoint หน้า 28 ควรตรวจอะไรให้ครอบคลุมปัญหานี้?",
+      "options": ["ตรวจว่าชื่อ use cases เป็นชื่อที่ผู้ใช้และลูกค้าอ่านแล้วเข้าใจหน้าที่ ไม่ทำให้สับสนเมื่อนำไปใช้งานต่อ", "เปรียบเทียบ flow ของทั้งสองเพื่อดูว่ามีพฤติกรรมคล้ายกันหรือไม่", "เก็บทั้งสองไว้โดยไม่ตรวจ เพราะชื่อไม่เหมือนกันยืนยันแล้วว่าพฤติกรรมไม่ซ้ำ", "ตรวจ flows ที่ซ้ำและปรับชื่อให้ unique, intuitive และ explanatory"],
+      "correct": 3, "shades": ["เทา", "เทา", "ดำ", "ขาว"],
+      "reasons": ["ตรงปัญหาชื่อที่ผู้ใช้แยกไม่ออก แต่ยังไม่ตรวจความซ้ำของพฤติกรรม", "ตรงปัญหา flow คล้ายกัน แต่ยังไม่แก้คุณภาพของชื่อ", "ชื่อต่างกันไม่ได้พิสูจน์ว่าพฤติกรรมต่างกัน จึงยังต้องตรวจ flows", "ตอบทั้งความคล้ายของ flows และชื่อที่ต้องสื่อหน้าที่ให้แยกได้"],
+      "explanation": "Checkpoint หน้า 28 ให้ตรวจทั้ง similar behaviors/flows และชื่อที่ unique, intuitive, explanatory โดยผู้ใช้กับลูกค้าเข้าใจชื่อและคำอธิบายได้ ไม่สรุปจากชื่อสองชื่อเพียงอย่างเดียว",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 28}
+    },
+    {
+      "id": "x-m3-5", "module": 3, "topic": "ตรวจ Use-Case Specification",
+      "stem": "Spec ของยกเลิกสมาชิกมีชื่อกับ brief description แล้ว แต่ผู้อ่านยังไม่รู้ว่าใครเริ่ม คุยกับระบบอย่างไร และจบเมื่อใด หากต้องตรวจปัญหานี้ให้ครบตามหน้า 29 ข้อใดดีที่สุด?",
+      "options": ["ตรวจว่าจุดเริ่มและจุดจบของ flow ชัดเจนพอให้ผู้อ่านรู้ว่า use case เริ่มทำงานและสิ้นสุดลงเมื่อใด", "ตรวจเพียงสีและขนาดรูป actor แทนรายละเอียดการโต้ตอบ", "ตรวจ actor/เป้าหมาย จุดเริ่มจบ การสื่อสาร ข้อมูล และความซับซ้อน", "ตรวจว่าข้อมูลที่ actor แลกกับระบบชัดหรือไม่"],
+      "correct": 2, "shades": ["เทา", "ดำ", "ขาว", "เทา"],
+      "reasons": ["เป็น checkpoint ที่ตรงหนึ่งปัญหา แต่ยังไม่ครอบคลุม actor และการสื่อสาร", "ไม่ตอบความไม่ชัดใน spec และใช้แทนการตรวจ flow ไม่ได้", "ครอบคลุมคุณภาพ spec และปัญหาที่โจทย์ระบุ", "ตรงปัญหาการโต้ตอบบางส่วน แต่ยังไม่ครบเรื่องผู้เริ่มและจุดจบ"],
+      "explanation": "ชื่อและคำบรรยายสั้นช่วยให้เห็นภาพ แต่ยังต้องอ่านแล้วตอบได้ว่าใครทำเพื่ออะไร การสื่อสารและ flow เริ่มจบชัดเพียงใด",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 29}
+    },
+    {
+      "id": "x-m3-6", "module": 3, "topic": "Glossary และความสม่ำเสมอ",
+      "stem": "โครงการขนส่งนิยามคำว่ารอบขนส่งไว้ชัดแล้ว แต่บาง use cases ใช้คำนี้แทนรถ และบางแห่งใช้แทนเที่ยวเดินทาง หากจะปรับ Glossary กับการใช้งานให้ผ่าน checkpoint หน้า 30 ข้อใดตรงที่สุด?",
+      "options": ["ตรวจว่าคำนิยามรอบขนส่งกระชับและชัดเจน", "ทำคำนิยามให้ชัด แล้วตรวจการใช้คำใน use-case descriptions และ brief descriptions ให้ตรงกันอย่างสม่ำเสมอ", "ใช้คำเดียวให้หลายความหมายโดยไม่ชี้แจง เพราะมี Glossary แล้วจึงไม่มี ambiguity", "ตรวจว่า terms ใน Glossary ปรากฏใน use-case descriptions หรือไม่"],
+      "correct": 1, "shades": ["เทา", "ขาว", "ดำ", "เทา"],
+      "reasons": ["เป็นคุณภาพนิยามที่จำเป็น แต่ยังไม่แก้การใช้คำไม่ตรงกัน", "รวมทั้งความชัด นิยามถูกใช้งาน และความสม่ำเสมอ ตรงปัญหาครบ", "การมีเอกสารไม่แก้ ambiguity ถ้ายังใช้คำต่างความหมาย", "ตรวจความเชื่อมโยงได้ส่วนหนึ่ง แต่คำปรากฏแล้วก็ยังใช้ความหมายไม่สม่ำเสมอได้"],
+      "explanation": "Glossary ที่ดีต้องถูกนำไปใช้ตามความหมายเดียวกัน การตรวจเพียงมีคำอยู่ในเอกสารยังไม่พอสำหรับปัญหาความหมายปนกัน",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 30}
+    },
+    {
+      "id": "x-m3-7", "module": 3, "topic": "อ่าน guard หลัง concurrent checks",
+      "stem": "ตามโครงสร้างหน้า 22 หากตรวจตารางและวิชาบังคับก่อนมารวมที่ join แล้วผลเป็น [checks failed] ข้อใดอธิบายเส้นทางนี้พร้อมความหมายสัญลักษณ์ได้ดีที่สุด?",
+      "options": ["รวม concurrent checks ที่ join แล้วตาม [checks failed] ไป Resolve conflicts", "guard [checks failed] เป็นเงื่อนไขของเส้นทางไป Resolve conflicts", "fork ทำให้ข้ามการตรวจทั้งสอง และ [checks failed] นำไป Assign to Course", "Check Schedule กับ Check Pre-requisites อยู่ระหว่าง fork และ join เป็น concurrent threads"],
+      "correct": 0, "shades": ["ขาว", "เทา", "ดำ", "เทา"],
+      "reasons": ["อ่านทั้งบริบท concurrent checks การรวม และเส้นทางเมื่อไม่ผ่านได้ถูก", "ตรงทางออกเมื่อไม่ผ่าน แต่ยังไม่อธิบายโครงสร้างก่อน decision", "ผิดทั้งการตีความ fork และปลายทางเมื่อ checks failed", "อ่านส่วนคู่ขนานถูก แต่ยังไม่ตอบปลายทางเมื่อไม่ผ่าน"],
+      "explanation": "อ่านจากโครงสร้างแล้วตาม guard จริงในภาพ การมี join ไม่ได้แปลว่าตรวจผ่าน ต้องดู decision และ guard หลังการรวมด้วย",
+      "source": {"file": "ISAAD-3-2026.pdf", "page": 22}
+    },
+    {
+      "id": "x-m4-1", "module": 4, "topic": "Deployment: เปรียบเทียบกับเปิดปิดฟีเจอร์",
+      "stem": "ทีมข่าวมีสองเป้าหมาย: เปรียบเทียบหน้าอ่านข่าวสองแบบ และเปิด/ปิดความสามารถแนะนำข่าวแบบ real time ตามภาพหน้า 19 ควรจับคู่กลยุทธ์อย่างไรให้ครบ?",
+      "options": ["A/B Testing ช่วยเปรียบเทียบฟีเจอร์", "Rolling คือเปรียบเทียบฟีเจอร์ และ Blue/Green คือสวิตช์เปิดปิดฟีเจอร์", "Feature Flag ช่วยควบคุมการเปิด/ปิดความสามารถแบบ real time", "A/B Testing แล้ว Feature Flag ตามลำดับ"],
+      "correct": 3, "shades": ["เทา", "ดำ", "เทา", "ขาว"],
+      "reasons": ["ตรงเป้าหมายแรก แต่ยังไม่จับคู่เป้าหมายที่สอง", "จับคู่ผิดจากคำอธิบายกลยุทธ์ในภาพ", "ตรงเป้าหมายที่สอง แต่ยังไม่จับคู่การเปรียบเทียบ", "ตรงทั้งสองเป้าหมายตามภาพหน้า 19"],
+      "explanation": "ทั้งสองอย่างเกี่ยวกับฟีเจอร์ แต่เจตนาต่างกัน: เปรียบเทียบใช้ A/B Testing ส่วนควบคุมเปิดปิดใช้ Feature Flag ตามภาพสไลด์",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 19}
+    },
+    {
+      "id": "x-m4-2", "module": 4, "topic": "Deployment: สลับกับทยอยเปลี่ยน",
+      "stem": "แผนปล่อยระบบพัสดุมีทางเลือกหนึ่งเน้นสลับเวอร์ชันทันทีเพื่อลด downtime และอีกทางเลือกเน้นทยอยเปลี่ยนเพื่อให้ทำงานต่อเนื่อง หากสรุปสองทางเลือกตามสไลด์ ข้อใดดีที่สุด?",
+      "options": ["Blue/Green สำหรับสลับ; Rolling สำหรับทยอยเปลี่ยน", "Blue/Green เน้นสลับทันทีและลด downtime", "ทั้งสองคือ A/B Testing เพราะเป้าหมายหลักของสองแผนคือเปรียบเทียบฟีเจอร์", "Rolling เน้นทยอยเปลี่ยนให้ระบบทำงานต่อเนื่อง"],
+      "correct": 0, "shades": ["ขาว", "เทา", "ดำ", "เทา"],
+      "reasons": ["จับคู่ครบทั้งสองและไม่เพิ่มคำรับประกันเกินสไลด์", "อธิบายแผนแรกถูก แต่ไม่ตอบแผนที่สอง", "โจทย์ไม่ได้มีเป้าหมายเปรียบเทียบฟีเจอร์ และชื่อไม่ตรงภาพ", "อธิบายแผนที่สองถูก แต่ไม่ตอบแผนแรก"],
+      "explanation": "คำว่าทยอยเปลี่ยนในภาพคือ Rolling ส่วนสลับทันทีคือ Blue/Green ใช้เป้าหมายที่ระบุ ไม่ต้องสมมติว่าทุกวิธีรับประกัน downtime เป็นศูนย์",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 19}
+    },
+    {
+      "id": "x-m4-3", "module": 4, "topic": "4+1: ความสนใจของแต่ละ view",
+      "stem": "ในการทบทวนระบบประกัน นักวิเคราะห์ดูโครงสร้างเชิงตรรกะ ทีมรวมระบบดูประสิทธิภาพ/การประมวลผล และต้องมีมุมมองยึดโยงกับ functions ของผู้ใช้ ข้อใดเลือก view ครบตรงความสนใจ?",
+      "options": ["Logical View รองรับความสนใจโครงสร้างเชิงตรรกะ", "Logical, Process และ Use-Case View ตามลำดับ", "Implementation, Deployment และ Data View เป็น +1", "Process View รองรับประสิทธิภาพและการประมวลผล"],
+      "correct": 1, "shades": ["เทา", "ขาว", "ดำ", "เทา"],
+      "reasons": ["ตรงความสนใจแรก แต่ยังไม่ตอบอีกสองส่วน", "ตรงทั้งโครงสร้าง การประมวลผล และ +1 ที่ยึดโยง functions", "จับคู่ผิดและ +1 ไม่ใช่ Data View", "ตรงความสนใจที่สอง แต่ยังไม่ตอบโครงสร้างและมุมมองกลาง"],
+      "explanation": "ใช้ 4+1 เพื่อเล่าระบบเดียวกันจากหลายคำถาม Logical เน้น structure; Process เน้น performance/processing; Use-Case View เชื่อมกับ functions ของ end users",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 20}
+    },
+    {
+      "id": "x-m4-4", "module": 4, "topic": "ผลของ Architectural decisions",
+      "stem": "ทีมเปลี่ยน communication style ระหว่าง components หลังมี design รายละเอียดแล้ว และต้องประเมินส่วนที่เกี่ยวข้อง ข้อใดอธิบายเหตุผลเชิง architecture ได้ดีที่สุด?",
+      "options": ["Communication style เป็นตัวอย่าง architectural decision ตามหน้า 16", "เปลี่ยน architecture แล้วทุก class ต้องแก้ทั้งหมดเสมอโดยไม่ต้องดูความสัมพันธ์", "Architecture กำกับ design จึงอาจกระทบ interfaces/collaborations ที่เกี่ยวข้อง", "Interfaces และ collaborations เป็นส่วนของขอบเขต architecture"],
+      "correct": 2, "shades": ["เทา", "ดำ", "ขาว", "เทา"],
+      "reasons": ["ระบุชนิดการตัดสินใจถูก แต่ยังไม่อธิบายเหตุผลที่ต้องประเมินผลต่อ design", "คำว่าทุก class และเสมอเกินข้อความสไลด์ที่บอก ripple effects", "เชื่อมข้อกำกับและผลกระทบของการเปลี่ยนกับสิ่งที่ควรตรวจได้ครบ", "ระบุสิ่งที่เกี่ยวข้องถูก แต่ยังไม่อธิบายผลจากการเปลี่ยน architecture"],
+      "explanation": "Architecture เป็นชุดการตัดสินใจที่ constrain งานต่อ การเปลี่ยนจึงอาจกระทบส่วนอื่นตามความสัมพันธ์ ไม่ใช่สรุปว่าทุกส่วนต้องเปลี่ยนเท่ากันเสมอ",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 15}
+    },
+    {
+      "id": "x-m4-5", "module": 4, "topic": "บทบาทและความรับผิดชอบใน A&D",
+      "stem": "ทีมจัดงานสามส่วนตามภาพหน้า 23: Architecture Document, Subsystem & Class Design และ Data Model ต้องจับคู่กับ Software Architect, Designer, Database Designer อย่างไรให้ครบ?",
+      "options": ["Designer ทำ Architecture Document; Database Designer ทำ Class Design; Software Architect ทำ Data Model", "Software Architect รับผิดชอบ Architecture Document และ Architectural Proof-of-Concept ซึ่งใช้กำกับภาพสถาปัตยกรรม", "Architecture Document → Architect; Class Design → Designer; Data Model → Database Designer", "Database Designer รับผิดชอบ Data Model และ Database Design ตามแถวของบทบาทออกแบบฐานข้อมูลในสไลด์"],
+      "correct": 2, "shades": ["ดำ", "เทา", "ขาว", "เทา"],
+      "reasons": ["สลับคู่ของทั้งสามบทบาทจากภาพหน้า 23", "ตรงบทบาทแรก แต่ยังไม่จับคู่ Class Design และ Data Model", "จับคู่ครบทั้งสามงานตรงแถวบทบาทในภาพ", "ตรงบทบาทฐานข้อมูล แต่ยังไม่จับคู่อีกสองงาน"],
+      "explanation": "ภาพหน้า 23 วาง Architecture Document ในแถว Software Architect, Subsystem & Class Design ในแถว Designer และ Data Model ในแถว Database Designer ใช้ภาพนี้จับคู่หน้าที่ ไม่เดาจากคำว่าออกแบบที่ปรากฏร่วมกัน",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 23}
+    },
+    {
+      "id": "x-m4-6", "module": 4, "topic": "หลักฐานของ Use-Case Realization",
+      "stem": "ผู้ตรวจต้องการหลักฐานสามส่วนของ realization: เชื่อมกลับไปยัง Use Case/Spec เดิม, เห็นโครงสร้าง classes, และเห็น object collaboration ไปพร้อมกัน ข้อใดตอบครบทั้งสามตามภาพหน้า 27?",
+      "options": ["ใช้ Class Diagram แสดงโครงสร้าง classes ที่เกี่ยวข้อง", "เปลี่ยนชื่อรายชื่อ classes เป็น Use-Case Realization โดยไม่เพิ่มความสัมพันธ์หรือ collaboration", "ใช้ Sequence Diagram แสดงลำดับข้อความระหว่าง objects เพื่อให้เห็นการทำงานร่วมกันตอบพฤติกรรมของ use case", "เชื่อม Use Case/Spec → Design Model พร้อม class และ interaction diagrams"],
+      "correct": 3, "shades": ["เทา", "ดำ", "เทา", "ขาว"],
+      "reasons": ["เป็นชนิด diagram ในภาพและช่วยเรื่องโครงสร้าง แต่ยังไม่ตอบ collaboration กับความเชื่อมโยงครบ", "เปลี่ยนชื่อไม่เพิ่มสาระ design objects และ collaboration", "ตรงเครื่องมือแสดง collaboration แต่ยังไม่ครอบคลุมความเชื่อมโยงและโครงสร้างตามคำขอ", "ตรงสะพาน Use Case/Spec → realization และ diagrams ที่แสดงในภาพครบ"],
+      "explanation": "Realization ต้องทำให้เห็นว่าวัตถุร่วมกันรองรับ use case ใด แผนภาพหน้า 27 จึงเชื่อมความต้องการกับ Design Model ผ่านหลายมุมของ diagrams",
+      "source": {"file": "ISAAD-4-2026.pdf", "page": 27}
+    }
+  ]
+}
