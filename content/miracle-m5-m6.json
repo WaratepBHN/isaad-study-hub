@@ -1,0 +1,81 @@
+[
+  {
+    "id": 5,
+    "title": "M5 วาง Architecture ให้เปลี่ยนต่อได้",
+    "bigPicture": "นำ Requirements/Use Cases มาจัด Architecture ระบุกลไกเทคนิคและแกนธุรกิจ ให้ส่วนต่าง ๆ ร่วมงานและเปลี่ยนต่อได้",
+    "points": [
+      {
+        "label": "Dependency",
+        "text": "Client → Supplier: Supplier เปลี่ยนอาจกระทบ Client ถ้าตามลูกศรกลับจุดเดิมได้คือวงจร ต้องแก้การพึ่งพาจริง"
+      },
+      {
+        "label": "Layers",
+        "text": "รวมงานระดับใกล้กัน แยก concerns และลด dependency ข้ามชั้น เพื่อจำกัดผลกระทบเมื่อเปลี่ยนส่วนหนึ่ง"
+      },
+      {
+        "label": "Mechanisms",
+        "text": "Persistence → RDBMS → MySQL: Analysis → Design → Implementation จากความต้องการสู่กลไกและเทคโนโลยีจริง"
+      },
+      {
+        "label": "Key Abstractions",
+        "text": "Student/Order คือแกนธุรกิจจาก requirements/domain model ส่วน Security/Persistence เป็นกลไกเทคนิคที่รองรับงาน"
+      }
+    ],
+    "memoryLine": "ดูการพึ่งพา → แบ่งชั้น → ระบุกลไก → หาแกนธุรกิจ",
+    "trap": {
+      "tempting": "เปลี่ยนชื่อ A เป็น A′ ก็แก้ circular dependency แล้ว",
+      "correction": "ถ้าลูกศรยังวนกลับได้ วงจรยังอยู่ ต้องปรับขอบเขตงานหรือ edges จริง"
+    },
+    "sourcePages": [
+      6,
+      8,
+      10,
+      21,
+      26,
+      34,
+      35
+    ],
+    "diagramTakeaway": "Layers แบ่งความรับผิดชอบ ส่วนกลไกสามระดับเพิ่มความเป็นรูปธรรม เป็นคนละแกนของภาพ"
+  },
+  {
+    "id": 6,
+    "title": "M6 แจกงานจาก Flow สู่คลาส",
+    "bigPicture": "ใช้ Use Cases, Business Model และ Architecture หา Analysis Classes/Interaction Diagrams ให้ทุกขั้นใน flow มีผู้รับผิดชอบ",
+    "points": [
+      {
+        "label": "BCE",
+        "text": "Boundary เชื่อมภายนอก Control ประสาน workflow Entity จัดการข้อมูลธุรกิจ แบ่งหน้าที่จึงไม่โยนทุกงานให้หน้าจอ"
+      },
+      {
+        "label": "ผู้รับ",
+        "text": "Controller ส่ง addCourse ไป Schedule ผู้รับคือ Schedule จึงต้องมี operation นี้ ไม่ใช่ผู้ส่งเพราะเริ่มคำขอ"
+      },
+      {
+        "label": "สองภาพ",
+        "text": "Sequence เล่า messages ตามเวลา; VOPC รวม BCE พร้อมหน้าที่ attributes/relationships ให้เห็นโครงสร้างคลาสที่ร่วม use case"
+      },
+      {
+        "label": "ทางเลือก",
+        "text": "จำนวน diagrams ไม่ตายตัว พิจารณาแยก alternative flow ที่ซับซ้อนเพื่อตรวจงานให้ครบ ไม่ใช่หนึ่งภาพต่อ use case เสมอ"
+      }
+    ],
+    "memoryLine": "Flow → BCE → Messages → Operations ผู้รับ → ตรวจคลาส",
+    "trap": {
+      "tempting": "ใช้ VOPC แทน Sequence อ่านลำดับงานได้",
+      "correction": "VOPC ดูโครงสร้างคลาส; Sequence ดู messages ตามเวลา"
+    },
+    "sourcePages": [
+      4,
+      11,
+      20,
+      21,
+      28,
+      29,
+      34,
+      36,
+      41,
+      45
+    ],
+    "diagramTakeaway": "ลูกศร BCE แสดงการส่งต่องาน ส่วน Sequence กับ VOPC ช่วยดูพฤติกรรมและโครงสร้างคนละมุม"
+  }
+]

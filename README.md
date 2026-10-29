@@ -5,6 +5,7 @@
 ## เนื้อหาและแบบทดสอบ
 
 - สรุปเข้ม 6 โมดูล อธิบายหลักการ เหตุผล ตัวอย่าง จุดสับสน และหน้าอ้างอิงในสไลด์
+- **10 Minutes Miracle**: หน้าอ่านทวนประมาณ 10 นาที มีแผนเวลา ภาพอธิบาย 6 โมดูล จุดจำ กับดัก และสรุป 30 วินาทีก่อนเข้าห้อง ที่ `#miracle`
 - แบบฝึกแยกโมดูล **โมดูลละ 5 ข้อ รวม 30 ข้อ** ตรวจและอธิบายทันที
 - คลังข้อสอบรวม **80 ข้อ** แยกจากแบบฝึกแต่ละโมดูล สุ่ม **40 ข้อต่อรอบ** และแก้คำตอบได้ก่อนส่ง
 - เฉลยทุกตัวเลือก: ขาว = คำตอบดีที่สุด, เทา = ถูกบางส่วนแต่ไม่ครบโจทย์, ดำ = ผิด
@@ -29,9 +30,11 @@ python -m http.server 8080
 
 ```sh
 python scripts/build_data.py
+python scripts/build_miracle.py
 node --check app.js
 node --check data.js
 node scripts/test_quiz.cjs
+node scripts/test_miracle.cjs
 ```
 
 ไฟล์ `content/m1-m2.json`, `content/m3-m4.json`, `content/m5-m6.json` เก็บบทเรียนและคำถามชุดเดิม ส่วน `content/exam-extra-m1-m2.json`, `content/exam-extra-m3-m4.json`, `content/exam-extra-m5-m6.json` เพิ่มข้อสอบรวมอีก 40 ข้อ สคริปต์ตรวจจำนวนข้อ จำนวนตัวเลือก คำตอบขาวเพียงหนึ่งตัว ID และ stem ซ้ำ พร้อมรายงานคู่โจทย์ข้ามชุด/คลังที่มีถ้อยคำคล้ายกันใน `content-audit.json` การตรวจความคล้ายเป็นตัวช่วย ไม่แทนการอ่านทบทวนโดยคน
@@ -45,6 +48,10 @@ node scripts/test_quiz.cjs
 GitHub Pages ใช้สาขา `main` โฟลเดอร์ `/ (root)` และไฟล์ `.nojekyll` ลิงก์ภายในใช้ hash routes จึงเปิดหน้าบทเรียนตรง ๆ และรีเฟรชบน project Pages ได้
 
 เว็บไซต์: https://waratepbhn.github.io/isaad-study-hub/
+
+ทวนก่อนเข้าห้อง: https://waratepbhn.github.io/isaad-study-hub/#miracle
+
+ภาพในหน้า Miracle เป็นกราฟิกที่เขียนด้วย HTML/SVG และปรับการเรียงตามขนาดหน้าจอ จึงอ่านป้ายกำกับได้โดยไม่ต้องย่อภาพกว้างทั้งภาพ เนื้อหาย่ออยู่ใน `content/miracle-m1-m2.json`, `content/miracle-m3-m4.json`, `content/miracle-m5-m6.json` และสร้าง `miracle-data.js` ด้วยสคริปต์ข้างต้น
 
 ## แหล่งเนื้อหา
 

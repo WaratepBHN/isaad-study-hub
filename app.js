@@ -26,12 +26,17 @@
     document.getElementById('module-nav').innerHTML=data.modules.map(m=>`<a class="module-link${active===m.id?' active':''}${state.read.includes(m.id)?' read':''}" href="#module/${m.id}"${active===m.id?' aria-current="page"':''} aria-label="Module ${m.id} ${esc(m.title)}${state.read.includes(m.id)?' อ่านแล้ว':''}"><span class="index">${state.read.includes(m.id)?'✓':String(m.id).padStart(2,'0')}</span><span class="module-nav-title">${esc(m.title)}</span></a>`).join('');
     document.getElementById('reading-progress').textContent=`อ่านแล้ว ${state.read.length} / 6 บท`;
     document.getElementById('reading-fill').style.width=`${state.read.length/6*100}%`;
-    const nav=location.hash.startsWith('#module')||location.hash.startsWith('#practice')?'module':location.hash.includes('exam')?'exam':'home';
+    const nav=location.hash.startsWith('#miracle')?'miracle':location.hash.startsWith('#module')||location.hash.startsWith('#practice')?'module':location.hash.includes('exam')?'exam':'home';
     document.querySelectorAll('[data-nav]').forEach(el=>{el.classList.toggle('active',el.dataset.nav===nav);if(el.dataset.nav===nav)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
   }
   function home(){
     const next=data.modules.find(m=>!state.read.includes(m.id))?.id||1;
     app.innerHTML=`<section class="hero"><div><span class="eyebrow">06066304 / INFORMATION SYSTEM ANALYSIS AND DESIGN</span><h1>เข้าใจระบบ<br><em>ก่อนเลือกคำตอบ</em></h1><p class="lede">ติวเข้มตั้งแต่กระบวนการพัฒนา ไปจนถึงการวิเคราะห์คลาส อ่านเหตุผลผ่านตัวอย่าง แล้วฝึกแยกคำตอบที่ “ถูก” ออกจากคำตอบที่ “ดีที่สุด”</p><div class="actions"><a class="button primary" href="#module/${next}">${state.read.length?'เรียนต่อจากที่อ่าน':'เริ่มเรียน Module 1'} <span class="arrow">→</span></a><a class="button" href="#exam">ลองสอบรวม 40 ข้อ</a></div><div class="stats-line"><span><strong>6</strong> โมดูล</span><span><strong>30</strong> ข้อฝึกแยกบท</span><span><strong>40</strong> สุ่มจากคลัง 80 ข้อ</span></div></div><div class="hero-art" aria-hidden="true"><div class="orbit"></div><div class="orbit two"></div><span class="art-tag one">ANALYSIS → DESIGN</span><div class="art-core">i.</div><span class="art-tag two">WHAT · WHY · HOW</span></div></section><div class="section-heading"><h2>เส้นทางการเรียน</h2><span>อ่านสรุปเข้ม → ฝึก 5 ข้อ → ทวนจุดพลาด</span></div><div class="module-grid">${data.modules.map(m=>{const b=banks[`practice-${m.id}`],a=state.attempts[b.id];return `<article class="module-card"><div class="card-top"><span class="chapter-number">${String(m.id).padStart(2,'0')}</span><span class="chapter-status">${a?.submitted?`ฝึกแล้ว ${getScore(b,a)}/5`:state.read.includes(m.id)?'อ่านแล้ว':'5 ข้อท้ายบท'}</span></div><h3>${esc(m.title)}</h3><p>${esc(m.subtitle)}</p><div class="card-links"><a href="#module/${m.id}">อ่านสรุปเข้ม <span aria-hidden="true">↗</span></a><a href="#practice/${m.id}">${a?.submitted?'ดูผล / ฝึกอีกครั้ง':'ฝึกแยกบท 5 ข้อ'} →</a></div></article>`;}).join('')}</div><section class="exam-banner"><div><h3>พร้อมเชื่อมทุกบทเข้าด้วยกัน?</h3><p>สุ่ม 40 จากคลัง 80 ข้อ · ชุดใหม่เมื่อกลับเข้าเว็บ · เฉลยหลังส่งคำตอบ</p></div><a class="button" href="#exam">เข้าสู่โหมดสอบ →</a></section><p class="note-line">อ่านฉบับสั้นได้ด้วย <a href="assets/ISAAD-5-minute-review.pdf" download><u>ชีตทวน 5 นาทีพร้อมภาพประกอบ</u></a> · จำผลฝึกแยกบทในเครื่อง · สอบรวมเริ่มชุดใหม่เมื่อเปิดเว็บใหม่</p>`;
+    app.querySelector('.hero').insertAdjacentHTML('afterend','<a class="miracle-entry" href="#miracle"><span class="miracle-entry-number">10</span><span class="miracle-entry-copy"><strong>10 Minutes Miracle</strong><span>ทวนภาพใหญ่ทั้ง 6 Module ด้วยภาพและแผนอ่านก่อนเข้าห้อง</span></span><span class="miracle-entry-arrow" aria-hidden="true">↗</span></a>');
+  }
+  function miracle(){
+    document.title='10 Minutes Miracle · ทวนก่อนเข้าห้อง | ISAAD Study Hub';
+    app.innerHTML=window.ISAADMiracle.render(window.ISAAD_MIRACLE.modules);
   }
   function lesson(id){
     const m=data.modules.find(x=>x.id===id);if(!m){go('#home');return;}
@@ -65,6 +70,7 @@
     document.title='ISAAD Study Hub · เข้าใจระบบก่อนเลือกคำตอบ';
     if(page==='module')lesson(Number(id));
     else if(page==='practice') {const bank=banks[`practice-${Number(id)}`];if(!bank){go('#home');return;}if(!state.attempts[bank.id])start(bank.id);if(state.attempts[bank.id].submitted)results(bank.id);else quiz(bank.id);}
+    else if(page==='miracle')miracle();
     else if(page==='exam')examIntro();
     else if(page==='quiz')quiz(id);
     else if(page==='result')results(id);
