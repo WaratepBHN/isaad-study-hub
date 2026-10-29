@@ -1,0 +1,392 @@
+[
+  {
+    "id": "x-m5-7",
+    "module": 5,
+    "topic": "Package เป็นหน่วยจัดระเบียบและ configuration management",
+    "stem": "ทีมทะเบียนต้องจัดกลุ่ม analysis elements เพื่อดูแล model และควบคุมเวอร์ชันของกลุ่มนั้นร่วมกัน โดยยังไม่ได้กำหนดโมดูล executable ควรเลือกองค์ประกอบใดและใช้เพื่ออะไร?",
+    "options": [
+      "ใช้ package รวม analysis elements ที่เกี่ยวข้องไว้ด้วยกันเพื่อให้อ่านและจัดระเบียบ model ได้สะดวก",
+      "ใช้ package รวม model elements ที่เกี่ยวข้องเพื่อจัดระเบียบ model และใช้กลุ่มนั้นเป็นหน่วย configuration management ได้ตามจุดประสงค์ที่ทีมกำหนด",
+      "ใช้ object หนึ่งตัวแทนทุก class เพราะ object มีหน้าที่เก็บ model elements ทุกชนิด",
+      "ใช้ package แล้วถือว่าได้ executable พร้อมติดตั้งโดยไม่ต้องผ่าน implementation"
+    ],
+    "correct": 1,
+    "shades": [
+      "เทา",
+      "ขาว",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "ตอบด้านจัดระเบียบ model ถูก แต่ยังไม่กล่าวถึงการควบคุมเวอร์ชันเป็นหน่วยตามโจทย์",
+      "ตรงการใช้ package ทั้ง organize model และ unit of configuration management",
+      "object เป็น instance ไม่ใช่กลไกทั่วไปสำหรับบรรจุ model elements เป็นกลุ่ม",
+      "package จัดกลุ่ม model ได้ แต่ไม่ได้ทำให้เกิด executable โดยอัตโนมัติ"
+    ],
+    "explanation": "หน้า 7 ให้ package ใช้ทั้งจัดระเบียบ model และเป็นหน่วย configuration management จึงยังไม่ต้องตีความกลุ่มนี้เป็นโมดูลที่รันได้จริง",
+    "source": {
+      "file": "ISAAD-5-2026.pdf",
+      "page": 7
+    }
+  },
+  {
+    "id": "x-m5-8",
+    "module": 5,
+    "topic": "เหตุผลของ analysis mechanisms เมื่อยังไม่เลือกเทคโนโลยี",
+    "stem": "สามทีมต้องรองรับการเก็บข้อมูลเหมือนกัน แต่ยังตกลงผลิตภัณฑ์ไม่ได้ จึงเสนอใช้คำว่า Persistency ร่วมกันในช่วง analysis แนวทางนี้ช่วยแก้ปัญหาอย่างไรได้ครบที่สุด?",
+    "options": [
+      "ช่วยให้ทั้งสามทีมคุยถึงความต้องการเก็บข้อมูลด้วยแนวคิดเดียวกันและลดความซับซ้อนของการวิเคราะห์ร่วมกัน",
+      "Analysis mechanism ต้องระบุ MySQL ก่อน",
+      "ทำให้ไม่ต้องตัดสินใจเรื่องกลไกหรือเทคโนโลยีอีกเลย แม้เข้าสู่ design และ implementation แล้ว",
+      "ลดความซับซ้อน เพิ่ม consistency และเลื่อน technology decisions"
+    ],
+    "correct": 3,
+    "shades": [
+      "เทา",
+      "ดำ",
+      "ดำ",
+      "ขาว"
+    ],
+    "reasons": [
+      "อธิบายประโยชน์เรื่องความซับซ้อนและแนวคิดร่วมถูก แต่ยังไม่ครอบคลุมการเลื่อน technology decisions",
+      "MySQL เป็นระดับ implementation และขัดเหตุผลที่ให้เลื่อนการเลือกเทคโนโลยี",
+      "เลื่อนการตัดสินใจไม่ใช่ยกเลิกความจำเป็นที่จะตัดสินใจในขั้นถัดไป",
+      "ครบทั้งสามเหตุผลของการใช้ analysis mechanisms ตามหน้า 27"
+    ],
+    "explanation": "ทีมใช้กลไกระดับ conceptual พูดถึงความต้องการก่อน แล้วทำให้ชัดขึ้นใน design และ implementation เช่น Persistence → RDBMS → MySQL การใช้ชื่อร่วมไม่ได้ตัดสินผลิตภัณฑ์แทนทีม",
+    "source": {
+      "file": "ISAAD-5-2026.pdf",
+      "page": 27
+    }
+  },
+  {
+    "id": "x-m5-9",
+    "module": 5,
+    "topic": "คัด key abstractions ออกจากกลไกและเทคโนโลยี",
+    "stem": "Requirement ระบบทุนกล่าวถึงนักศึกษา ใบสมัคร ผลการพิจารณาทุน การรักษาสิทธิ์เข้าถึง และ PostgreSQL หากกำลังหาแกนธุรกิจ ข้อใดคัดและตรวจ candidates ได้เหมาะที่สุด?",
+    "options": [
+      "เริ่ม Student/Application/AwardDecision แล้วตรวจ glossary และ relationships",
+      "พิจารณา Student และ Application เป็น candidate analysis classes เพราะแทนแนวคิดที่ระบบทุนจัดการในโดเมน",
+      "ใช้ Security กับ PostgreSQL แทนแกนธุรกิจทั้งหมด",
+      "สร้าง class สุดท้ายให้ทุกคำนามทันที เพราะคำว่า candidate แปลว่าไม่ต้องตรวจความหมายอีก"
+    ],
+    "correct": 0,
+    "shades": [
+      "ขาว",
+      "เทา",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "คัดแนวคิดธุรกิจเป็นจุดเริ่มและยังตรวจความหมาย/ความสัมพันธ์ตามขั้นหา key abstractions",
+      "เลือกตัวอย่างธุรกิจได้จริง แต่ยังไม่ครอบคลุมการตรวจ glossary และ relationships ของชุด candidates",
+      "Security เป็น technical mechanism และ PostgreSQL เป็นเทคโนโลยี ไม่ใช่ตัวแทนแกนธุรกิจทั้งหมด",
+      "candidates ยังต้องพิจารณา ไม่ใช่ทุกคำนามกลายเป็น class สุดท้ายอัตโนมัติ"
+    ],
+    "explanation": "ชื่อ Student/Application/AwardDecision เป็นตัวอย่างที่อนุมานจาก requirement ในโจทย์ หลักตามสไลด์คือทบทวน requirements/glossary หา candidate analysis classes แล้วกำหนด relationships ไม่ปนกับกลไกหรือผลิตภัณฑ์",
+    "source": {
+      "file": "ISAAD-5-2026.pdf",
+      "page": 35
+    }
+  },
+  {
+    "id": "x-m5-10",
+    "module": 5,
+    "topic": "ตรวจความครบของคำอธิบาย design pattern",
+    "stem": "เอกสารชื่อ QueueCoordinator Pattern มีเพียงรูป objects กับข้อความว่าจัดคำขอตามคิว ผู้เขียนต้องการให้ทีมอื่นตัดสินใจได้ว่าควรนำไปใช้หรือไม่ ควรเติมอะไรตามองค์ประกอบ design pattern ในสไลด์?",
+    "options": [
+      "เติมชื่อผลิตภัณฑ์และเลขเวอร์ชันให้ครบ แล้วใช้ข้อมูลนั้นแทน common problem และ trade-offs ทั้งหมด",
+      "อธิบาย common design problem ที่แบบทางออกนี้มุ่งแก้ เพื่อให้ผู้อ่านรู้ว่าปัญหาตนเองเข้ากรอบหรือไม่",
+      "เติม common design problem ที่แบบทางออกนี้ใช้แก้ พร้อมอธิบาย results และ trade-offs เพื่อให้ทีมอื่นประเมินความเหมาะสมก่อนนำไปใช้ซ้ำ",
+      "ลบส่วนอธิบายปัญหาออก เพราะ pattern ที่ reuse ได้ต้องไม่กล่าวถึงปัญหาหรือผลของการนำไปใช้"
+    ],
+    "correct": 2,
+    "shades": [
+      "ดำ",
+      "เทา",
+      "ขาว",
+      "ดำ"
+    ],
+    "reasons": [
+      "ชื่อผลิตภัณฑ์ไม่แทนปัญหา ผล และข้อแลกเปลี่ยนของ design solution",
+      "ช่วยให้เห็นบริบทปัญหาได้จริง แต่ยังไม่พอประเมินผลและ trade-offs หลังใช้",
+      "เติมส่วนที่ขาดจากเอกสารซึ่งมีทางออกคร่าว ๆ แล้ว และช่วยประเมินความเหมาะสมก่อน reuse",
+      "สไลด์ระบุให้ pattern อธิบายทั้ง common problem, solution, results และ trade-offs"
+    ],
+    "explanation": "การตั้งชื่อและวาด collaboration ยังไม่ทำให้คำอธิบาย pattern ครบ ผู้อ่านต้องเห็นว่าทางออกตอบปัญหาอะไร และเมื่อใช้แล้วได้ผลหรือมีข้อแลกเปลี่ยนใด",
+    "source": {
+      "file": "ISAAD-5-2026.pdf",
+      "page": 13
+    }
+  },
+  {
+    "id": "x-m5-11",
+    "module": 5,
+    "topic": "Specific/general functionality ใน typical layers",
+    "stem": "ใช้ภาพ Typical Layering Approach หน้า 19 ทีมต้องวางบริการเฉพาะของระบบมหาวิทยาลัย กับ operating system/device drivers ข้อใดจัดทั้งคู่และทิศความทั่วไปได้ถูกต้อง?",
+    "options": [
+      "วาง operating system และ device drivers ใน System Software เพราะเป็นโครงสร้างพื้นฐานของระบบที่ใช้งานจริง",
+      "ส่วนเฉพาะระบบอยู่ Application Subsystems; OS/drivers อยู่ System Software ที่ทั่วไปกว่า",
+      "OS/drivers อยู่ Application Subsystems",
+      "ย้ายทุกส่วนไป Business-Specific เพราะชื่อชั้นหนึ่งชื่อเดียวทำให้ระดับ abstraction เท่ากันได้ทันที"
+    ],
+    "correct": 1,
+    "shades": [
+      "เทา",
+      "ขาว",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "จัดส่วน infrastructure ถูก แต่ยังไม่จัดบริการเฉพาะระบบและเปรียบเทียบทิศความทั่วไปของทั้งคู่",
+      "ตรงภาพที่ Application Subsystems อยู่ฝั่ง specific และ System Software อยู่ฝั่ง general",
+      "ภาพจัด OS/drivers ใน System Software ไม่ใช่ Application Subsystems",
+      "เปลี่ยนชื่อหรือรวมชั้นไม่ทำให้หน้าที่จริงมีระดับ abstraction เดียวกัน"
+    ],
+    "explanation": "ภาพนี้ไล่ Application Subsystems → Business-Specific → Middleware → System Software จาก functionality เฉพาะไปทั่วไป จึงใช้หน้าที่จริงตัดสินตำแหน่ง ไม่ใช่บังคับตามชื่อเทคโนโลยีอย่างเดียว",
+    "source": {
+      "file": "ISAAD-5-2026.pdf",
+      "page": 19
+    }
+  },
+  {
+    "id": "x-m5-12",
+    "module": 5,
+    "topic": "Mapping mechanisms to actions",
+    "stem": "ระบบร้านหนังสือออนไลน์มี Login → Checkout → Send Receipt → Save Record หากยึดภาพ Mapping Mechanisms to Action หน้า 31 ควรจับคู่กลไกครบทั้งสี่ขั้นอย่างไร?",
+    "options": [
+      "Security → Payment Interface → Messaging/Notification → Persistence",
+      "ขั้น Send Receipt เชื่อมกับ Messaging/Notification ส่วน Save Record เชื่อมกับ Persistence ตามหน้าที่ของทั้งสองขั้น",
+      "Persistence → Messaging → Security → Payment Interface",
+      "ใช้ Payment Interface ทุกขั้น เพราะเมื่อมีการซื้อสินค้า ความต้องการเทคนิคทุกชนิดจะกลายเป็นการชำระเงิน"
+    ],
+    "correct": 0,
+    "shades": [
+      "ขาว",
+      "เทา",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "ตรงการจับคู่ Login, Checkout, Send Receipt และ Save Record ในภาพครบ",
+      "จับคู่สองขั้นท้ายถูก แต่ยังไม่ตอบ Login กับ Checkout ตามขอบเขตโจทย์",
+      "นำกลไกไปจับกับการกระทำไม่ตรงภาพและหน้าที่ของแต่ละกลไก",
+      "use case เดียวกระตุ้นหลาย technical concerns ได้ ไม่ได้ยุบทั้งหมดเป็น Payment Interface"
+    ],
+    "explanation": "แยก action ที่ผู้ใช้เห็นออกจากกลไกสนับสนุน: Login ต้องการ Security, Checkout ใช้ Payment Interface, ส่งใบเสร็จใช้ Messaging/Notification และบันทึกใช้ Persistence ตามภาพตัวอย่าง",
+    "source": {
+      "file": "ISAAD-5-2026.pdf",
+      "page": 31
+    }
+  },
+  {
+    "id": "x-m6-8",
+    "module": 6,
+    "topic": "Noun filter: ซ้ำ คลุมเครือ และ implementation constructs",
+    "stem": "Flow ยืมเครื่องมือให้ candidates ว่า Equipment, อุปกรณ์ ซึ่งหมายถึงสิ่งเดียวกัน, สิ่งของ, DatabaseRow และ Approve ทีมควรจัดชุด candidates ก่อนตรวจ entities ต่ออย่างไร?",
+    "options": [
+      "สร้าง entities แยก Equipment และอุปกรณ์เสมอ เพราะใช้คนละภาษา และเก็บ DatabaseRow เป็นแนวคิดธุรกิจหลัก",
+      "รวม Equipment กับอุปกรณ์ที่มีความหมายเดียวกันให้เหลือ candidate เดียว เพื่อลดรายการซ้ำในแบบจำลอง",
+      "ทุก candidate เป็น final class ได้ทันที",
+      "รวมคำซ้ำ คัดคำคลุมเครือ/implementation construct/operation ออก"
+    ],
+    "correct": 3,
+    "shades": [
+      "ดำ",
+      "เทา",
+      "ดำ",
+      "ขาว"
+    ],
+    "reasons": [
+      "ความหมายซ้ำควรถูกทบทวน และ DatabaseRow เป็น implementation construct ตามบริบทโจทย์",
+      "แก้ความซ้ำถูก แต่ยังไม่จัดการสิ่งของที่คลุมเครือ DatabaseRow และ Approve",
+      "ผลจาก noun extraction เป็น candidates ที่ต้อง filter ไม่ใช่รายการ final classes",
+      "ใช้ตัวกรองหลายชนิดตรงกับ candidates ที่โจทย์ระบุ โดย Approve เป็นการกระทำ"
+    ],
+    "explanation": "Equipment/อุปกรณ์ซ้ำกันตามข้อมูลในโจทย์ สิ่งของคลุมเครือ DatabaseRow เป็นโครงสร้าง implementation และ Approve เป็น operation จึงต้องกรองก่อนตรวจ entity candidates ต่อ",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 17
+    }
+  },
+  {
+    "id": "x-m6-9",
+    "module": 6,
+    "topic": "Control: use-case dependent แต่ environment independent",
+    "stem": "Use case จองคิวเดิมย้ายจากเว็บไปแอปมือถือ โดย workflow และกฎธุรกิจยังเดิม ทีมเสนอเขียน QueueController ให้ขึ้นกับปุ่มเฉพาะของเว็บ ข้อใดทบทวนบทบาท Control ได้ครบที่สุด?",
+    "options": [
+      "Control ต้องผูกกับ environment เสมอ เพราะหน้าที่หลักคือวาดปุ่มเฉพาะของแต่ละ UI",
+      "QueueController ควรประสานการทำ use case จองคิวตามขั้นตอนของ workflow ที่ระบบต้องรองรับ",
+      "ให้ QueueController ประสาน workflow ของ use case จองคิว โดยรักษา use-case dependence แต่ไม่ผูกกับ environment หรือปุ่มเฉพาะของ UI เว็บ",
+      "เมื่อเปลี่ยนจากเว็บเป็นมือถือ Control ต้องกลายเป็น Entity เพราะทั้งสอง environment ต่างกัน"
+    ],
+    "correct": 2,
+    "shades": [
+      "ดำ",
+      "เทา",
+      "ขาว",
+      "ดำ"
+    ],
+    "reasons": [
+      "ขัด environment independent และสับสนหน้าที่ Control กับการแสดง UI",
+      "ยืนยันงานประสาน use case ถูก แต่ยังไม่แก้ข้อเสนอให้ขึ้นกับปุ่มเฉพาะของเว็บ",
+      "รักษาทั้ง use-case dependence และ environment independence ตามนิยาม Control",
+      "การเปลี่ยน environment ไม่ได้เปลี่ยนบทบาท workflow coordination เป็นข้อมูลธุรกิจ"
+    ],
+    "explanation": "Control ขึ้นกับพฤติกรรมของ use case แต่ไม่ควรผูกกับ environment เฉพาะ การรับส่งกับ UI เป็นบทบาท Boundary ส่วนการประสาน workflow ยังเป็น Control",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 20
+    }
+  },
+  {
+    "id": "x-m6-10",
+    "module": 6,
+    "topic": "Sequence anatomy: reflexive message และ focus of control",
+    "stem": "ใน Sequence ของคิดค่าปรับ Loan object ส่ง calculateFine ไปหาตัวเอง และมีแถบสี่เหลี่ยมแคบบน lifeline ระหว่างดำเนินงาน ข้อใดอธิบายสองสัญลักษณ์นี้ครบ?",
+    "options": [
+      "calculateFine เป็น reflexive message เพราะผู้ส่งกับผู้รับเป็น Loan object ตัวเดียวกันในภาพการโต้ตอบ",
+      "ข้อความเป็น reflexive message; แถบคือ focus of control ช่วงดำเนินงาน",
+      "Reflexive message ต้องมี Loan สอง objects",
+      "แถบคือ lifeline ทั้งหมดตั้งแต่ต้นถึงจบ และข้อความถึงตัวเองแปลว่าไม่มีผู้รับ message"
+    ],
+    "correct": 1,
+    "shades": [
+      "เทา",
+      "ขาว",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "อธิบาย reflexive message ถูก แต่ยังไม่ระบุความหมายของแถบที่โจทย์ให้",
+      "แยก self-message ออกจากช่วง focus of control ได้ตรง anatomy ของ Sequence",
+      "self-message ส่งกลับมายัง object ตัวเดิม ไม่ได้บังคับให้มี Loan ตัวที่สอง",
+      "lifeline กับ focus of control เป็นคนละองค์ประกอบ และ self-message ยังมีผู้รับคือตัว object เอง"
+    ],
+    "explanation": "ภาพหน้า 29 แยก Object Lifeline, Reflexive Message และ Focus of Control ชัดเจน การส่งถึงตัวเองยังเป็น message ที่มีผู้รับ ไม่ใช่ข้อความที่หายออกจาก model",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 29
+    }
+  },
+  {
+    "id": "x-m6-11",
+    "module": 6,
+    "topic": "ทบทวน class งานเดียวโดยไม่ลบอัตโนมัติ",
+    "stem": "ผู้ตรวจพบ EligibilityChecker มี responsibility เดียวและติดต่อหลายคลาส จึงสั่งลบทันทีเพราะถือว่าผิดเสมอ ตามรายการ Maintaining Consistency ควรตอบข้อเสนอนี้อย่างไร?",
+    "options": [
+      "ใช้สองลักษณะนี้เป็นจุดทบทวนการกระจายงาน ไม่ใช่คำสั่งลบอัตโนมัติ",
+      "ตรวจว่าหน้าที่เดียวของ EligibilityChecker สอดคล้องกับงานที่มันควรรับผิดชอบใน use case หรือไม่ ก่อนตัดสินใจแก้",
+      "ลบทันที เพราะสไลด์ห้ามทุก class มี responsibility เดียวโดยไม่มีข้อยกเว้น",
+      "รวม EligibilityChecker เข้ากับทุก class ที่มันติดต่อเพื่อให้ association หายไปทั้งหมดโดยไม่ตรวจหน้าที่"
+    ],
+    "correct": 0,
+    "shades": [
+      "ขาว",
+      "เทา",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "อ่านรายการ What to Look For เป็นสิ่งต้องตรวจและไม่สรุปการลบจากสองอาการโดยอัตโนมัติ",
+      "เสนอการตรวจหน้าที่เดียวที่เกี่ยวข้องจริง แต่ยังไม่ครอบคลุมประเด็นติดต่อหลายคลาสและข้อสรุปลบอัตโนมัติทั้งหมด",
+      "สไลด์จัด class งานเดียวไว้ในรายการทบทวน ไม่ได้ประกาศว่าใช้ไม่ได้ทุกกรณี",
+      "การลดเส้นด้วยการรวมทุกอย่างไม่ใช่การตรวจการกระจาย responsibilities ที่เหมาะสม"
+    ],
+    "explanation": "รายการความสอดคล้องรวม class งานเดียวและ class ที่ติดต่อหลาย class เพื่อกระตุ้นการทบทวน ต้องวิเคราะห์ความรับผิดชอบก่อนตัดสินใจปรับ model ไม่ใช่แปลงรายการตรวจเป็นข้อห้ามตายตัว",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 37
+    }
+  },
+  {
+    "id": "x-m6-12",
+    "module": 6,
+    "topic": "อ่าน mechanism mapping ของ CourseOffering และ Control",
+    "stem": "ยึดตารางหน้า 43 ทีมกำลังตรวจว่า CourseOffering กับ RegistrationController ต้องใช้กลไกเหมือนกันหรือไม่ ข้อใดอ่านสองแถวในตารางได้ครบและถูกต้อง?",
+    "options": [
+      "CourseOffering มี Persistency และ Legacy Interface เพื่อสะท้อนความต้องการกลไกของ class ตามตัวอย่างในตาราง",
+      "ทุก analysis class ใช้ Security เท่านั้น",
+      "CourseOffering: Persistency/Legacy Interface; RegistrationController: Distribution",
+      "RegistrationController ใช้ Legacy Interface ส่วน CourseOffering ใช้ Distribution เท่านั้น"
+    ],
+    "correct": 2,
+    "shades": [
+      "เทา",
+      "ดำ",
+      "ขาว",
+      "ดำ"
+    ],
+    "reasons": [
+      "อ่านแถว CourseOffering ถูก แต่ยังไม่ตอบแถว RegistrationController และการเปรียบเทียบทั้งคู่",
+      "ตารางไม่ได้ใส่ Security ให้ทุก class และไม่ได้ตัดกลไกชนิดอื่นออก",
+      "ตรง mapping สองแถวตามตารางและแสดงว่าความต้องการกลไกแตกต่างกันได้",
+      "สลับกลไกจากสองแถวและตัด Persistency ของ CourseOffering ออก"
+    ],
+    "explanation": "Mechanism mapping ทำตามความต้องการของแต่ละ class ตารางตัวอย่างจึงให้ CourseOffering เก็บข้อมูลและเชื่อม legacy ขณะที่ RegistrationController ถูก map กับ Distribution ไม่ต้องเติมชุดเดียวกันให้ทุก class",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 43
+    }
+  },
+  {
+    "id": "x-m6-13",
+    "module": 6,
+    "topic": "ใช้ multiplicity M6 ตรวจชุดข้อมูล",
+    "stem": "ทดสอบข้อมูลตามภาพ M6 หน้า 41: (I) Professor P ยังไม่สอน offering ใด (II) offering A ไม่มี Professor (III) offering B เชื่อม Professor สองคน ข้อใดสรุปผลตรวจทั้งสามครบ?",
+    "options": [
+      "I ผ่าน เพราะ Professor เชื่อม CourseOffering ได้ 0..* จึงอนุญาตอาจารย์ที่ยังไม่มีรายการเปิดสอนในภาพตัวอย่างนี้",
+      "I ไม่ผ่าน แต่ II และ III ผ่าน เพราะเลข 1 บังคับจำนวน offering ของ Professor เท่านั้น",
+      "I กับ II ผ่าน เพราะให้ใช้ 0..1 จากภาพ M2 แทนเลข 1 ของภาพ M6 ได้",
+      "I ผ่าน; II/III ไม่ผ่าน เพราะแต่ละ offering ต้องมี Professor 1 คน"
+    ],
+    "correct": 3,
+    "shades": [
+      "เทา",
+      "ดำ",
+      "ดำ",
+      "ขาว"
+    ],
+    "reasons": [
+      "ตรวจข้อมูล I ถูก แต่ยังไม่ให้ผลของ II และ III ตามโจทย์",
+      "อ่าน multiplicity ผิดด้าน และมองข้าม 1 ที่ปลาย Professor",
+      "โจทย์อ้าง M6 จึงต้องใช้ 1 จากภาพนี้ ไม่แทนด้วยเงื่อนไขของคนละ diagram",
+      "ใช้ 0..* ตรวจ I และใช้ 1 ที่ปลาย Professor ตรวจทั้งกรณีไม่มีและมีสองคน"
+    ],
+    "explanation": "M6 กำหนด Professor 1 ที่ปลายฝั่ง Professor และ CourseOffering 0..* ที่อีกปลาย ดังนั้นอาจารย์ไม่มี offering ได้ แต่แต่ละ offering ต้องมีอาจารย์หนึ่งคนตามภาพ",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 41
+    }
+  },
+  {
+    "id": "x-m6-14",
+    "module": 6,
+    "topic": "ตรวจ incoming operations ตาม message chain",
+    "stem": "Interaction ระบุ Controller → Schedule: submit() แล้ว Schedule → CourseOffering: reserveSeat() แต่ class model มี submit() และ reserveSeat() อยู่ที่ Schedule ทั้งคู่ ข้อใดแก้จุดไม่สอดคล้องโดยคงเจ้าของ operation ที่ถูกไว้?",
+    "options": [
+      "คง submit() ที่ Schedule; ย้าย reserveSeat() ไป CourseOffering",
+      "คง submit() ที่ Schedule เพราะเป็น class ของ object ผู้รับข้อความแรกจาก Controller ใน interaction นี้",
+      "Controller ต้องเป็นเจ้าของ operation ทุกตัว",
+      "ย้าย reserveSeat() ไป Controller และ submit() ไป CourseOffering เพราะลำดับ message บอกให้สลับผู้รับ"
+    ],
+    "correct": 0,
+    "shades": [
+      "ขาว",
+      "เทา",
+      "ดำ",
+      "ดำ"
+    ],
+    "reasons": [
+      "ตรวจผู้รับแยกแต่ละ message: Schedule รับ submit ส่วน CourseOffering รับ reserveSeat",
+      "ยืนยันเจ้าของ operation แรกได้ถูก แต่ยังไม่แก้ reserveSeat ที่วางผิด class",
+      "operation เกิดกับผู้รับ message ไม่ได้รวมที่ผู้เริ่ม use case โดยอัตโนมัติ",
+      "ไม่มีหลักให้สลับผู้รับตามลำดับ ต้องอ่านปลายทางของแต่ละ message"
+    ],
+    "explanation": "ส่ง message ต่อจาก Entity ไป Entity ก็ใช้หลักผู้รับเช่นเดิม ผู้ส่ง reserveSeat คือ Schedule แต่ class ที่ต้องรองรับ operation นั้นคือ CourseOffering ต่างจาก submit ที่ Schedule เป็นผู้รับ",
+    "source": {
+      "file": "ISAAD-6-2026.pdf",
+      "page": 36
+    }
+  }
+]
