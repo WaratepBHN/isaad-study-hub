@@ -1,0 +1,290 @@
+{
+  "questions": [
+    {
+      "id": "e713-m9-01",
+      "module": 9,
+      "topic": "Outside-In mapping และขอบเขตการ scale",
+      "stem": "ระบบประมูลมี BidReceiver → BidValidator → PriceUpdater ทีมเริ่มจาก event การยื่นราคาแล้วตามเส้นทางทำงาน พบว่าเฉพาะ BidValidator ต้องเพิ่มกำลังเมื่อมีการประมูลรอบใหญ่ แม้ BidReceiver จะเรียกมันถี่ หากเป้าหมายรอบนี้คือหาขอบเขต process ที่ตอบต่อภาระจาก event ข้อเสนอพร้อมเหตุผลใดมีน้ำหนักตรงเกณฑ์ที่สุด?",
+      "options": [
+        "รวม BidReceiver กับ BidValidator ตามการเรียกถี่ เพื่อจำกัด communication overhead ของคู่คลาสใน process เดียว",
+        "พิจารณาแยก BidValidator ตาม stage ที่ต้อง scale เพื่อให้ขอบเขต process สอดคล้อง event ตาม Outside-In",
+        "จำนวนคลาสในแต่ละ stage แทนปริมาณภาระได้ จึงใช้ Outside-In แบ่ง process ให้มีจำนวนคลาสใกล้กัน",
+        "การแยก BidValidator เป็น process ทำให้แชร์ memory context แบบ threads จึงลดต้นทุนการสร้างขอบเขตใหม่"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "เป็นแผนที่ใช้เหตุผลจริงของ Inside-Out และลด overhead ของคู่คลาสนี้ได้ แต่ผูกขอบเขตการเพิ่มกำลังของ BidValidator กับ BidReceiver ที่ไม่ได้ต้อง scale ตาม จึงตรงเกณฑ์ภาระจาก event น้อยกว่าแผนที่แยกพิจารณา stage นี้",
+        "Outside-In เริ่มจาก external event/service แล้ว trace execution path เข้าด้านใน เพื่อให้ mapping สอดคล้องกับ trigger และ scalability bottleneck ตรงกับวิธีและหลักฐานในสถานการณ์",
+        "สไลด์ให้พิจารณา execution path และ bottleneck ไม่ได้ใช้จำนวนคลาสเป็นตัวแทนภาระหรือเกณฑ์แบ่ง process ให้เท่ากัน",
+        "memory/context ร่วมกันเป็นลักษณะของ threads ภายใน process ไม่ใช่ผลที่รับประกันหลังแยกเป็นคนละ process และ process มีต้นทุนขอบเขตแยกมากกว่า thread"
+      ],
+      "explanation": "ความถี่การเรียกระหว่างคลาสเป็นเหตุผลด้าน overhead ที่ต้องชั่ง แต่โจทย์ให้หา boundary จากภาระตาม event การ trace จนพบ stage ที่ต้อง scale จึงเป็นหลักฐานเฉพาะของ Outside-In ไม่ใช่การนับคลาสหรืออาศัย shared context ข้าม process",
+      "source": {
+        "file": "ISAAD-9-2026.PDF",
+        "page": 21
+      },
+      "sourcePages": [
+        8,
+        9,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "e713-m9-02",
+      "module": 9,
+      "topic": "Async messaging กับ shared state ของ threads",
+      "stem": "หน้าจอจัดคิวส่งพัสดุส่งงานเข้า queue แล้วตอบผู้ใช้ทันที ภายใน DispatchProcess มี WorkerA และ WorkerB เป็น threads ทั้งคู่แก้ object ตัวนับเดียวกัน ผลทดสอบพบหน้าจอตอบเร็วแต่ยอดงานบางครั้งหาย ผู้พัฒนากล่าวว่า queue ทำให้สอง worker ไม่ต้อง synchronize ข้อใดอธิบายผลทดสอบที่หักล้างข้อกล่าวนี้?",
+      "options": [
+        "แม้ queue ส่งงานครบ ยอดอาจผิดหลัง worker รับงาน; การตอบเร็วไม่ยืนยันความถูกต้องของตัวนับร่วม",
+        "Queue จัดลำดับข้อความเข้าแล้ว จึงทำให้การอ่านและแก้ object ของ worker สองตัวเป็นลำดับเดียวกัน",
+        "Queue ลดการรอของผู้ส่ง แต่ threads ยังแชร์ context จึงต้องควบคุมการเข้าถึงตัวนับร่วมกัน",
+        "Queue ให้แต่ละ worker รับงานแยกกัน จึงทำให้แต่ละ thread มี memory boundary ของตัวนับเป็นของตน"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "แยกความครบของการส่งงาน ความตอบสนอง และความถูกต้องของตัวนับได้จริง จึงเกี่ยวกับอาการโดยตรง แต่ยังไม่ระบุเหตุผลเรื่อง threads ใช้ shared context ที่ทำให้ต้องควบคุมการเข้าถึงร่วมกันตามข้อกล่าวที่โจทย์ให้ประเมิน",
+        "ลำดับข้อความเข้า queue ไม่ได้ทำให้ชุดการอ่านและแก้ object ร่วมของสอง threads กลายเป็นการทำงานทีละตัวโดยอัตโนมัติ",
+        "Async/queue กำหนดการรอและการสื่อสาร ส่วน thread safety กำหนดการใช้ shared memory/context ทั้งสองประเด็นต้องออกแบบแยกกัน",
+        "การรับข้อความคนละรายการไม่ได้สร้าง memory boundary แยกให้ threads ใน DispatchProcess เดียวกัน"
+      ],
+      "explanation": "การตอบเร็วและการแก้ข้อมูลถูกต้องเป็นคนละคุณสมบัติ Queue ช่วยให้ผู้ส่งทำงานต่อได้ ขณะที่สอง threads ยังใช้ object ร่วมใน process จึงยังเกิด race condition และต้องจัด synchronization",
+      "source": {
+        "file": "ISAAD-9-2026.PDF",
+        "page": 9
+      },
+      "sourcePages": [
+        8,
+        9,
+        10,
+        26
+      ]
+    },
+    {
+      "id": "e713-m9-03",
+      "module": 9,
+      "topic": "แก้ UML mapping หลังย้าย class ระหว่าง processes",
+      "stem": "Runtime class diagram เดิมมี composition จาก ImportProcess ไป Parser และ dependency จาก ImportProcess ไป IndexProcess หลังปรับระบบ Parser จะ execute ใน IndexProcess ส่วน ImportProcess ยังเรียกใช้ IndexProcess ผ่าน interface เดิม ข้อใดบันทึกทั้งสถานที่ execute ของ Parser และการสื่อสารระหว่าง process หลังย้ายได้ตรงความหมายของเส้นในสไลด์?",
+      "options": [
+        "IndexProcess รวม Parser ด้วย composition; คง dependency จาก ImportProcess ไป IndexProcess ตามเดิม",
+        "ImportProcess ยังพึ่ง IndexProcess ผ่าน interface เดิม; dependency นี้ไม่ระบุที่ execute ของ Parser",
+        "ย้าย dependency ของ Parser ไป IndexProcess และคง composition จาก ImportProcess ไป IndexProcess",
+        "กลับ composition ให้ Parser เป็น whole ของ IndexProcess และคง dependency ระหว่าง process ทั้งคู่"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "Composition ใน process mapping แสดง class ที่จัดเข้า process จึงต้องย้าย whole เป็น IndexProcess ส่วน dependency เดิมยังบันทึกการพึ่งพาข้าม process ได้",
+        "อธิบายความหมายของ dependency ในสถานการณ์นี้ถูกทั้งสองส่วน และยืนยันการสื่อสารเดิมได้ แต่ยังไม่ได้บันทึกว่า IndexProcess เป็นผู้รวม Parser หลังย้าย จึงไม่ครอบคลุมสถานที่ execute ที่โจทย์ให้บันทึกด้วย",
+        "Dependency ไม่ได้บอกว่า Parser execute ภายใน IndexProcess และ composition ระหว่างสอง process ก็เปลี่ยนความหมายจากการพึ่งพาเป็น whole-part",
+        "เพชรทึบต้องอยู่ฝั่ง process ที่เป็น whole การให้ Parser เป็น whole ของ IndexProcess กลับความหมายของการจัด class เข้า process"
+      ],
+      "explanation": "การย้ายที่ execute เปลี่ยน composition ที่ใช้ mapping class ไป process โดย whole ต้องเป็น IndexProcess ส่วนการเรียกผ่าน interface ยังแสดงด้วย dependency เดิมได้ การอธิบายความหมายของ dependency อย่างถูกต้องเพียงเส้นเดียวจึงยังไม่บันทึก membership ใหม่ของ Parser",
+      "source": {
+        "file": "ISAAD-9-2026.PDF",
+        "page": 19
+      },
+      "sourcePages": [
+        16,
+        17,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "e713-m9-04",
+      "module": 9,
+      "topic": "Process isolation เทียบกับ threads และ async",
+      "stem": "ระบบแปลงไฟล์มีตัวอ่านไฟล์ที่อาจทำ memory context เสียหาย ปัจจุบันมันเป็น thread ร่วม process กับตัวจัดการ session ทีมต้องการเพิ่ม failure isolation ระหว่างสองงาน โดยยอมรับต้นทุนการสื่อสารที่สูงขึ้น ข้อเสนอใดเปลี่ยนขอบเขต runtime ให้ตรงเป้าหมาย?",
+      "options": [
+        "คงตัวอ่านเป็น thread แล้วใช้ async messaging เพื่อแยก memory context ออกจากตัวจัดการ session",
+        "คงตัวอ่านเป็น thread ใน process เดิม เพื่อใช้ execution path ที่เบาและแชร์ context กับ session",
+        "คงตัวอ่านเป็น thread แล้วเปลี่ยนเป็น synchronous call เพื่อให้ความเสียหายอยู่ในขอบเขตของผู้รับคำสั่ง",
+        "ย้ายตัวอ่านเป็นอีก process แล้วกำหนด interface สื่อสาร เพื่อให้มีขอบเขต isolation แยกจาก session"
+      ],
+      "correct": 3,
+      "shades": [
+        "ดำ",
+        "เทา",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "Async messaging เปลี่ยนว่าผู้ส่งต้องรอหรือไม่ ไม่ได้แยก memory/context ของ thread ที่ยังอยู่ใน process เดิม",
+        "Thread เป็น execution path ที่เบาและแชร์ context จริง แต่ข้อเสนอนี้คงขอบเขต isolation เดิม จึงไม่ตอบเป้าหมายเพิ่ม failure isolation",
+        "Synchronous call ทำให้ผู้ส่งรอ response ไม่ได้สร้างขอบเขตแยกเพื่อจำกัดความเสียหายของ memory/context",
+        "Process เป็น independent execution unit ที่มี isolation สูงกว่า threads การแยก process จึงตรงเป้าหมาย และต้องกำหนดการสื่อสารระหว่างหน่วยงาน"
+      ],
+      "explanation": "สไลด์แยก isolation ของ process/thread ออกจาก synchronous/asynchronous communication การยอมเพิ่มต้นทุนเพื่อได้ขอบเขตแยกจึงสนับสนุนการใช้ process อีกตัว มากกว่าการเปลี่ยนรูปแบบ call ภายใน process เดิม",
+      "source": {
+        "file": "ISAAD-9-2026.PDF",
+        "page": 8
+      },
+      "sourcePages": [
+        8,
+        9,
+        16,
+        26
+      ]
+    },
+    {
+      "id": "e713-m10-01",
+      "module": 10,
+      "topic": "Process-to-node allocation ภายใต้ cross-network traffic",
+      "stem": "ในขั้น Process Allocation ระบบตรวจชิ้นงานมี CaptureProcess ส่งภาพขนาดใหญ่ให้ InspectProcess หลายครั้งต่อชิ้น ส่วน ArchiveProcess รับผลสรุปขนาดเล็กวันละครั้ง Node A รองรับ Capture และ Inspect ร่วมกันได้ตามเป้า throughput; Node B ก็มี capacity เพียงพอ หากการทดลองรอบนี้มุ่งลด cross-network traffic ข้อเสนอใดมีเหตุผลตรงเกณฑ์ที่สุด?",
+      "options": [
+        "แยก Capture กับ Inspect ลง A/B เพื่อกระจาย processor load โดยใช้ capacity ของทั้งสอง node",
+        "วาง Capture กับ Inspect ร่วม A และ Archive บน B เพื่อลดการส่งภาพขนาดใหญ่ข้าม network ระหว่างตรวจงาน",
+        "แยก Capture กับ Inspect ลง A/B และใช้ stub เพื่อลดการส่งภาพให้เหลือการเรียก method ภายในเครื่อง",
+        "วาง Capture กับ Inspect ร่วม A และ Archive บน B โดยถือว่า traffic A→B เป็นภาพต้นฉบับทุกครั้งที่ Capture ผลิต"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "การกระจาย processor load เป็นเหตุผลจริงของ distribution แต่โจทย์ระบุว่า capacity/throughput ผ่านแล้วและกำลังลด traffic ของคู่ที่ส่งภาพถี่",
+        "Allocation ต้องชั่ง cross-network traffic กับ capacity และ throughput เงื่อนไข capacity ที่โจทย์ให้ทำให้ colocate คู่ส่งภาพถี่ตอบเกณฑ์ได้ตรงที่สุด",
+        "Stub ทำให้ client เห็นการเรียกคล้าย local แต่ RMI Transport ยังส่งผ่าน network จริง ไม่ได้เปลี่ยนการเรียกข้าม node ให้กลายเป็น local execution",
+        "หลังวาง Capture และ Inspect ร่วมกัน ภาพระหว่างสอง process ไม่ต้องข้าม A→B ส่วน Archive รับเพียงผลสรุปขนาดเล็กวันละครั้ง การระบุ link ว่าขนภาพต้นฉบับทุกครั้งจึงไม่ตรง data flow"
+      ],
+      "explanation": "ต้องอ่าน allocation เป็นการชั่งภาระประมวลผลและภาระเครือข่ายร่วมกัน เมื่อ node เดียวรองรับคู่ที่คุยถี่ได้ การวางคู่นั้นร่วม node ลด cross-network traffic ได้ โดยยังมี traffic ของผลสรุปไป Archive และยังต้องประเมินคุณภาพด้านอื่นในงานจริง",
+      "source": {
+        "file": "ISAAD-10-2026.PDF",
+        "page": 13
+      },
+      "sourcePages": [
+        5,
+        7,
+        10,
+        13,
+        17
+      ]
+    },
+    {
+      "id": "e713-m10-02",
+      "module": 10,
+      "topic": "RMI stub/skeleton และ network latency",
+      "stem": "ทีมมี trace ของ remote pricing call จากเครื่องที่ซิงก์นาฬิกาแล้ว: client เข้าสู่ RemoteStub เวลา 10:00:00.000, RemoteSkeleton รับเวลา .180, RemoteObject ประมวลผลเสร็จเวลา .185 และ client ได้ผลเวลา .360 การค้นหา object ผ่าน Naming เสร็จก่อนเริ่ม trace แล้ว หากต้องหาต้นทุนที่ภาพเรียกคล้าย local ซ่อนไว้ ควรเพิ่มหลักฐานส่วนใดก่อน?",
+      "options": [
+        "เก็บช่วง transport ผ่าน network ระหว่าง stub กับ skeleton เพื่อแยกเวลาสื่อสารออกจากเวลาที่ remote object ทำงาน",
+        "เก็บการใช้ CPU ภายใน RemoteObject เพิ่มเติม เพื่อประเมินภาระประมวลผลของ implementation ฝั่ง server ให้ละเอียด",
+        "เก็บจำนวนครั้งที่ Naming ประมวลผลราคาแทน RemoteObject เพื่อแยกเวลาที่เกิดจากการค้นหาและการคำนวณออกจากกัน",
+        "เก็บช่วงที่ RemoteStub รัน business method บน client เพื่อแยกเวลาประมวลผล local ออกจากช่วงส่งผลกลับ server"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "สไลด์แสดง stub → RMI Transport/network → skeleton → remote object เวลาส่วนใหญ่ของ trace อยู่นอกช่วงประมวลผล 5 ms จึงควรตรวจขอบเขตการสื่อสารนี้ก่อน",
+        "การวัด CPU ของ implementation เป็นหลักฐานด้าน processing ที่มีประโยชน์จริง แต่ trace ระบุว่าช่วง remote object สั้น จึงยังไม่ตอบต้นทุนการสื่อสารที่โจทย์ให้หา",
+        "Naming ใช้ค้นหา object ไม่ใช่ส่วนที่ประมวลผลราคาทดแทน RemoteObject และโจทย์ระบุว่าการค้นหาเสร็จก่อน trace แล้ว",
+        "Stub เป็นตัวกลางการเรียก remote ไม่ใช่การย้าย business method ของ RemoteObject มาประมวลผลที่ client ตามภาพ RMI"
+      ],
+      "explanation": "ภาพ local เป็น abstraction ของการเรียก ไม่ใช่ข้อพิสูจน์ว่าไม่มี network cost Trace นี้ยังไม่แยก transport ออกจาก overhead อื่นทุกชนิด แต่บอกได้ว่าการวัดขอบเขต stub–network–skeleton ตอบเป้าหมายก่อนการลงรายละเอียด CPU ใน method",
+      "source": {
+        "file": "ISAAD-10-2026.PDF",
+        "page": 17
+      },
+      "sourcePages": [
+        15,
+        17,
+        18,
+        22
+      ]
+    },
+    {
+      "id": "e713-m10-03",
+      "module": 10,
+      "topic": "บทบาท Java RMI: Remote, Serializable, Naming และ implementation",
+      "stem": "โครงการใช้ Java RMI ตาม anatomy ในสไลด์ มี remote interface, server implementation และ client ที่ค้นหา object ได้แล้ว ก่อนเพิ่ม operation ส่ง CalibrationBatch ซึ่งเป็นชุดค่าข้อมูลผ่าน argument ทีมต้องตรวจข้อกำหนดของชนิดข้อมูลนี้โดยตรง ข้อใดเป็นงานตรวจที่ตอบเป้าหมาย?",
+      "options": [
+        "ตรวจว่า operation ที่รับ CalibrationBatch อยู่ใน remote interface ที่รองรับ java.rmi.Remote เพื่อยืนยันสัญญาการเรียก",
+        "ตรวจ CalibrationBatch ว่า extends UnicastRemoteObject เพื่อให้ข้อมูล argument ถูกแปลงเป็นค่าและส่งผ่าน network ได้",
+        "ตรวจ CalibrationBatch ว่าเรียก Naming ค้นหา server เพื่อให้ข้อมูล argument ทราบตำแหน่ง node ก่อนถูกส่งไปใช้งาน",
+        "ตรวจ CalibrationBatch ว่ารองรับ java.io.Serializable เพื่อให้ชนิดข้อมูล argument ตรงบทบาท Data Parameters ในสไลด์"
+      ],
+      "correct": 3,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "เป็นการตรวจสัญญาการเรียก operation ที่จะรับข้อมูลใหม่นี้โดยตรง และ java.rmi.Remote ก็เป็นบทบาทของ remote interface จริง แต่ยังไม่ตรวจคุณสมบัติของ CalibrationBatch เองว่าพร้อมเป็น Data Parameters หรือไม่",
+        "UnicastRemoteObject อยู่ในบทบาท server implementation ตามภาพ ไม่ใช่ข้อกำหนดของชุดข้อมูล argument ที่ต้องผ่าน Serializable",
+        "Naming เป็นบทบาท client สำหรับค้นหา remote object ไม่ได้กำหนดให้ชนิดข้อมูล argument ต้องค้นหา node ด้วยตนเอง",
+        "ภาพแยก Data Parameters ออกจาก Interface/Implementation/Client และระบุ Serializable สำหรับ passed arguments ตรงชนิดข้อมูลใหม่ในโจทย์"
+      ],
+      "explanation": "ต้องแยกสัญญาของบริการ การเปิดบริการ การค้นหาบริการ และข้อมูลที่ส่งให้บริการออกจากกัน โจทย์ถามข้อมูล argument จึงตรวจ Serializable โดยไม่ต้องอาศัยการจับ syntax extends/implements ที่ภาพใช้คำไม่ชัดเจน",
+      "source": {
+        "file": "ISAAD-10-2026.PDF",
+        "page": 18
+      },
+      "sourcePages": [
+        17,
+        18
+      ]
+    },
+    {
+      "id": "e713-m10-04",
+      "module": 10,
+      "topic": "Deployment checkpoints: Data Integrity และการประสาน update",
+      "stem": "ระบบคลังสินค้ามีสำเนาข้อมูลบนสอง node การทดสอบยืนยันว่า response time ผ่านและสลับ primary ไป secondary ได้สำเร็จ แต่เมื่อทั้งสองฝั่งรับการปรับยอดช่วงเดียวกัน รายงานกลับมียอดต่างกัน ทีมจะเติมหลักฐานใน deployment review เพื่ออธิบายปัญหาที่เหลือ ควรตรวจประเด็นใดก่อน?",
+      "options": [
+        "ตรวจผลการปรับยอดทีละ node โดยไม่ให้ช่วง update ทับกัน เพื่อแยกความผิดพลาดของแต่ละฝั่งจากปัญหาขณะทำงานพร้อมกัน",
+        "ตรวจลำดับและการประสาน distributed updates บนสองสำเนา เพื่อประเมิน Data Integrity ขณะมีการปรับยอดพร้อมกัน",
+        "ตรวจว่า argument ทุกชนิดเป็น Serializable แล้วหรือยัง เพื่อใช้ยืนยันว่าการ update บนสองสำเนาถูก synchronize แล้ว",
+        "ตรวจว่า link มี bandwidth เหลือเพียงพอตอน peak หรือไม่ เพื่อใช้ยืนยันว่าการ update สองฝั่งไม่เกิดความขัดแย้ง"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "การทดสอบ update แยกฝั่งเป็นหลักฐานที่ช่วยคัดปัญหาการคำนวณของแต่ละฝั่งออกได้จริง และเกี่ยวกับยอดที่ผิดโดยตรง แต่ยังไม่ตรวจ coordination/synchronization ที่เกิดระหว่างสองฝั่งในเงื่อนไขพร้อมกันซึ่งเป็นอาการหลัก",
+        "Final Checkpoints ระบุ Data Integrity โดยถามถึง distributed data update coordination และ synchronization ตรงกับอาการเมื่อเกิด update พร้อมกัน",
+        "Serializable เป็นบทบาทข้อมูล argument สำหรับส่งผ่าน RMI ไม่ได้ยืนยันการประสานลำดับหรือความถูกต้องของ update ระหว่างสำเนา",
+        "Bandwidth เป็นเงื่อนไข allocation/communication ที่ต้องพิจารณาจริง แต่ความจุ link ไม่ใช่กลไก synchronize หรือหลักฐานว่าการ update จะไม่ขัดแย้ง"
+      ],
+      "explanation": "ผ่าน latency และ failover ยังไม่ได้ยืนยัน Data Integrity สไลด์แยกคุณภาพเหล่านี้เป็น checkpoint ต่างกัน อาการยอดต่างกันเมื่อ update พร้อมกันจึงต้องตรวจ coordination/synchronization ของ distributed updates ก่อน",
+      "source": {
+        "file": "ISAAD-10-2026.PDF",
+        "page": 22
+      },
+      "sourcePages": [
+        13,
+        18,
+        22
+      ]
+    }
+  ]
+}

@@ -1,0 +1,439 @@
+{
+  "count": 30,
+  "moduleCounts": {
+    "7": 4,
+    "8": 4,
+    "9": 4,
+    "10": 4,
+    "11": 4,
+    "12": 5,
+    "13": 5
+  },
+  "maxOptionLengthRatio": 1.356,
+  "correctUniqueLongest": 3,
+  "longestOptionHeuristicExpectedScore": 3.0,
+  "shortestOptionHeuristicExpectedScore": 5.5,
+  "lengthAudit": [
+    {
+      "id": "e713-m7-01",
+      "lengths": [
+        93,
+        98,
+        99,
+        105
+      ],
+      "maxMinRatio": 1.129,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m7-02",
+      "lengths": [
+        99,
+        96,
+        96,
+        107
+      ],
+      "maxMinRatio": 1.115,
+      "correctLengthRank": 1,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0.5
+    },
+    {
+      "id": "e713-m7-03",
+      "lengths": [
+        85,
+        83,
+        83,
+        88
+      ],
+      "maxMinRatio": 1.06,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m7-04",
+      "lengths": [
+        93,
+        95,
+        122,
+        90
+      ],
+      "maxMinRatio": 1.356,
+      "correctLengthRank": 1,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 1.0
+    },
+    {
+      "id": "e713-m8-01",
+      "lengths": [
+        96,
+        97,
+        95,
+        97
+      ],
+      "maxMinRatio": 1.021,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m8-02",
+      "lengths": [
+        94,
+        99,
+        112,
+        110
+      ],
+      "maxMinRatio": 1.191,
+      "correctLengthRank": 4,
+      "correctUniqueLongest": true,
+      "longestHeuristicCredit": 1.0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m8-03",
+      "lengths": [
+        89,
+        96,
+        104,
+        104
+      ],
+      "maxMinRatio": 1.169,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m8-04",
+      "lengths": [
+        99,
+        110,
+        94,
+        98
+      ],
+      "maxMinRatio": 1.17,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m9-01",
+      "lengths": [
+        108,
+        100,
+        92,
+        99
+      ],
+      "maxMinRatio": 1.174,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m9-02",
+      "lengths": [
+        92,
+        93,
+        87,
+        93
+      ],
+      "maxMinRatio": 1.069,
+      "correctLengthRank": 1,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 1.0
+    },
+    {
+      "id": "e713-m9-03",
+      "lengths": [
+        97,
+        99,
+        94,
+        96
+      ],
+      "maxMinRatio": 1.053,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m9-04",
+      "lengths": [
+        92,
+        94,
+        100,
+        96
+      ],
+      "maxMinRatio": 1.087,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m10-01",
+      "lengths": [
+        89,
+        99,
+        95,
+        108
+      ],
+      "maxMinRatio": 1.213,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m10-02",
+      "lengths": [
+        110,
+        109,
+        104,
+        106
+      ],
+      "maxMinRatio": 1.058,
+      "correctLengthRank": 4,
+      "correctUniqueLongest": true,
+      "longestHeuristicCredit": 1.0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m10-03",
+      "lengths": [
+        116,
+        114,
+        110,
+        113
+      ],
+      "maxMinRatio": 1.055,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m10-04",
+      "lengths": [
+        109,
+        104,
+        112,
+        108
+      ],
+      "maxMinRatio": 1.077,
+      "correctLengthRank": 1,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 1.0
+    },
+    {
+      "id": "e713-m11-01",
+      "lengths": [
+        101,
+        93,
+        96,
+        100
+      ],
+      "maxMinRatio": 1.086,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m11-02",
+      "lengths": [
+        101,
+        95,
+        94,
+        96
+      ],
+      "maxMinRatio": 1.074,
+      "correctLengthRank": 4,
+      "correctUniqueLongest": true,
+      "longestHeuristicCredit": 1.0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m11-03",
+      "lengths": [
+        99,
+        97,
+        106,
+        98
+      ],
+      "maxMinRatio": 1.093,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m11-04",
+      "lengths": [
+        93,
+        89,
+        95,
+        93
+      ],
+      "maxMinRatio": 1.067,
+      "correctLengthRank": 1,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 1.0
+    },
+    {
+      "id": "e713-m12-01",
+      "lengths": [
+        107,
+        108,
+        111,
+        113
+      ],
+      "maxMinRatio": 1.056,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m12-02",
+      "lengths": [
+        112,
+        114,
+        115,
+        118
+      ],
+      "maxMinRatio": 1.054,
+      "correctLengthRank": 1,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 1.0
+    },
+    {
+      "id": "e713-m12-03",
+      "lengths": [
+        109,
+        99,
+        116,
+        111
+      ],
+      "maxMinRatio": 1.172,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m12-04",
+      "lengths": [
+        110,
+        101,
+        97,
+        99
+      ],
+      "maxMinRatio": 1.134,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m12-05",
+      "lengths": [
+        104,
+        95,
+        101,
+        97
+      ],
+      "maxMinRatio": 1.095,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m13-01",
+      "lengths": [
+        111,
+        107,
+        120,
+        133
+      ],
+      "maxMinRatio": 1.243,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m13-02",
+      "lengths": [
+        99,
+        109,
+        104,
+        107
+      ],
+      "maxMinRatio": 1.101,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m13-03",
+      "lengths": [
+        116,
+        107,
+        101,
+        105
+      ],
+      "maxMinRatio": 1.149,
+      "correctLengthRank": 3,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m13-04",
+      "lengths": [
+        135,
+        132,
+        126,
+        113
+      ],
+      "maxMinRatio": 1.195,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    },
+    {
+      "id": "e713-m13-05",
+      "lengths": [
+        139,
+        134,
+        156,
+        158
+      ],
+      "maxMinRatio": 1.179,
+      "correctLengthRank": 2,
+      "correctUniqueLongest": false,
+      "longestHeuristicCredit": 0,
+      "shortestHeuristicCredit": 0
+    }
+  ],
+  "note": "Character lengths are a clue audit, not proof of question quality. Semantic/source cross-review is also required."
+}

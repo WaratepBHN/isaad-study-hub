@@ -1,0 +1,295 @@
+{
+  "questions": [
+    {
+      "id": "e713-m7-01",
+      "module": 7,
+      "topic": "Mapping ตาม abstraction และขอบเขตบริการ",
+      "stem": "ระบบจัดเก็บหลักฐานมี analysis class สองตัว: EvidenceCode เก็บรหัสหลักฐานหนึ่งค่าและตรวจรูปแบบรหัส ส่วน EvidenceExchange รวมการรับ ส่ง ตรวจรับ และเชื่อมระบบภายนอกหลายแห่ง โดยต้องให้บริการหลักผ่านสัญญาที่ผู้เรียกใช้ได้แม้เปลี่ยนการเชื่อมต่อภายใน แผน mapping เริ่มต้นใดมีน้ำหนักรองรับมากที่สุดจากข้อมูลนี้?",
+      "options": [
+        "ให้ EvidenceCode เป็น design class; แยก EvidenceExchange เป็นหลายคลาสภายใน package ตามหน้าที่",
+        "ให้ EvidenceCode เป็น design class; แยก EvidenceExchange เป็น subsystem ที่ให้บริการผ่าน interface",
+        "ให้ EvidenceCode เป็น subsystem; คง EvidenceExchange เป็นคลาสเดียวเพราะเป็น analysis class หนึ่งตัว",
+        "ให้ EvidenceCode เป็น design class; คง EvidenceExchange เป็นคลาสเดียวเพื่อรักษา traceability กับ analysis"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "คลาสซับซ้อนแยกเป็นหลาย design classes และจัดใน package ได้จริง จึงเป็นขั้นเริ่มต้นที่ใช้ได้ แต่แผนนี้ยังไม่แสดงขอบเขตบริการและ interface ที่โจทย์ต้องการให้ปกปิดการเชื่อมต่อภายใน",
+        "EvidenceCode เป็น single logical abstraction จึงมีเหตุผลให้ map ตรง ส่วน EvidenceExchange เป็นบริการซับซ้อนที่ต้องมีสัญญาบริการและซ่อน implementation จึงเหมาะกับ subsystem และ interface",
+        "การมีหนึ่ง analysis class ไม่ได้บังคับให้เหลือหนึ่ง design class และข้อมูลของ EvidenceCode ก็ยังไม่แสดงความซับซ้อนหรือบริการหลักที่รองรับการยกระดับเป็น subsystem",
+        "การรักษา traceability ไม่ได้บังคับให้คงขอบเขตคลาสเดิม การ mapping ไปสู่ design เป็น many-to-many ได้ และควรพิจารณาความซับซ้อนกับ abstraction ของงาน"
+      ],
+      "explanation": "ต้องตัดสินใจสองระดับร่วมกัน: ความเรียบง่ายของ abstraction รองรับการ map ตรง ส่วนบริการซับซ้อนที่ต้องซ่อนวิธีเชื่อมต่อรองรับ subsystem ที่มี interface การแบ่งคลาสใน package เป็นทางเลือกที่เป็นไปได้ แต่ยังให้หลักฐานเรื่องขอบเขตบริการน้อยกว่าแผน subsystem",
+      "source": {
+        "file": "ISAAD-7-2026.PDF",
+        "page": 7
+      },
+      "sourcePages": [
+        6,
+        7,
+        18,
+        19,
+        22,
+        24
+      ]
+    },
+    {
+      "id": "e713-m7-02",
+      "module": 7,
+      "topic": "Boundary packaging ตามความผันผวน",
+      "stem": "ระบบสำรวจพื้นที่มี boundary สองชุด: MobileSurvey เปลี่ยนหน้าจอและวิธีรับข้อมูลทุกไตรมาส ขณะที่ FixedConsole มีสัญญาว่าจะคงหน้าจอเดิมตลอดรุ่น ทั้งสองชุดมี control/entity ตามหน้าที่ของตน ทีมต้องเลือกแผนเริ่มต้นตาม heuristic เรื่อง boundary ในบทนี้ และต้องการหลีกเลี่ยงการแยก package ที่ข้อมูลยังไม่สนับสนุน แผนใดตรงเกณฑ์ที่สุด?",
+      "options": [
+        "แยก boundary ของ MobileSurvey จากคลาสตามหน้าที่; แยก boundary ของ FixedConsole เป็นอีก package ด้วย",
+        "รวม boundary ของ MobileSurvey กับคลาสตามหน้าที่; แยก boundary ของ FixedConsole จากคลาสตามหน้าที่",
+        "แยก boundary ของ MobileSurvey จากคลาสตามหน้าที่; รวม boundary ของ FixedConsole กับคลาสตามหน้าที่",
+        "รวม boundary ของ MobileSurvey กับคลาสตามหน้าที่; รวม boundary ของ FixedConsole โดยถือว่าความผันผวนไม่เกี่ยว"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "การแยก boundary ทั้งสองชุดเป็นโครงสร้างที่ทำได้ และแยกชุดที่เปลี่ยนบ่อยได้ถูกทิศทาง แต่การแยก FixedConsole เพิ่มยังไม่มีเหตุผลจากความผันผวน จึงตรงเกณฑ์เริ่มต้นของโจทย์น้อยกว่า",
+        "วางแผนกลับทิศกับ heuristic: ชุดที่มีการเปลี่ยน interface มากควรพิจารณาแยก ขณะที่ชุดคงที่สามารถอยู่กับคลาสที่เกี่ยวข้องตามหน้าที่ได้",
+        "ใช้เงื่อนไขของ heuristic แยกกันสำหรับแต่ละ boundary: แยกชุดเปลี่ยนบ่อย และเก็บชุดคงที่ร่วมกับคลาสตามหน้าที่ จึงใช้ข้อมูลที่ให้มาโดยไม่เพิ่ม package เกินเหตุผล",
+        "การรวม boundary ไม่ได้เป็นไปไม่ได้ แต่เหตุผลที่ตัดความผันผวนออกจากการตัดสินใจขัดกับ heuristic ของบทนี้ และทำให้กรณี MobileSurvey ไม่ได้รับการพิจารณาตามข้อมูลสำคัญ"
+      ],
+      "explanation": "สไลด์ไม่ได้กำหนดให้ boundary ทุกตัวแยก package เหมือนกัน แต่ใช้โอกาสเปลี่ยน system interface เป็นเงื่อนไข การเปรียบเทียบสองชุดจึงต้องใช้เงื่อนไขกับแต่ละชุด และแยกให้ออกระหว่างแผนที่ทำได้กับแผนที่มีเหตุผลรองรับตรงโจทย์ที่สุด",
+      "source": {
+        "file": "ISAAD-7-2026.PDF",
+        "page": 10
+      },
+      "sourcePages": [
+        8,
+        10,
+        21,
+        32
+      ]
+    },
+    {
+      "id": "e713-m7-03",
+      "module": 7,
+      "topic": "Dependency topology และข้อยกเว้นการข้าม layer",
+      "stem": "ให้ลูกศร X→Y หมายถึง X พึ่งพา Y ระบบมี U ใน Application, S ใน Business Services และ M ใน Middleware พร้อมเส้น U→S, S→M และ U→M โดยสถาปนิกยืนยันว่า U→M จำเป็นเพื่อใช้ core distribution ของ Java RMI ตามกรณีในสไลด์ ต่อมามีการเพิ่ม M→U เพื่ออ่านค่า config ข้อความ review ใดวินิจฉัยสองเส้น U→M และ M→U ได้เฉพาะเจาะจงกับหลักฐานมากที่สุด?",
+      "options": [
+        "U→M มีเหตุผลรองรับจาก core Java RMI; M→U ทั้งย้อนชั้นและทำให้กราฟ dependency เกิดวงจร",
+        "U→M ข้าม Business Services ลง Middleware; M→U ปิดวงจรผ่านเส้น U→S→M ที่มีอยู่ในกราฟ",
+        "U→M มีเหตุผลรองรับจาก core RMI; M→U จึงใช้ข้อยกเว้นเดียวกันเพื่ออ่าน config กลับได้",
+        "U→M ละเมิดกฎ layer แม้มีเหตุผล RMI; M→U ยอมรับได้เมื่อคลาส config เปิด public visibility"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "หน้า 31 ให้เหตุผลเฉพาะที่ Application ต้องเข้าถึง core distribution ของ Java RMI จึงรองรับ U→M ส่วน M→U เป็น dependency จากล่างขึ้นบน และปิดวงจรทั้ง U→M→U และ U→S→M→U",
+        "เป็นการอ่าน topology ที่ถูกต้องทั้งการข้ามชั้นและวงจร แต่ยังไม่วินิจฉัยสถานะของ U→M จากเหตุผล core RMI ซึ่งสไลด์ยอมรับเป็นข้อยกเว้น จึงให้เหตุผลเชิงสถาปัตยกรรมน้อยกว่าคำตอบที่แยกข้อยกเว้นออกจากข้อบกพร่อง",
+        "เหตุผลของ U→M ไม่ได้อนุญาต dependency กลับทิศ M→U การอ่าน config กลับไปยัง Application ยังเป็นการพึ่งพาจากชั้นล่างขึ้นบนและยังสร้างวงจร",
+        "กฎไม่ข้าม layer ใช้คำว่า in general และมีตัวอย่าง RMI รองรับข้อยกเว้น ส่วน public visibility บอกสิทธิ์อ้างอิงองค์ประกอบ ไม่ได้ทำให้การย้อนชั้นและวงจรถูกต้องทางสถาปัตยกรรม"
+      ],
+      "explanation": "ต้องอ่านทั้ง topology และเหตุผลของ dependency พร้อมกัน เส้นที่ข้าม layer ไม่ได้ผิดโดยไม่มีข้อยกเว้น แต่ข้อยกเว้นก็ไม่ได้เปลี่ยนข้อควรหลีกเลี่ยงเรื่อง lower→upper หรือ cyclic dependencies การเปิด public แก้เพียง visibility ไม่ได้แก้ทิศทางกราฟ",
+      "source": {
+        "file": "ISAAD-7-2026.PDF",
+        "page": 31
+      },
+      "sourcePages": [
+        11,
+        13,
+        15,
+        31,
+        32
+      ]
+    },
+    {
+      "id": "e713-m7-04",
+      "module": 7,
+      "topic": "Interface contract กับการซ่อน technology",
+      "stem": "GeoImage เป็น subsystem ให้หลายแผนกขอภาพตามพื้นที่และวันที่ ผู้ให้บริการภาพจะเปลี่ยนจากบริษัท A เป็น B โดยชนิด token และชนิดผลลัพธ์ของสองบริษัทต่างกัน ทีมต้องกำหนด contract ที่ทั้งคงที่และเป็น technology independent ตามบทนี้ ข้อเสนอใดตอบเป้าหมายเมื่อสลับผู้ให้บริการได้ตรงที่สุด?",
+      "options": [
+        "ใช้ fetchTile(VendorToken): VendorTile; ระบุ parameter และผลลัพธ์ให้ชัดแล้วตรึง signature นี้",
+        "ใช้ fetchArea(Area, Date): TileSet; เปิด private vendor classes ให้ผู้เรียกอ้างข้าม package ได้",
+        "ใช้ fetchArea(Area, Date): TileSet; ให้ TileSet มี public field VendorTile โดยถือว่าไม่ผูก vendor เพราะชนิดชั้นนอกเป็นกลาง",
+        "ใช้ fetchArea(Area, Date): TileSet; กำหนดชนิดข้อมูลกลางแล้วซ่อนการแปลงชนิด vendor ไว้ภายใน"
+      ],
+      "correct": 3,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "การระบุ parameter/ผลลัพธ์และตรึง signature เป็นงานกำหนด contract ที่ทำได้จริง แต่ชนิดเฉพาะผู้ให้บริการเดิมยังอยู่ใน contract การเปลี่ยนบริษัทที่มีชนิดต่างกันจึงเหลือภาระรักษาหรือแปลงชนิดเฉพาะ vendor ไม่ตรงหลัก technology independent เท่าข้อที่ใช้ชนิดกลาง",
+        "signature ภายนอกใช้ชนิดกลางได้ดี แต่ private classes ของ package ไม่สามารถถูกอ้างอิงโดยตรงจากภายนอก package ตามกติกา visibility ที่สไลด์กำหนด",
+        "แม้ชื่อ operation และชนิดชั้นนอกเป็นกลาง แต่ public field ที่ใช้ชนิด VendorTile ยังทำให้ contract ผูกกับผู้ให้บริการ การเปลี่ยน vendor จึงรั่วถึงผู้เรียก",
+        "operation สื่อความหมายงานของผู้เรียก ใช้ parameter/return type ที่ไม่ผูกบริษัท และเก็บรายละเอียดชนิดเฉพาะ vendor ภายใน จึงรองรับทั้ง stable interface และ technology independence"
+      ],
+      "explanation": "ความคงที่ของชื่อ operation อย่างเดียวไม่พอ ต้องตรวจชนิดของ parameter ผลลัพธ์ และ public fields ที่ผู้เรียกผูกอยู่ด้วย การตรึง vendor signature ทำได้แต่ยังไม่เป็น technology independent ส่วนชื่อ TileSet ที่เป็นกลางไม่ได้ซ่อน VendorTile ซึ่งยังปรากฏใน public contract",
+      "source": {
+        "file": "ISAAD-7-2026.PDF",
+        "page": 24
+      },
+      "sourcePages": [
+        13,
+        24,
+        25,
+        26
+      ]
+    },
+    {
+      "id": "e713-m8-01",
+      "module": 8,
+      "topic": "Persistence requirements จาก workload ที่มี volume เท่ากัน",
+      "stem": "ทีมเปรียบเทียบข้อมูลใหม่สองชุด: A มี object ขนาด 2 MB จำนวน 20,000 ชิ้น โดย 80% ของคำขอเป็น Create; B มี object ขนาด 2 KB จำนวน 20,000,000 ชิ้น โดย 80% เป็น Read ให้ใช้หน่วยฐานสิบจึงได้ข้อมูลรวมชุดละ 40 GB ทั้งคู่ค้นตาม key เก็บ 5 ปี และต้องทน fault เท่ากัน บันทึกใดแยกมิติที่ต่างกันของ workload สองชุดได้ตรงที่สุดก่อนเลือกกลไก?",
+      "options": [
+        "แยก granularity ตามขนาด object และ access frequency ตามสัดส่วน CRUD; บันทึก volume รวมว่าเท่ากัน",
+        "แยก granularity ตามขนาด object และบันทึก duration ว่าเท่ากัน; ระบุ access mechanism ว่าค้นตาม key",
+        "แยก volume ตามจำนวน object และ access frequency ตามจำนวนชิ้นสะสม; บันทึก granularity ว่าเท่ากัน",
+        "แยก access mechanism ตามสัดส่วน Create/Read และ volume ตามขนาด object; บันทึก duration ว่าเท่ากัน"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "ขนาดต่อ object ต่างกันคือ granularity และสัดส่วน Create/Read ต่างกันคือ access frequency ส่วน volume คือปริมาณข้อมูลรวม ซึ่งโจทย์คำนวณให้เท่ากันแล้ว",
+        "ทั้งขนาด object, อายุข้อมูล และการค้นตาม key ถูกจัดมิติถูกต้อง จึงเป็นบันทึกที่มีประโยชน์จริง แต่ยังไม่แยกความต่างสำคัญเรื่องสัดส่วน CRUD ของสอง workload ตามที่โจทย์ให้มาพิจารณา",
+        "จำนวน object อย่างเดียวไม่ใช่ volume รวมเมื่อขนาดต่อ object ต่างกัน และจำนวนชิ้นที่สะสมก็ไม่ใช่สัดส่วน CRUD อีกทั้งขนาด object ในโจทย์ไม่ได้เท่ากัน",
+        "access mechanism ถามว่า query อย่างไร ไม่ใช่สัดส่วน CRUD ขณะที่ขนาด object เป็น granularity ไม่ใช่ volume รวม แม้ข้อความเรื่อง duration จะถูกต้องก็ตาม"
+      ],
+      "explanation": "ห้ามสรุปภาระ persistence จากจำนวน object หรือขนาดต่อ object เพียงอย่างเดียว สองชุดอาจมี volume รวมเท่ากันแต่ต่างทั้ง granularity และ access frequency ซึ่งเป็นคนละมิติในกรอบของสไลด์ และควรใช้ร่วมกับ requirements อื่นก่อนเลือกกลไก",
+      "source": {
+        "file": "ISAAD-8-2026.PDF",
+        "page": 12
+      },
+      "sourcePages": [
+        12,
+        19,
+        30
+      ]
+    },
+    {
+      "id": "e713-m8-02",
+      "module": 8,
+      "topic": "Repository กับ implementation หลายแหล่ง",
+      "stem": "AuditService ต้องค้นหลักฐานจากสองแหล่ง: ฐานเดิมใช้ JDBC พร้อม SQL ที่ทีมต้องการเก็บไว้ และคลังใหม่อ่านผ่าน external API การทดสอบกฎตัดสินหลักฐานต้องแทนทั้งสองแหล่งด้วยข้อมูลจำลองได้ โดยไม่แก้กฎธุรกิจ ข้อเสนอใดตอบเงื่อนไขทั้งการคง implementation เดิมและการแยก business logic ได้ดีที่สุด?",
+      "options": [
+        "คง JDBC สำหรับฐานเดิมและแยก API client สำหรับคลังใหม่; ให้ AuditService เลือกแหล่งและแปลงผลเอง",
+        "เปลี่ยนฐานเดิมเป็น ORM และคง API client สำหรับคลังใหม่; ถือว่า ORM ซ่อนทั้งสองแหล่งจาก Service แล้ว",
+        "ใช้ repository interface คืน object ของหลักฐาน; ทำ implementation ด้วย JDBC และ API ให้ Service แทนด้วย mock ได้",
+        "ใช้ repository interface รับคำค้นจาก Service; ให้ Service จัดการ ResultSet เพราะ Repository แปลงทุกแหล่งให้เอง"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "เป็นการแยก JDBC กับ API client ที่ทำได้จริงและคง SQL เดิมไว้ แต่ Service ยังรู้จักการเลือกกลไกและการแปลงผลของแต่ละแหล่ง จึงแยก business logic เพื่อ mock ผ่าน contract เดียวได้ไม่ชัดเท่า Repository",
+        "ORM ช่วย mapping ฐานเชิงสัมพันธ์ ไม่ได้ซ่อนการเข้าถึง external API จาก Service โดยตัวมันเอง และยังเปลี่ยน implementation ฐานเดิมโดยไม่ตอบเงื่อนไขเก็บ SQL เดิม",
+        "Repository เป็นตัวกลางเชิงโครงสร้างที่ implement ด้วย JDBC หรือ external API ได้ จึงรักษา SQL เดิมไว้ภายในและให้ Service พึ่ง contract ที่ส่ง object กลับ ซึ่งแทนด้วย mock ในการทดสอบได้",
+        "Repository ไม่ได้ให้ความสามารถแปลงทุกแหล่งอัตโนมัติ การให้ Service จัดการ ResultSet ยังเปิดเผยรายละเอียด JDBC และขัดกับเป้าหมายการซ่อนกลไกเข้าถึงข้อมูลจาก business logic"
+      ],
+      "explanation": "โจทย์ไม่ได้ต้องการแทน JDBC ด้วย ORM แต่ต้องการแยกผู้ที่รู้รายละเอียด data access Repository อยู่คนละมิติกับกลไก implementation จึงห่อทั้ง SQL เดิมและ external API ได้ และทำให้ทดสอบกฎธุรกิจผ่าน interface โดยไม่ผูกแหล่งจริง",
+      "source": {
+        "file": "ISAAD-8-2026.PDF",
+        "page": 17
+      },
+      "sourcePages": [
+        13,
+        15,
+        17,
+        20
+      ]
+    },
+    {
+      "id": "e713-m8-03",
+      "module": 8,
+      "topic": "การประกอบ JDBC และ ORM ตามข้อกำหนดต่างกัน",
+      "stem": "ระบบประมวลผลภาพมีงานสองส่วนใต้ Repository: Statistics ต้องให้ทีมควบคุม SQL และการแปลง row เองตามรายงานที่รับรองไว้ ส่วน CaseFile เปลี่ยนความสัมพันธ์ One-to-Many และข้อมูล object บ่อย จึงต้องการลดงานเขียน mapping และตรวจการเปลี่ยนแปลงด้วยมือ เมื่อเลือกกลไกตามความรับผิดชอบในสไลด์ แผนใดมีเหตุผลรองรับตรงทั้งสองงานที่สุด?",
+      "options": [
+        "ใช้ JDBC ทั้ง Statistics และ CaseFile; ทีมควบคุม SQL และเขียน mapping ของทั้งสองงานได้เอง",
+        "ใช้ JDBC สำหรับ Statistics และ ORM สำหรับ CaseFile; แบ่งงานควบคุม SQL กับงาน mapping ตามข้อกำหนด",
+        "ใช้ ORM สำหรับ Statistics และ JDBC สำหรับ CaseFile; ORM ให้เขียน row mapping เอง ส่วน JDBC ติดตาม object",
+        "ใช้ Repository แทน JDBC และ ORM ของทั้งสองงาน; Repository เป็นผู้สร้าง SQL และติดตาม object โดยตัวมันเอง"
+      ],
+      "correct": 1,
+      "shades": [
+        "เทา",
+        "ขาว",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "JDBC ใช้กับทั้งสองงานได้และให้ผู้พัฒนาควบคุม SQL/mapping เองจริง จึงตอบ Statistics แต่ยังทิ้งภาระ mapping และติดตามการเปลี่ยนแปลงของ CaseFile ไว้กับทีม ไม่ตรงเป้าลดงานส่วนนั้นเท่า ORM",
+        "Statistics ตรงกับ direct SQL และ manual row-to-object mapping ของ JDBC ส่วน CaseFile ตรงกับ ORM ที่ช่วย mapping ความสัมพันธ์และตรวจการเปลี่ยนแปลงของ object โดย Repository ยังทำหน้าที่ซ่อน data access ได้ตามเดิม",
+        "จัดความรับผิดชอบกลับด้าน: JDBC ในสไลด์ให้ผู้พัฒนาอ่าน ResultSet และ map เอง ส่วน ORM เป็นกลไกที่ช่วยจัดการ mapping ความสัมพันธ์และตรวจการเปลี่ยนแปลงของ object",
+        "Repository เป็นรูปแบบจัดโครงสร้างและซ่อน data access ไม่ใช่ตัวสร้าง SQL หรือกลไก change tracking โดยตัวมันเอง ความสามารถดังกล่าวขึ้นกับ implementation ที่อยู่ข้างหลัง"
+      ],
+      "explanation": "กลไกไม่จำเป็นต้องเป็นตัวเลือกเดียวครอบทั้งระบบ งานที่มี requirements ต่างกันใช้ implementation ต่างกันภายใต้ Repository ได้ ต้องจับความรับผิดชอบของ JDBC กับ ORM ให้ถูกก่อนเลือก และไม่ย้ายความสามารถ mapping ไปให้ Repository เพียงเพราะมันอยู่หน้าฐานข้อมูล",
+      "source": {
+        "file": "ISAAD-8-2026.PDF",
+        "page": 15
+      },
+      "sourcePages": [
+        13,
+        15,
+        17,
+        20,
+        30
+      ]
+    },
+    {
+      "id": "e713-m8-04",
+      "module": 8,
+      "topic": "แยก REST exposure ออกจาก microservice ownership",
+      "stem": "ศูนย์สื่อดิจิทัลมี GET/POST/PUT/DELETE ผ่าน HTTP อยู่แล้ว แต่ทั้งหมดเข้าโปรแกรมเดียวที่รวม business logic และข้อมูลไว้ร่วมกัน ทีมต้องปรับให้เป็น independent services ตามความหมายในสไลด์ พร้อมรับ event ระหว่างบริการผ่าน messaging ข้อเสนอใดแสดงการเปลี่ยนโครงสร้างที่เป็นหลักฐานตรงที่สุดว่าได้ทำตามเป้าหมาย?",
+      "options": [
+        "แยก URL ตามความสามารถงานโดยยังใช้ logic และ data ในโปรแกรมเดิม; ทำให้ขอบเขต HTTP ของแต่ละงานชัดขึ้น",
+        "แยก process ตาม GET/POST/PUT/DELETE โดยยังเรียกใช้ logic และข้อมูลที่อยู่ส่วนกลาง; จึงได้ independent services",
+        "แยกบริการให้ถือ logic และข้อมูลของตนพร้อม messaging; ต้องเปลี่ยนช่องทางนั้นเป็น REST จึงนับได้",
+        "แยกบริการให้ถือ logic และข้อมูลของตนพร้อม messaging; ใช้ REST เปิด functionality ให้ client ต่อได้"
+      ],
+      "correct": 3,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "การจัด URL ตามความสามารถช่วยทำขอบเขต HTTP ให้ชัดขึ้นได้จริง และเป็นงานออกแบบ REST ที่เกี่ยวข้อง แต่ยังไม่มีการเปลี่ยน ownership ของ logic/data หรือแยกเป็น independent services ตามเป้าหมาย",
+        "การแยกตาม HTTP verbs และแยก process ไม่ได้เป็นหลักฐานเพียงพอของ independent services ตามสไลด์ เมื่อยังคง logic และ data ส่วนกลางไว้ร่วมกัน จึงสรุปเช่นนั้นไม่ได้",
+        "การให้แต่ละบริการถือ logic/data ของตนตรงกับ microservices แต่ข้อสรุปว่าต้องเปลี่ยน messaging เป็น REST ผิด เพราะสไลด์อนุญาตการสื่อสารผ่าน REST หรือ messaging",
+        "แสดงการแบ่งความเป็นเจ้าของ business logic/data และการเป็นบริการแยกกัน ส่วน messaging เป็นวิธีสื่อสารที่สไลด์รองรับ ขณะที่ REST ยังคงใช้เปิด functionality ให้ client ได้"
+      ],
+      "explanation": "HTTP methods เป็นหลักฐานของการเปิด functionality แบบ REST แต่ยังไม่พอพิสูจน์การแบ่ง application เป็น microservices ต้องดูความเป็นอิสระและการถือ logic/data ของแต่ละบริการด้วย การใช้ messaging ระหว่างบริการไม่ขัดกับกรอบ microservices ในบทนี้",
+      "source": {
+        "file": "ISAAD-8-2026.PDF",
+        "page": 23
+      },
+      "sourcePages": [
+        21,
+        22,
+        23,
+        30
+      ]
+    }
+  ]
+}

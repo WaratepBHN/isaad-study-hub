@@ -1,0 +1,525 @@
+{
+  "questions": [
+    {
+      "id": "e713-m11-01",
+      "module": 11,
+      "topic": "เจ้าของกฎโดเมนเมื่อมีหลายช่องทางเรียกใช้",
+      "stem": "ระบบจองเครื่องทดลองมีทั้งคำขอจากเว็บและงานนำเข้าไฟล์ ทั้งสอง flow โหลด ReservationPlan และต้องตรวจเวลาทับซ้อนก่อนเพิ่มการจอง Repository มี unique constraint กันเลขคำขอซ้ำอยู่แล้ว หากแบ่ง boundary/control/entity ตาม Module 11 ข้อเสนอใดกำหนดเจ้าของการตรวจเวลาทับซ้อนได้เหมาะที่สุด?",
+      "options": [
+        "ให้ Repository ใช้ unique constraint ป้องกันเลขคำขอซ้ำ และรายงานความขัดแย้งที่เกิดระหว่างบันทึกข้อมูล",
+        "ให้แต่ละ Boundary ตรวจเวลาทับซ้อนจากข้อมูลนำเข้า และส่งเฉพาะคำขอที่ผ่านกฎไปให้ Service บันทึก",
+        "ให้ ReservationPlan ตรวจเวลาทับซ้อนผ่าน canReserve(slot) และให้ Service ประสานการเรียกก่อนบันทึก",
+        "ให้ EquipmentAdapter ตรวจเวลาทับซ้อนของผู้จอง และส่ง slot ที่อนุมัติแล้วกลับให้ Service บันทึกข้อมูล"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "เป็นกลไก persistence ที่ถูกต้องสำหรับคำขอซ้ำ แต่โจทย์มี constraint นี้แล้ว และเลขคำขอไม่ซ้ำยังมีเวลาทับซ้อนกันได้ จึงยังไม่ระบุเจ้าของกฎที่ถาม",
+        "Boundary รับและตรวจคำขอได้ แต่การกระจายกฎเวลาทับซ้อนไปแต่ละช่องทางขัดการให้ entity เป็นเจ้าของ domain rules ตามการแบ่งความรับผิดชอบในบท",
+        "เทียบกับ Schedule.canAdd ในสไลด์ ReservationPlan เป็นผู้ถือสถานะและกฎ ส่วน Service ประสาน flow ทั้งสองช่องทางจึงใช้กฎเจ้าของเดียวกัน",
+        "Adapter เป็น external boundary ที่ซ่อนรายละเอียดภายนอก ไม่ใช่เจ้าของแผนการจองของผู้ใช้ การให้มันตัดสินกฎใน ReservationPlan สลับความรับผิดชอบกัน"
+      ],
+      "explanation": "ความต่างอยู่ที่การตรวจรูปแบบคำขอ กฎโดเมน และข้อจำกัด persistence สไลด์แยกสามงานนี้ โดย entity เป็นเจ้าของกฎ และ control ประสานการทำงาน การมี unique constraint ไม่ได้ย้ายกฎเวลาทับซ้อนไปไว้ที่ Repository",
+      "source": {
+        "file": "ISAAD-11-2026.PDF",
+        "page": 36
+      },
+      "sourcePages": [
+        10,
+        14,
+        28,
+        31,
+        36
+      ]
+    },
+    {
+      "id": "e713-m11-02",
+      "module": 11,
+      "topic": "Interface เป็นจุดประสานของ flow ข้าม subsystem",
+      "stem": "ใน use-case realization การออกใบรับรอง Service เรียก IEligibility.check(id) แล้วแยกเพียงผ่าน/ไม่ผ่าน ทีมภายในกำลังเปลี่ยนฐานข้อมูล แต่พบว่าแหล่งข้อมูลอาจ timeout ซึ่ง caller ต้องแจ้งให้ลองใหม่โดยไม่สร้างใบรับรอง ขณะนี้ contract ยังไม่ระบุ failure นี้ สิ่งใดควรตกลงร่วมกันก่อนแยกทีมพัฒนาต่อ?",
+      "options": [
+        "เพิ่ม unavailable ใน contract ของ IEligibility และเพิ่ม error flow ของ caller ที่แยกจากผลไม่ผ่านเกณฑ์",
+        "ระบุ timeout ในเอกสารภายในของ EligibilityAdapter และให้ caller อนุมาน failure จากผลไม่ผ่านเกณฑ์",
+        "วาด mapping ระหว่าง records กับผลตรวจภายใน subsystem และซ่อนรายละเอียดฐานข้อมูลไว้หลัง adapter",
+        "เพิ่มคำสั่ง query ฐานข้อมูลใน realization ของ caller และให้ Service จัดการ timeout แทน subsystem"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "ดำ",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "Failure ที่ caller ต้องจัดการต้องเป็นส่วนของ interface contract และ flow ข้าม boundary ใช้ interface เป็น synchronization point ได้แม้รายละเอียดฐานข้อมูลยังเปลี่ยนอยู่",
+        "การซ่อนรายละเอียดฐานข้อมูลถูกทิศทาง แต่ซ่อนความต่างระหว่าง unavailable กับผลไม่ผ่านเกณฑ์ไม่ได้ เพราะ caller มีพฤติกรรมตอบสนองสองกรณีต่างกัน",
+        "เป็นงานภายใน subsystem ที่ควรทำและช่วย encapsulation แต่ยังไม่ตกลง observable failure ที่ทั้ง provider และ caller ต้องใช้ร่วมกันในสถานการณ์นี้",
+        "การดึง query เข้า realization ของ caller เปิดเผย internals และผูก caller กับฐานข้อมูล แทนการกำหนด failure ผ่าน interface ที่เป็นจุดประสาน"
+      ],
+      "explanation": "การทำงานคู่ขนานอาศัย contract ที่ตกลงกันตรง boundary ไม่ได้อาศัยการรู้ schema ร่วมกัน สไลด์ให้ระบุ errors ที่ caller ต้องจัดการ และแยก unavailable ออกจากผลลัพธ์เชิงธุรกิจ",
+      "source": {
+        "file": "ISAAD-11-2026.PDF",
+        "page": 23
+      },
+      "sourcePages": [
+        8,
+        11,
+        17,
+        18,
+        23,
+        27
+      ]
+    },
+    {
+      "id": "e713-m11-03",
+      "module": 11,
+      "topic": "ผลลัพธ์เมื่อการเขียนรายการที่สองใน transaction ล้มเหลว",
+      "stem": "ระบบเปิดสิทธิ์ใช้งานบันทึก Entitlement กับ InvoiceRequest ในฐานเดียวกันภายใน UnitOfWork เดียวตามแบบ transaction ของสไลด์ save(Entitlement) สำเร็จ แต่ add(InvoiceRequest) ล้มเหลวก่อน commit และ rollback สำเร็จแล้ว API ยังไม่ได้ส่งผลกลับ ข้อใดเป็นการตอบสนองต่อ trace นี้ที่ตรง boundary ดังกล่าว?",
+      "options": [
+        "ตอบเปิดสิทธิ์สำเร็จแก่ caller แล้วให้ worker สร้าง InvoiceRequest ทดแทนจาก Entitlement ที่บันทึกไว้",
+        "ตอบรับคำขอแก่ caller แล้วให้ Billing ส่งผลล้มเหลวกลับมาเพื่อย้อน transaction ที่เพิ่ง rollback ไป",
+        "หลัง commit สำเร็จให้ worker retry รายการ InvoiceRequest ที่ pending โดยคง requestId เดิมเพื่อกู้คืนการส่ง",
+        "ตอบเปิดสิทธิ์ล้มเหลวแก่ caller เพราะ rollback ครอบคลุมทั้ง Entitlement และ InvoiceRequest ที่เขียน"
+      ],
+      "correct": 3,
+      "shades": [
+        "ดำ",
+        "ดำ",
+        "เทา",
+        "ขาว"
+      ],
+      "reasons": [
+        "save สำเร็จก่อน commit ไม่ได้ทำให้ Entitlement คงอยู่หลัง rollback สมมติฐานว่า worker จะอ่าน Entitlement ที่คงอยู่จึงไม่ตรง trace และละเมิด all-or-nothing",
+        "ผลธุรกรรมในฐานข้อมูลทราบแล้วว่า rollback จึงต้องตอบตามนั้น Remote Billing ไม่ใช่ผู้ย้อน transaction เดิมและไม่มี accepted transaction ให้ยืนยัน",
+        "เป็นกฎ recovery ที่ถูกต้องภายใต้เงื่อนไขหลัง commit ซึ่งตัวเลือกระบุไว้ แต่ trace นี้ rollback แล้ว จึงไม่มี InvoiceRequest จากธุรกรรมนี้ให้ส่งต่อ และกฎดังกล่าวไม่ใช่การตอบผลของ trace ปัจจุบัน",
+        "การเขียนสองรายการอยู่ใน transaction เดียวและ rollback สำเร็จ ผลจึงเป็นล้มเหลวทั้งหน่วย ต้องแจ้ง caller หลังทราบ outcome ตามจริง"
+      ],
+      "explanation": "จุดชี้ขาดคือ save ครั้งแรกยังอยู่ก่อน commit และ rollback สำเร็จ การออกแบบให้บันทึก intent คู่กับข้อมูลโดเมนมีไว้ให้คงอยู่ทั้งคู่หรือไม่คงอยู่ทั้งคู่ Recovery หลัง commit ใช้แทน rollback ที่เกิดขึ้นแล้วไม่ได้",
+      "source": {
+        "file": "ISAAD-11-2026.PDF",
+        "page": 32
+      },
+      "sourcePages": [
+        29,
+        31,
+        32,
+        33,
+        35
+      ]
+    },
+    {
+      "id": "e713-m11-04",
+      "module": 11,
+      "topic": "Remote acceptance ที่คำตอบสูญหายหลัง local commit",
+      "stem": "ฐานข้อมูลท้องถิ่น commit การสมัครสมาชิกและ BillingRequest R72 แล้ว Worker ส่ง R72 ไป Billing ซึ่งรับคำขอสำเร็จ แต่คำตอบสูญหายระหว่างทาง Worker จึงยังเห็นสถานะ pending เมื่อจะกู้คืนการส่งครั้งนี้ การกระทำใดรักษาความหมายของ transaction และป้องกันผลซ้ำตามแบบใน Module 11?",
+      "options": [
+        "สร้าง requestId ใหม่สำหรับการส่งรอบถัดไป และให้ Billing แยกคำขอรอบนี้จาก R72 ที่อาจได้รับแล้ว",
+        "ส่งซ้ำโดยคง requestId R72 ไว้ตามเดิม และให้ Billing deduplicate คำขอที่อาจรับสำเร็จไปแล้ว",
+        "นับอายุของ R72 ในรายการ pending ต่อไป และติดตามคำขอที่ค้างอยู่เพื่อให้ตรวจพบ recovery ที่ล่าช้า",
+        "ย้อน transaction การสมัครสมาชิกที่ commit แล้ว และให้ผลของการส่งรอบถัดไปตัดสินการ commit ใหม่"
+      ],
+      "correct": 1,
+      "shades": [
+        "ดำ",
+        "ขาว",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "เปลี่ยน requestId ทำให้ Billing มองเป็นคำขอใหม่ จึงตัดความเชื่อมโยงกับการส่ง R72 ที่รับสำเร็จแต่คำตอบหายและเสี่ยงสร้างผลซ้ำ",
+        "ผู้ส่งไม่ทราบ remote outcome แต่ local transaction commit แล้ว การ retry ด้วย ID เดิมร่วมกับ deduplication เป็นกลไก recovery ที่สไลด์กำหนด",
+        "การ monitor pending requests เป็นส่วนที่ถูกต้องของ recovery และช่วยพบคำขอค้าง แต่โจทย์ถามการกู้คืนการส่งครั้งนี้ การติดตามอย่างเดียวยังไม่ทำให้ส่งสำเร็จ",
+        "Remote Billing อยู่นอก transaction ฐานข้อมูลท้องถิ่น การไม่ได้รับคำตอบไม่ทำให้ transaction ที่ commit แล้วกลับไปเป็น transaction ที่ยังรอตัดสินใจ"
+      ],
+      "explanation": "ต้องแยก local outcome ที่ทราบแล้วออกจาก remote outcome ที่ผู้ส่งยังไม่ทราบ การรับคำขอซ้ำโดยใช้ ID เดิมจึงสำคัญกว่าการนับจำนวนครั้งที่เรียก และต้องออกแบบ deduplication ฝั่ง Billing ประกอบด้วย",
+      "source": {
+        "file": "ISAAD-11-2026.PDF",
+        "page": 33
+      },
+      "sourcePages": [
+        8,
+        27,
+        31,
+        33,
+        35
+      ]
+    },
+    {
+      "id": "e713-m12-01",
+      "module": 12,
+      "topic": "Error ownership ของข้อมูลผิดรูปแบบหลัง query สำเร็จ",
+      "stem": "CatalogFacade ตรวจ semesterId ผ่านแล้ว Adapter query สำเร็จและได้ 12 records แต่ record หนึ่งมีชนิดข้อมูล CRS_ID ผิดจากที่ Mapper แปลงได้ กรณีนี้ไม่ใช่ timeout และไม่ใช่ไม่มี offerings หากใช้ error ownership ตามสไลด์ ข้อใดตรงกับ failure ที่เกิดขึ้นขณะนี้?",
+      "options": [
+        "เมื่อ query timeout ให้ Repository Adapter แปลเป็น CatalogUnavailable เพื่อซ่อน driver exception จาก caller",
+        "CatalogFacade ส่ง InvalidSemester กลับให้ caller เพราะ record ที่แปลงไม่ได้ทำให้ semesterId กลายเป็น invalid",
+        "Mapper ร่วมกับ Facade จัด controlled failure พร้อม internal logging เพื่อไม่ให้รายละเอียด record รั่วสู่ caller",
+        "Repository ร่วมกับ Facade คืน empty list ให้ caller เพราะ record ที่แปลงไม่ได้เทียบได้กับไม่มี matching offerings"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "เป็น owner และ observable error ที่ถูกสำหรับ database timeout แต่โจทย์ระบุว่า query สำเร็จ ความผิดรูปแบบเกิดในขั้น representation mapping จึงไม่ใช่แถวนี้ในตาราง",
+        "semester identifier ผ่านการตรวจแล้ว Record format ไม่ตรงคาดเป็นคนละ failure กับ invalid semester ซึ่ง Facade ต้องบล็อกก่อน query",
+        "ตรงแถว unexpected record format ในตารางหน้า 23 ซึ่งกำหนด Mapper + Facade เป็น owner และให้ controlled failure พร้อม internal logging",
+        "Empty list เป็น valid success เมื่อไม่มี matching offerings การเปลี่ยน record เสียให้เป็น success ว่างทำให้ความหมาย contract ผิดไป"
+      ],
+      "explanation": "ต้องระบุ failure จากจุดที่เกิดจริง ไม่ใช่รวมทุกปัญหาเป็น error เดียว ขั้น validate identifier, query และ mapping มีเจ้าของและ observable outcomes ต่างกันตามตาราง error ownership",
+      "source": {
+        "file": "ISSAD-12-2026.PDF",
+        "page": 23
+      },
+      "sourcePages": [
+        16,
+        18,
+        21,
+        23,
+        25
+      ]
+    },
+    {
+      "id": "e713-m12-02",
+      "module": 12,
+      "topic": "หลักฐานการห่อ persistence และ DTO contract",
+      "stem": "ทีมเปลี่ยน Catalog จาก JDBC เป็น ORM โดยคงพฤติกรรม getCourseOfferings ไว้ ผู้ตรวจต้องเลือกหลักฐานที่ตอบตรงที่สุดว่า client ถูกแยกจาก persistence representation ตาม Module 12 ข้อใดรองรับข้อสรุปนี้โดยตรงที่สุด?",
+      "options": [
+        "Client อ้าง DTO และ stable errors จาก contract เท่านั้น ส่วน Mapper ภายในเปลี่ยน input จาก records เป็น ORM data",
+        "Adapter integration tests ยืนยัน query และ timeout ของ ORM ใหม่ ส่วน unit tests ยืนยันการแปลงข้อมูลภายใน subsystem",
+        "Client รับ ORM entity ผ่าน type alias ชื่อ DTO เหมือนเดิม จึงนับว่า contract แยกจาก persistence representation แล้ว",
+        "Client กับ Adapter อ้าง shared package ที่รวม driver types เดียวกัน จึงนับว่าทั้งคู่พึ่ง public contract ที่มั่นคงแล้ว"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "หลักฐานแสดง boundary โดยตรงว่า client เห็น stable data types ส่วน representation ที่เปลี่ยนอยู่ภายใน ตรงเป้าหมายให้ public contract อยู่รอดเมื่อเปลี่ยน Repository/ORM",
+        "เป็นการทดสอบที่มีประโยชน์และตรงชนิด evidence ตามหน้า 36 แต่ query/mapping ผ่านยังไม่พิสูจน์ว่า client ไม่ import หรือรับ persistence types",
+        "การตั้งชื่อ alias ไม่เปลี่ยนสิ่งที่ client ได้รับ ถ้ายังเป็น ORM entity ก็ยังผูกกับ persistence representation และไม่ใช่การ map สู่ DTO ที่ห่อรายละเอียด",
+        "shared package ไม่ทำให้ทุก type ในนั้นกลายเป็น stable contract การแชร์ driver types กระจาย technology coupling ไปยัง client"
+      ],
+      "explanation": "การตรวจ behavior ของ adapter กับการตรวจการห่อข้อมูลตอบคนละด้าน DTO ต้องมี field และความหมายสำหรับ client โดยซ่อน driver/ORM records ไว้ภายใน ชื่อ DTO อย่างเดียวไม่ใช่หลักฐานของ encapsulation",
+      "source": {
+        "file": "ISSAD-12-2026.PDF",
+        "page": 24
+      },
+      "sourcePages": [
+        22,
+        24,
+        25,
+        33,
+        34,
+        36
+      ]
+    },
+    {
+      "id": "e713-m12-03",
+      "module": 12,
+      "topic": "Required contracts กับวงจรใน import graph",
+      "stem": "ตรวจ build graph พบ BillingImpl → ProfileContract → SharedTypes → BillingImpl โดย ProfileContract ใช้เพียง ContactId ส่วน SharedTypes นำเข้า BillingImpl เพื่ออ้าง BillRecord ทีมต้องตัด cycle ที่พบ พร้อมคงการพึ่ง capability ผ่าน public contract ข้อใดแก้ dependency เส้นปัญหานี้ได้ตรงที่สุด?",
+      "options": [
+        "ให้ ProfileContract นำเข้า BillStore จาก BillingImpl โดยตรง เพื่อให้กราฟเลิกอ้อมผ่าน SharedTypes ก่อนย้อนกลับ",
+        "เพิ่ม architecture check ตรวจ build/import graph เพื่อให้ตรวจพบ cycle นี้ก่อนเผยแพร่ implementation",
+        "ให้ ProfileContract คืน BillRecord จาก BillingImpl แทน ContactId เพื่อให้ client ใช้ record ได้โดยไม่ต้อง map ข้อมูล",
+        "แยก ContactId ไป contract package แคบที่ไม่ import implementation แล้วให้ ProfileContract อ้าง package ใหม่นั้น"
+      ],
+      "correct": 3,
+      "shades": [
+        "ดำ",
+        "เทา",
+        "ดำ",
+        "ขาว"
+      ],
+      "reasons": [
+        "ทำให้เส้นย้อนกลับเข้า implementation ตรงขึ้น แต่ BillingImpl ยังพึ่ง ProfileContract และ ProfileContract ย้อนพึ่ง BillingImpl จึงยังเป็น cycle",
+        "การตรวจ build/import graph และใช้ architecture check เป็นงานที่สไลด์รองรับและตรวจพบ cycle นี้ได้จริง แต่การเพิ่มตัวตรวจยังไม่ได้ตัดเส้น dependency ที่ย้อนเข้า BillingImpl",
+        "ProfileContract จะยิ่งพึ่ง BillingImpl ที่เป็น persistence implementation วงจร BillingImpl → ProfileContract → BillingImpl จึงยังอยู่ และ database record รั่วผ่าน contract",
+        "ProfileContract ใช้เพียง ContactId การตัด dependency ไป SharedTypes ที่ดึง BillingImpl กลับเข้ามาจึงตัดวงจรได้ โดยยังอ้าง public contract type ที่แคบพอดี"
+      ],
+      "explanation": "ต้องอ่านทิศของ graph ไม่ใช่ตัดสินจากชื่อ Shared หรือ Contract เส้นที่ต้องตัดคือทางกลับสู่ implementation สไลด์ให้ shared contract types แคบ ตรวจ coupling และตรวจ build/import graph เพื่อไม่ให้เกิด cycles",
+      "source": {
+        "file": "ISSAD-12-2026.PDF",
+        "page": 33
+      },
+      "sourcePages": [
+        7,
+        8,
+        33,
+        34
+      ]
+    },
+    {
+      "id": "e713-m12-04",
+      "module": 12,
+      "topic": "จุดตอบ accepted กับความรับผิดชอบ delivery",
+      "stem": "คำขอออกบิลใหม่ผ่าน findByRequestId แล้วได้ absent ดึง contact และสร้าง bill สำเร็จ Gateway ส่งบิลกำลังปิดปรับปรุง แต่ BillStore ยังเขียนได้ ทีมต้องเลือกจุดที่ออก BillingReceipt แบบ accepted ได้ตาม teaching design โดยไม่อ้างว่า delivery สำเร็จ ข้อใดตรงจุดนั้น?",
+      "options": [
+        "หลัง createBill คืน object แล้ว จึงตอบ accepted จาก object ในหน่วยความจำก่อนให้ worker บันทึก intent ในภายหลัง",
+        "หลัง saveIntentAtomically ทำ durable acceptance แล้ว จึงตอบ accepted ก่อนที่ worker จะส่งผ่าน gateway",
+        "เมื่อพบรายการ Pending แล้ว จึงติดตาม Pending, Delivered และ Failed เพื่อให้เห็นผลการส่งของ worker",
+        "หลัง gateway รับ connection แล้ว จึงตอบ accepted และให้ worker บันทึก intent เมื่อได้ผลการส่งกลับมา"
+      ],
+      "correct": 1,
+      "shades": [
+        "ดำ",
+        "ขาว",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "Bill object ที่สร้างใน memory ยังไม่ใช่ durable acceptance การตอบ accepted ก่อนบันทึก intent จึงเลื่อนความทนทานที่ contract อาศัยไปหลังการตอบ",
+        "หน้า 29 ระบุให้ตอบหลัง durable acceptance โดย BillStore ส่วน worker จัด delivery แยกต่างหาก Gateway ยังส่งไม่ได้จึงไม่ขัด accepted ที่มีความหมายนี้",
+        "การติดตามสถานะเหล่านี้ถูกต้องตามหน้า 30 และใช้กับ recovery แต่เป็นเรื่องการติดตาม delivery ไม่ได้ระบุจุดที่ facade รับคำขออย่างถาวรและตอบ receipt ได้",
+        "การเปิด connection ไม่ได้แทน atomic storage และสลับลำดับที่สไลด์ให้บันทึก intent ก่อนตอบ accepted โดยให้ worker ส่งภายหลัง"
+      ],
+      "explanation": "BillingReceipt ในบทนี้ยืนยัน accepted request พร้อม status จุดแยกสำคัญอยู่ที่ intent ถูกบันทึกอย่างถาวรแล้วหรือยัง ส่วนการส่งจริงเป็นงานของ worker ซึ่งอาจยัง Pending หรือเกิด Failed ได้",
+      "source": {
+        "file": "ISSAD-12-2026.PDF",
+        "page": 29
+      },
+      "sourcePages": [
+        28,
+        29,
+        30,
+        31
+      ]
+    },
+    {
+      "id": "e713-m12-05",
+      "module": 12,
+      "topic": "Idempotency เมื่อจำนวนเงินเท่ากันแต่ currency ต่างกัน",
+      "stem": "Billing รับ R81 ของ student S9 เป็น Money(120.00, THB) อย่างถาวรแล้ว แต่ client ไม่ได้รับ receipt จึงส่ง R81 อีกครั้งเป็น Money(120.00, USD) โดย studentId เดิม และ bill แรกยัง Pending ต้องใช้กฎ repeated request ของสไลด์กับการเรียกครั้งที่สองอย่างไร?",
+      "options": [
+        "เมื่อ ID และ payload ตรงกันให้คืน receipt เดิมตาม contract โดยไม่สร้าง bill ใบที่สองจากการส่งคำขอเดิมซ้ำ",
+        "คืน receipt เดิมให้ requestId เดิมได้เลย เพราะจำนวนแบบ decimal เท่ากันและ bill ยังไม่ได้ส่งจริง",
+        "ตอบ conflict สำหรับ payload ที่เปลี่ยนไป เพราะ currency เป็นส่วนของ Money แม้จำนวนแบบ decimal เท่ากัน",
+        "แทน intent เดิมด้วย payload รอบล่าสุดได้ เพราะสถานะ Pending ยังไม่ถือว่า Billing รับคำขออย่างถาวร"
+      ],
+      "correct": 2,
+      "shades": [
+        "เทา",
+        "ดำ",
+        "ขาว",
+        "ดำ"
+      ],
+      "reasons": [
+        "เป็นกฎที่ถูกเมื่อ ID และ payload ตรงกัน และเป็นทางที่ใช้เมื่อคำตอบหาย แต่กรณีนี้ currency เปลี่ยน จึงเข้าเงื่อนไข conflict แทน",
+        "Money ประกอบด้วย decimal amount และ currency จำนวนเท่ากันจึงไม่พอจะถือว่า payload เหมือนเดิม สถานะ Pending ไม่ยกเว้นกฎ conflict",
+        "requestId เดิมแต่ payload ต่างต้อง conflict โดย currency เป็นส่วนหนึ่งของ input type ตาม contract จึงต้องนับการเปลี่ยน THB เป็น USD ด้วย",
+        "Pending เป็นสถานะ delivery ของคำขอที่รับแล้ว ไม่ได้แปลว่าแก้ intent ที่รับอย่างถาวรได้ และการนำ ID เดิมมาใช้กับ payload ต่างขัด contract"
+      ],
+      "explanation": "การตัดสิน repeated request ต้องตรวจทั้ง ID และความหมายของ payload ไม่ใช่ดูเพียงจำนวนเงินหรือว่าส่งจริงแล้วหรือยัง Receipt ที่หายไม่ได้เปิดทางให้ payload ใหม่ใช้ ID เดิม",
+      "source": {
+        "file": "ISSAD-12-2026.PDF",
+        "page": 28
+      },
+      "sourcePages": [
+        28,
+        29,
+        30
+      ]
+    },
+    {
+      "id": "e713-m13-01",
+      "module": 13,
+      "topic": "Operation contract, method และ classifier scope",
+      "stem": "ทุก object ของ RateBook มี public operation quote(request: QuoteRequest): Money แบบ instance เดิมทีมคำนวณราคาด้วยสูตรใหม่จะเปลี่ยนไปเรียก LookupTable โดยคง signature และ observable behavior เดิม ผู้พัฒนาเสนอขีดเส้นใต้ quote เพราะทุก object ใช้อัลกอริทึมเดียวกัน ข้อใดระบุการปรับ class design สำหรับการเปลี่ยนครั้งนี้ได้เหมาะที่สุด?",
+      "options": [
+        "ปรับ method description ให้ใช้ LookupTable โดยคง instance operation; อัลกอริทึมร่วมไม่ได้กำหนด classifier scope",
+        "ทบทวนการส่ง QuoteRequest ว่าเป็น by-value หรือ by-reference; parameter description ควรระบุความหมายให้ชัดเจน",
+        "ขีดเส้นใต้ quote ให้เป็น classifier operation โดยคง public visibility; การใช้ขั้นตอนร่วมทำให้มี operation เดียวต่อ class",
+        "เพิ่ม LookupTable เป็น parameter ของ quote เพื่อส่ง object ที่ method ใช้; ถือว่า signature เดิมคงอยู่เพราะ return type ยังเป็น Money"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "Method ระบุอัลกอริทึมและ objects/operations ที่ใช้ ส่วน scope ระบุสมาชิกระดับ instance หรือ classifier การเปลี่ยนวิธีคำนวณโดยคง contract จึงไม่ใช่เหตุให้เปลี่ยน scope",
+        "การทบทวน parameter passing และความหมาย parameter เป็นงานที่ถูกตามแนวทาง operation signatures แต่ไม่ตอบการเปลี่ยน implementation และข้อเสนอเรื่องขีดเส้นใต้ที่โจทย์ให้ตรวจ",
+        "การใช้อัลกอริทึมเดียวกันไม่ได้ทำให้ operation ที่กำหนดเป็น instance กลายเป็น classifier member ขีดเส้นใต้สื่อ scope ไม่ได้สื่อการใช้ method body คล้ายกัน",
+        "การเพิ่ม parameter เปลี่ยน operation signature แม้ return type ยังคงเดิม ส่วนการเปลี่ยนอัลกอริทึมภายใต้ signature ที่กำหนดต้องอธิบายใน method description"
+      ],
+      "explanation": "Operation ระบุบริการและ signature ส่วน method อธิบายวิธี implement LookupTable เป็นรายละเอียดของ method ภายใต้ signature เดิม การเพิ่ม parameter ย่อมเปลี่ยน signature แม้ return type คงเดิม และการใช้อัลกอริทึมร่วมไม่ได้ทำให้ operation กลายเป็น classifier scope",
+      "source": {
+        "file": "ISAAD-13-2026.PDF",
+        "page": 16
+      },
+      "sourcePages": [
+        9,
+        10,
+        11,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "id": "e713-m13-02",
+      "module": 13,
+      "topic": "อ่าน event, guard และ action จาก transition",
+      "stem": "Statechart ของ ExportJob มี transition จาก Queued ไป Running เขียนว่า start(user) [quota > 0] / quota = quota - 1 และใน Running มี do/ streamRows ขณะนี้อยู่ Queued, quota = 0 และได้รับ start(user) โดยไม่มี transition อื่น ข้อใดอธิบายผลของ event ครั้งนี้ได้ตรง syntax และเงื่อนไขที่ให้?",
+      "options": [
+        "transition เริ่มก่อนเพื่อลด quota แล้วจึงตรวจ guard; หาก quota ไม่พอให้ย้อนกลับมายัง Queued ภายหลัง",
+        "event start(user) ถูกใช้เป็น action ของ Running; guard quota > 0 จึงกำหนดว่าจะขัดจังหวะ streamRows ได้หรือไม่",
+        "streamRows เป็น activity ที่ใช้เวลาและขัดจังหวะได้; ส่วนการลด quota เป็น action ที่ติดอยู่กับ transition",
+        "guard เป็นเท็จจึงไม่ใช้ transition ไป Running; action ลด quota และ activity ของ Running จึงยังไม่เริ่มทำงาน"
+      ],
+      "correct": 3,
+      "shades": [
+        "ดำ",
+        "ดำ",
+        "เทา",
+        "ขาว"
+      ],
+      "reasons": [
+        "วงเล็บเหลี่ยมเป็นเงื่อนไขสำหรับ transition ไม่ใช่ post-check หลัง action จึงไม่เริ่ม transition แล้วลด quota เพื่อค่อยตัดสินว่าจะย้อนกลับ",
+        "start(user) เป็น event บน transition ไม่ใช่ action ของ Running ส่วน guard กำกับการใช้ transition ไม่ได้กำหนด interruptibility ของ activity",
+        "จำแนก activity และ transition action ได้ถูกตามหน้า 18 และ 22 แต่โจทย์ถามผลเมื่อ event มาถึงขณะที่ guard เป็นเท็จ จึงยังไม่ได้ตัดสินว่า transition ใช้ได้หรือไม่",
+        "รูป event [guard] / action กำหนดให้เงื่อนไขผ่านก่อนใช้ transition เมื่อ quota เป็นศูนย์จึงไม่เข้าสู่ Running ผ่านเส้นนี้ และไม่เริ่ม action/activity ที่ระบุ"
+      ],
+      "explanation": "ต้องอ่านทั้ง syntax และค่าปัจจุบัน การมี event ตรงชื่อยังไม่พอเมื่อ transition มี guard ส่วน do activity เป็นพฤติกรรมใน state เป้าหมาย จึงไม่เริ่มเพียงเพราะ event มาถึง state ต้นทาง",
+      "source": {
+        "file": "ISAAD-13-2026.PDF",
+        "page": 18
+      },
+      "sourcePages": [
+        18,
+        21,
+        22
+      ]
+    },
+    {
+      "id": "e713-m13-03",
+      "module": 13,
+      "topic": "Map พฤติกรรมตาม state กลับสู่ method",
+      "stem": "Review พบ statechart ของ Parcel ให้ reroute(destination) เปลี่ยนปลายทางได้เฉพาะก่อน Dispatched แต่ class มี operation นี้อยู่แล้วและ method กลับเปลี่ยนปลายทางได้ทุก state ทีมยืนยันว่าจะคง statechart นี้ ข้อใดแก้ความไม่สอดคล้องที่พบได้ตรงงาน map statechart กลับสู่ class?",
+      "options": [
+        "เปลี่ยน reroute เป็น private operation เพื่อให้ state Dispatched ไม่สามารถมองเห็นบริการนี้จากภายนอก class ได้ตามปกติ",
+        "ปรับ method ของ reroute ให้ใช้ข้อมูล state ในการตัดสินใจ เพื่อไม่เปลี่ยนปลายทางเมื่อเข้าสู่ Dispatched แล้ว",
+        "เพิ่มคำอธิบายความหมาย destination ในเอกสาร operation เพื่อให้ client ส่งค่าปลายทางที่มีความหมายชัดเจน",
+        "แยก statechart ออกจาก implementation specification เพื่อให้ method ใช้กฎเดียวกันได้โดยไม่ผูกกับ lifecycle"
+      ],
+      "correct": 1,
+      "shades": [
+        "ดำ",
+        "ขาว",
+        "เทา",
+        "ดำ"
+      ],
+      "reasons": [
+        "Visibility ควบคุมผู้เข้าถึง ไม่ใช่เงื่อนไข state การเปลี่ยนเป็น private ไม่ได้ทำให้ method ที่ถูกเรียกภายในหยุดแก้ปลายทางใน Dispatched และยังเปลี่ยนบริการของ client",
+        "หน้า 25 ให้ปรับ methods ด้วย state-specific information เมื่อ operation มีแล้วแต่ behavior ผิด state จึงต้องให้ implementation ใช้เงื่อนไขตาม lifecycle ที่ตกลง",
+        "การอธิบาย parameter เป็นสิ่งที่ควรทำตามหน้า 10–11 แต่ปลายทางที่มีความหมายถูกต้องก็ยังแก้ผิดช่วง lifecycle ได้ จึงไม่แก้ mismatch ที่โจทย์ระบุ",
+        "สไลด์ให้ statechart เชื่อมกลับกับ operations, methods และ attributes ไม่ได้แยกออกเพื่อให้ implementation ทำพฤติกรรมที่ขัดกับ lifecycle ได้"
+      ],
+      "explanation": "การเพิ่ม operation จาก event เป็นเพียงส่วนหนึ่งของการ map กลับ เมื่อ operation มีแล้วต้องตรวจ method ว่าทำตามข้อจำกัดของ state จริงหรือไม่ การแก้ visibility หรือเอกสาร parameter ไม่ทดแทนกฎ state-specific behavior",
+      "source": {
+        "file": "ISAAD-13-2026.PDF",
+        "page": 25
+      },
+      "sourcePages": [
+        10,
+        12,
+        16,
+        25,
+        26,
+        59,
+        60
+      ]
+    },
+    {
+      "id": "e713-m13-04",
+      "module": 13,
+      "topic": "Delegation กับ structural และ parameter visibility",
+      "stem": "ReportWriter ต้อง reuse ClosedFormatter ซึ่งแก้ source ไม่ได้ และมีหลาย operation ที่ไม่ควรเปิดผ่าน ReportWriter จึงเก็บ formatter เป็น field ระยะยาว ส่วน CheckPolicy รับผ่าน parameter เฉพาะ write ครั้งนั้นและไม่เก็บไว้ ตามแนวแบ่งของสไลด์ ข้อใดตรงทั้งกลไก reuse และความสัมพันธ์กับ formatter?",
+      "options": [
+        "ใช้ generalization จาก ClosedFormatter เพื่อ reuse implementation; เรียกความสัมพันธ์กับ formatter ว่า dependency เพราะมีการเรียก method",
+        "ใช้ factoring ย้าย operation ร่วมออกจาก ClosedFormatter ไป superclass; เรียกความสัมพันธ์กับ formatter ว่า association เพราะถือ field",
+        "ใช้ delegation ส่งงานไปยัง ClosedFormatter ที่ถือไว้; เรียกความสัมพันธ์กับ formatter ว่า association เพราะเป็นส่วนของโครงสร้าง",
+        "ใช้ association สำหรับ field ที่อ้าง ClosedFormatter; ใช้ dependency สำหรับ CheckPolicy ที่รับเข้ามาทาง parameter"
+      ],
+      "correct": 2,
+      "shades": [
+        "ดำ",
+        "ดำ",
+        "ขาว",
+        "เทา"
+      ],
+      "reasons": [
+        "อยาก reuse implementation ไม่ได้พิสูจน์ is-a/substitutability และการถือ formatter เป็น field ตามโจทย์เป็น structural relationship ไม่ใช่ dependency เพียงเพราะมีการเรียก method",
+        "ส่วน association สอดคล้องกับ field แต่ factoring แบบย้ายส่วนร่วมต้องแก้ class ที่ต้องการ reuse ซึ่งโจทย์ระบุว่าปรับ source ของ ClosedFormatter ไม่ได้",
+        "Delegation reuse class ที่แก้ไม่ได้โดยไม่รับทุก operation มาเป็นของ ReportWriter และ field reference ที่เก็บระยะยาวตรง association เชิงโครงสร้างตามบท",
+        "จำแนกความสัมพันธ์ทั้ง formatter และ policy ได้ถูกตาม field/parameter visibility แต่ยังไม่ระบุกลไก reuse ที่เหมาะกับ class ที่แก้ source ไม่ได้และไม่ควรเปิดทุก operation"
+      ],
+      "explanation": "การเรียก operation อย่างเดียวไม่พอบอก relationship ต้องดู visibility/lifetime ของการรู้จักกันด้วย ส่วนการ reuse class ที่แก้ไม่ได้และไม่ควรรับ interface ทั้งหมดตรงกับ delegation มากกว่าการฝืน generalization หรือ factoring",
+      "source": {
+        "file": "ISAAD-13-2026.PDF",
+        "page": 49
+      },
+      "sourcePages": [
+        30,
+        31,
+        32,
+        46,
+        47,
+        48,
+        49
+      ]
+    },
+    {
+      "id": "e713-m13-05",
+      "module": 13,
+      "topic": "Metamorphosis โดยคง identity และเปลี่ยนส่วน classification",
+      "stem": "Courier หนึ่งคนสลับระหว่าง Salaried กับ PerDelivery ได้หลายครั้ง โดย courierId และ link ไปประวัติการส่งต้องคงเดิม รูปแบบแรกมี monthlyRate รูปแบบหลังมี perStopRate ทีมกำลังเลือกจุดวาง inheritance ตามแนว metamorphosis ของสไลด์ ข้อใดทำให้ส่วนที่เปลี่ยนรูปแยกจาก identity ที่ต้องคงอยู่ได้ตรงที่สุด?",
+      "options": [
+        "ให้ Courier ถือ PayClassification แล้วแยก Salaried/PerDelivery เป็นชนิดย่อยของ classification โดยสับเปลี่ยนส่วนนี้เมื่อรูปแบบค่าจ้างเปลี่ยน",
+        "ให้ SalariedCourier กับ PerDeliveryCourier สืบทอด Courier เพื่อ share courierId และพฤติกรรมร่วม โดยมีข้อมูลค่าจ้างเฉพาะในแต่ละชนิดย่อย",
+        "ให้ object Courier เปลี่ยน runtime subclass เป็น SalariedCourier หรือ PerDeliveryCourier ผ่านเส้น generalization โดยถือว่าความสัมพันธ์นั้นทำการสับเปลี่ยนให้",
+        "ให้ PayClassification เป็น whole ของ Courier ผ่าน composition เพื่อให้เมื่อเปลี่ยน classification แล้ว identity และประวัติของ Courier เปลี่ยนตามส่วนที่ถือครอง"
+      ],
+      "correct": 0,
+      "shades": [
+        "ขาว",
+        "เทา",
+        "ดำ",
+        "ดำ"
+      ],
+      "reasons": [
+        "ตรงรูปหน้า 56 ที่ย้ายชนิดย่อยไปส่วน Classification แล้วให้ object หลักคง identity และ links ของตัวเอง ส่วนที่เปลี่ยนจึงสับเปลี่ยนได้โดยไม่ต้องเปลี่ยน Courier",
+        "Generalization แบบนี้แชร์โครงสร้างและพฤติกรรมร่วมได้จริง และตรงแนวแรกหน้า 55 แต่ยังติดปัญหาว่าจะทำอย่างไรเมื่อ object ที่คง identity ต้องเปลี่ยนชนิด จึงด้อยกว่าการแยกส่วนที่เปลี่ยนตามโจทย์",
+        "Generalization ระบุความสัมพันธ์ is-a ไม่ใช่ operation ที่เปลี่ยน runtime class ให้ object อัตโนมัติ ปัญหานี้เป็นเหตุที่สไลด์เสนออีกแนวด้วย Classification",
+        "กลับทิศ whole–part และทำให้ identity ของ Courier เปลี่ยนตาม classification ซึ่งขัดข้อกำหนด สไลด์ให้ object หลักถือส่วน Classification ที่เปลี่ยนได้"
+      ],
+      "explanation": "Metamorphosis ในบทนี้ไม่ได้ปฏิเสธ inheritance แต่ย้าย inheritance ไปไว้ในส่วนที่มีรูปแบบเปลี่ยนได้ ตัว Courier จึงคง courierId และความสัมพันธ์เดิม ขณะที่ข้อมูลและพฤติกรรมค่าจ้างอยู่ใน classification ที่เหมาะกับช่วงนั้น",
+      "source": {
+        "file": "ISAAD-13-2026.PDF",
+        "page": 56
+      },
+      "sourcePages": [
+        34,
+        41,
+        53,
+        54,
+        55,
+        56,
+        57
+      ]
+    }
+  ]
+}
